@@ -42,3 +42,36 @@ jobs:
       with:
         name: email2trip-report
         path: build/email2trip-report.pdf
+        
+    - name: Get latest tag
+      id: get_tag
+      run: |
+        git fetch --tags
+        latest=$(git tag | sort -V | tail -n 1)
+        echo "Latest tag: $latest"
+        if [ -z "$latest" ]; then
+          next="v0.1"
+        else
+          base=$(echo "$latest" | sed 's/^v//')
+          major=$(echo "$base" | cut -d. -f1)
+          minor=$(echo "$base" | cut -d. -f2)
+          next="v$major.$((minor + 1))"
+        fi
+        echo "Next tag: $next"
+        echo "tag_name=$next" >> $GITHUB_OUTPUT
+    
+    - name: Create new tag
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git tag ${{ steps.get_tag.outputs.tag_name }}
+        git push origin ${{ steps.get_tag.outputs.tag_name }}
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.get_tag.outputs.tag_name }}
+        name: Release ${{ steps.get_tag.outputs.tag_name }}
+        files: build/email2trip-report.pdf
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

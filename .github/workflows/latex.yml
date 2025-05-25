@@ -1,0 +1,44 @@
+name: Build LaTeX Report
+
+on:
+  push:
+    paths:
+      - '**.tex'
+      - '**.bib'
+      - '.github/workflows/latex.yml'
+  workflow_dispatch:
+
+jobs:
+  build_report:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install TeX Live
+      run: sudo apt-get update && sudo apt-get install -y texlive-full
+
+    - name: Create build directory
+      run: mkdir -p build
+
+    - name: Compile LaTeX (1st pass)
+      run: pdflatex -interaction=nonstopmode -output-directory=build report.tex
+
+    - name: Run BibTeX
+      run: bibtex build/report
+
+    - name: Compile LaTeX (2nd pass)
+      run: pdflatex -interaction=nonstopmode -output-directory=build report.tex
+
+    - name: Compile LaTeX (3rd pass)
+      run: pdflatex -interaction=nonstopmode -output-directory=build report.tex
+
+    - name: Rename output PDF
+      run: mv build/report.pdf build/email2trip-report.pdf
+
+    - name: Upload PDF as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: email2trip-report
+        path: build/email2trip-report.pdf

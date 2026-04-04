@@ -5,40 +5,30 @@ on:
     paths:
       - '**.tex'
       - '**.bib'
+      - '.latexmkrc'
       - '.github/workflows/latex.yml'
   workflow_dispatch:
 
 jobs:
   build_report:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v6
 
-    - name: Install TeX Live
-      run: sudo apt-get update && sudo apt-get install -y texlive-full
+    - name: Compile LaTeX with latex-action
+      uses: xu-cheng/latex-action@v4
+      with:
+        root_file: report.tex
 
-    - name: Create build directory
-      run: mkdir -p build
-
-    - name: Compile LaTeX (1st pass)
-      run: pdflatex -interaction=nonstopmode -output-directory=build report.tex
-
-    - name: Run BibTeX
-      run: bibtex build/report
-
-    - name: Compile LaTeX (2nd pass)
-      run: pdflatex -interaction=nonstopmode -output-directory=build report.tex
-
-    - name: Compile LaTeX (3rd pass)
-      run: pdflatex -interaction=nonstopmode -output-directory=build report.tex
-
-    - name: Rename output PDF
-      run: mv build/report.pdf build/email2trip-report.pdf
+    - name: Prepare artifact
+      run: |
+        mkdir -p build
+        cp report.pdf build/email2trip-report.pdf
 
     - name: Upload PDF as artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: email2trip-report
         path: build/email2trip-report.pdf
@@ -68,7 +58,7 @@ jobs:
         git push origin ${{ steps.get_tag.outputs.tag_name }}
     
     - name: Create GitHub Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ steps.get_tag.outputs.tag_name }}
         name: Release ${{ steps.get_tag.outputs.tag_name }}

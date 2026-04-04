@@ -2,40 +2,86 @@
 
 Informe TFI.
 
-## Compilación recomendada
+## Compilación con Latexmk
 
-## Bibliografía
+Se incluye un archivo `.latexmkrc` con la configuración necesaria.
 
-El archivo de bibliografía que usa el informe es `export.bib` y puede ser usado con BibDesk.
+Se resuelve automáticamente las pasadas de `pdflatex` y `biber` necesarias.
 
-### Línea de comando
+### Local
 
-Desde la raíz del repo:
+Requisitos
+- [TeX Live 2025](https://tug.org/texlive/)
+- [latexmk](https://mgeier.github.io/latexmk.html)
+
+#### Creación del PDF
 
 ```bash
 latexmk report.tex
 ```
 
-Resuelve automáticamente las pasadas de `pdflatex` y `biber` necesarias usando la configuración definida en `.latexmkrc`.
-
-### Limpieza de archivos auxiliares
+#### Limpieza de archivos auxiliares
 
 ```bash
 latexmk -c report.tex
 ```
 
-Hace una limpieza parcial: elimina auxiliares de compilación, pero conserva archivos útiles.
-
-Para una limpieza completa del build:
+#### Limpieza completa
 
 ```bash
 latexmk -C report.tex
 ```
 
-Eso también elimina `report.bbl`, `report.pdf` y `report.synctex.gz`.
+### Docker
+
+Requisitos
+- Docker
+
+#### Construcción de la imagen
+
+```bash
+docker build -t report-latex .
+```
+
+#### Creación del PDF
+
+Compilar el informe montando el repositorio actual dentro del contenedor:
+
+```bash
+docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/work" report-latex
+```
+#### Limpieza de archivos auxiliares
+
+```bash
+docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/work" report-latex -c report.tex
+```
+
+#### Limpieza completa
+
+```bash
+docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/work" report-latex -C report.tex
+```
+
+## TexLive macOS
 
 ### TexShop
 
+[TexShop](https://pages.uoregon.edu/koch/texshop/)
+
 En TexShop se recomienda utilizar `latexmk`
 
-Se incluye un archivo `.latexmkrc` de forma que TexShop y la compilación por línea de comando desde la terminal usan la misma configuración.
+### BibDesk
+
+[BibDesk](https://bibdesk.sourceforge.io)
+
+El archivo de bibliografía que usa el informe es `references.bib` y puede ser usado con BibDesk.
+
+## Estructura de archivos LaTeX
+
+El informe está dividido en varios archivos para separar configuración de contenido:
+
+- `report.tex`: archivo raíz del documento.
+- `preamble.tex`: paquetes, macros y configuración global.
+- `frontmatter/titlepage.tex`: portada.
+- `sections/`: secciones del informe.
+- `references.bib`: bibliografía usada por `biblatex`/`biber`.

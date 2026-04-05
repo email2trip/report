@@ -4,6 +4,405 @@
 
 \subsection{Implementación del/los Modelo/s}
 
+\subsubsection{Extractor/core}
+
+A continuación se detalla el \textit{pipeline} completo que inicia con un archivo de correo electrónico (de extensión
+\texttt{.eml}) y que finaliza con la extracción de los datos relevantes del mismo.
+
+Para el caso de correos electrónicos correspondientes a vuelos se busca obtener el código de la reserva, el nombre del
+pasajero y el detalle de uno o más segmentos de vuelo.
+Cada segmento se compone de un código de vuelo, el aeropuerto de origen, el aeropuerto de destino y la fecha y hora de
+inicio de vuelo.
+
+\paragraph{Archivo \texttt{.eml}, HTML y texto a simple vista}
+
+El primer paso consiste en obtener el contenido del correo electrónico y quedarse con solo lo relevante.
+Para ello se utiliza la librería simple-java-email (\url{https://www.simplejavamail.org}) que convierte el contenido de
+un \texttt{.eml} a formato HTML. Para ello se utiliza el método \texttt{org.simplejavamail.api.email.Email\#getHTMLText}
+y se consigue una instancia de \texttt{String} con todo el contenido HTML\@.
+
+A continuación se utiliza la librería Jsoup (\url{https://jsoup.org/}) que consiste en un \textit{parser} html que
+ofrece el método \texttt{org.jsoup.nodes.Element\#text()} para aplanar el HTML del mail y quedarse únicamente con el
+texto visible, tal como si se estuviera visualizando el mail desde una aplicación de correo electrónico.
+Esta acción aplica también para todas las secciones posibles según el estándar MIME Multipart
+(\url{https://en.wikipedia.org/wiki/MIME}).
+Un correo electrónico cuenta con varias de estas secciones, algunas contienen adjuntos, otras contienen información de
+reenvío del mail, y algunas incluso codifican el texto en Base64 (\url{https://en.wikipedia.org/wiki/Base64}) de forma
+que la biblioteca procede a decodificarlo.
+
+Es importante destacar que el \textit{pipeline} trabaja únicamente con el texto visible de los mails, ignorando mucho
+más contenido que podría ser relevante para identificar directamente áreas críticas del mail.
+Atributos presentes en los \textit{tags} html, imágenes, adjuntos como archivos PDF y demás contenidos son ignorados
+por el \textit{pipeline}.
+Incluso el asunto del mail es ignorado.
+
+Además, se aplica un preprocesamiento extra para eliminar \textit{footers} conocidos. Por ejemplo aquellos nodos HTML
+identificados con cadenas como \texttt{.footer} son ignorados.
+Durante la implementación este paso fue relevante para ignorar por ejemplo información de contacto de empresas de
+aerolíneas que pueden confundir al algoritmo NLP (un caso es el nombre del presidente de la compañía, el cual se podría
+confundir con el nombre del pasajero).
+Dado que está comprobado que no existe información útil para el usuario ubicada en esta sección entonces es seguro
+eliminarla.
+
+Otro preprocesamiento adicional que se aplica es la búsqueda mediante expresiones regulares de cadenas que puedan
+corresponder con códigos de vuelo.
+Un código de vuelo IATA (\url{https://en.wikipedia.org/wiki/Airline_codes}) consiste en dos letras, seguido de un número
+de entre 2 y 4 cifras.
+Por ejemplo \texttt{AC8633} corresponde al vuelo 8633 de la aerolínea Air Canada.
+En caso de que el mail contenga cadenas como \texttt{AC-8633} o \texttt{AC 8633} este preprocesamiento elimina el guion
+o el espacio para que siempre se obtenga la cadena \texttt{AC8633}, facilitando así la tarea de la próxima etapa del
+\textit{pipeline} para identificar códigos de vuelo usando una única convención.
+
+\begin{lstlisting}[
+    style=javacodestyle,
+    caption={Normalización de códigos de vuelo.},
+    label={lst:normalize-flight-numbers}
+]
+private static String normalizeFlightNumbers(String text) {
+  Pattern FLIGHT_NUMBER_WITH_HYPHEN_SEPARATOR =
+    Pattern.compile("\\b([A-Z][A-Z0-9]|[0-9][A-Z]|[A-Z][0-9])\\s*[-–]\\s*(\\d{2,4})\\b");
+  Pattern FLIGHT_NUMBER_WITH_SPACE_SEPARATOR =
+    Pattern.compile("\\b([A-Z][A-Z0-9]|[0-9][A-Z]|[A-Z][0-9])\\s+(\\d{2,4})\\b");
+\end{lstlisting}
+
+\paragraph{Stanford CoreNLP}
+
+Una vez que se cuenta con una instancia de \textit{String} con únicamente el contenido a simple vista de un correo
+electrónico se envía este texto al \textit{pipeline} de Stanford CoreNLP.
+El mismo cuenta con múltiples etapas que detallamos a continuación:
+
+\subparagraph{Tokenization}
+
+(\url{https://stanfordnlp.github.io/CoreNLP/tokenize.html})
+
+La tokenización consiste en convertir texto en tokens.
+La forma más elemental consiste en dividir cada vez que aparece un espacio.
+Por ejemplo para el texto ``Thanks for flying.'' la tokenización genera cuatro tokens: ``Thanks'', ``for'', ``flying'' y
+``.''.
+CoreNLP realiza la separación del texto en \textit{tokens} usando una colección de reglas ya previstas.
+En el archivo de configuración se indica la propiedad \texttt{tokenize.language=en} para que utilice las reglas del
+idioma inglés.
+Desde este momento la implementación estará limitada exclusivamente a correos electrónicos de reservas redactados en
+inglés.
+
+\subparagraph{Sentence Splitting}
+
+(\url{https://stanfordnlp.github.io/CoreNLP/ssplit.html})
+
+La separación en oraciones consiste en convertir un texto en oraciones.
+Por ejemplo ``Thanks for flying. Flight safe.''.
+será separado en las oraciones ``Thanks for flying.'' y ``Flight safe.''.
+Aquí también CoreNLP realiza la separación en oraciones usando una colección de reglas ya previstas.
+
+\subparagraph{Parts of Speech}
+
+(\url{https://stanfordnlp.github.io/CoreNLP/pos.html})
+
+Partes del discurso asignan \textit{tags} o etiquetas a los \textit{tokens} para marcarlos según su categoría
+gramatical.
+Por ejemplo para el texto ``Marie was born in Paris.'' se etiqueta a ``Marie'' como \texttt{NNP}
+(nombre propio singular), ``was'' como \texttt{VDB} (verbo pasado), ``born'' como \texttt{VBN} (verbo participio pasado),
+``in'' como \texttt{IN} (preposición), ``París'' nuevamente como \texttt{NNP} y el punto final ``.'' como signo de
+puntuación.
+
+\subparagraph{Lemmatization}
+
+(\url{https://stanfordnlp.github.io/CoreNLP/lemma.html})
+
+Aquí se asocia una palabra con su lema o forma de diccionario.
+Por ejemplo para la palabra ``was'' se mapea por la palabra ``be''.
+Este paso lleva todo el contenido a un solo tiempo verbal para simplificar la tarea de las próximas etapas.
+
+\subparagraph{Named Entity Recognition}
+
+(\url{https://stanfordnlp.github.io/CoreNLP/ner.html})
+
+En esta etapa, la más compleja de todo el pipeline de NLP, se reconocen entidades en el texto como personas o nombres
+de empresas.
+La librería utiliza uno o más modelos de secuencia de \textit{machine learning} para etiquetar las entidades.
+Además permite la ejecución de reglas específicas para etiquetar, por ejemplo, fechas, tiempos y valores numéricos.
+
+Para el idioma inglés la biblioteca reconoce por defecto 24 tipos distintos de entidades:
+\begin{itemize}
+    \item Nombres reconocidos: \texttt{PERSON}, \texttt{LOCATION}, \texttt{ORGANIZATION}, \texttt{MISC}
+    \item Numéricos: \texttt{MONEY}, \texttt{NUMBER}, \texttt{ORDINAL}, \texttt{PERCENT}
+    \item Temporales: \texttt{DATE}, \texttt{TIME}, \texttt{DURATION}, \texttt{SET}
+    \item Otros: \texttt{EMAIL}, \texttt{URL}, \texttt{CITY}, \texttt{STATEORPROVINCE}, \texttt{COUNTRY},
+    \texttt{NATIONALITY}, \texttt{RELIGION}, \texttt{TITLE}, \texttt{IDEOLOGY}, \texttt{CRIMINALCHARGE},
+    \texttt{CAUSEOFDEATH}, \texttt{HANDLE}
+\end{itemize}
+
+A simple vista se puede apreciar que no existe una entidad aeropuerto o aerolínea por lo que es necesario crear reglas
+adicionales para facilitar el reconocimiento de nuevos tipos de entidades.
+
+\subsubparagraph{Aeropuertos}
+
+Un aeropuerto de pasajeros se identifica por un código de tres letras denominado \textit{IATA Code}
+(\url{https://en.wikipedia.org/wiki/IATA_airport_code}).
+A excepción de aeropuertos muy pequeños, cualquier aeropuerto cuenta con un identificador único de tres letras emitido
+por IATA.
+
+Para esta implementación se utilizó el \textit{dataset} público de Our Airports Data
+(\url{https://ourairports.com/data/}) que ofrece la descarga de un archivo CSV con más de 84.000 registros que
+representan a todos los aeropuertos del mundo.
+Se procede a filtrar el mismo para considerar únicamente los aeropuertos que tengan un código IATA (descartando
+aeropuertos pequeños).
+Por ejemplo el aeropuerto ``Montreal / Pierre Elliott Trudeau International Airport'' se identifica con el código IATA
+``YUL''.
+
+\begin{lstlisting}[
+    style=basecodestyle,
+    caption={Registro de ejemplo del \textit{dataset} Our Airports Data.},
+    label={lst:ourairports-example}
+]
+id,ident,type,name,latitude_deg,longitude_deg,elevation_ft,continent,iso_country,iso_region,municipality,scheduled_service,icao_code,iata_code,gps_code,local_code,home_link,wikipedia_link,keywords
+1928,CYUL,large_airport,Montreal / Pierre Elliott Trudeau International Airport,45.467837,-73.742294,118,NA,CA,CA-QC,Montréal,yes,CYUL,YUL,CYUL,YUL,http://www.admtl.com/passager/Home.aspx,https://en.wikipedia.org/wiki/Montréal–Trudeau_International_Airport,"YMQ, Dorval Airport"
+\end{lstlisting}
+
+Para cada aeropuerto con código IATA se procede a crear un conjunto de reglas para que el \textit{pipeline} pueda
+reconocer con éxito la entidad \texttt{AIRPORT\_CODE} mencionando todos los códigos de aeropuerto existentes.
+Se creó un archivo \texttt{airport.rules} que asocia tanto el código IATA como la combinación de código IATA seguido del
+nombre de la ciudad donde se ubica el aeropuerto.
+Retomando el ejemplo de Montreal, el contenido del archivo de reglas es el siguiente:
+
+\begin{lstlisting}[
+    style=basecodestyle,
+    caption={Reglas de \texttt{airport.rules} para el aeropuerto YUL.},
+    label={lst:airport-rules-yul}
+]
+YUL	AIRPORT_CODE	O,MISC,ORGANIZATION	2.0
+YUL Montréal	AIRPORT_CODE	O,MISC,ORGANIZATION	2.0
+\end{lstlisting}
+
+La estructura de los archivos de reglas consiste en hasta 4 columnas separadas por un \textit{tab}.
+En la primer columna se indica la cadena a corresponder, luego se indica  el tipo de categoría a asociar.
+En la tercer columna se indican las categorías reconocidas que pueden ser reemplazadas (en el ejemplo estamos indicando
+que si fue reconocido como \texttt{MISC} o como \texttt{ORGANIZATION} entonces es más importante \texttt{AIRPORT\_CODE}
+y por lo tanto debería reconocerlo así.
+Por último con el valor \texttt{2.0} estamos indicando la prioridad, que resultá útil para el desempate cuando dos
+reglas aplican para una misma cadena.
+De esta forma CoreNLP entiende que frente al tag ``YUL'' lo debe reconocer como un nuevo tipo \texttt{AIRPORT\_CODE}.
+
+Debido a que CoreNLP puede reconocer a una cadena ``YUL Montréal'' como una única entidad, y anotarla como
+\texttt{ORGANIZATION}, entonces necesitamos de una segunda regla para cada aeropuerto donde se ubica primero el código
+IATA y luego el nombre de la ciudad correspondiente.
+
+La particularidad de los nombres de los aeropuertos es que el modelo puede fácilmente con el nombre de una persona,
+por ejemplo del pasajero del vuelo.
+Siguiendo con el mismo ejemplo, para la cadena ``Charles de Gaulle Airport'' el modelo lo anota como \texttt{PERSON}.
+Es por eso que para cada aeropuerto se crean hasta tres reglas adicionales indicadas en el archivo
+\texttt{airport-names.rules} donde para un nombre proveniente del dataset como ``Montreal / Pierre Elliott Trudeau
+International Airport'' se incluye no sólo la cadena exacta, sino también la misma sin la palabra ``Airport'' y otra sin
+la cadena ``International Airport''.
+De esta forma, para el aeropuerto en cuestión, se obtienen las siguientes reglas:
+
+\begin{lstlisting}[
+    style=basecodestyle,
+    caption={Reglas de \texttt{airport-names.rules} para el aeropuerto YUL.},
+    label={lst:airport-names-rules-yul}
+]
+Montreal / Pierre Elliott Trudeau	AIRPORT_NAME	O,MISC,ORGANIZATION,PERSON	2.0
+Montreal / Pierre Elliott Trudeau International	AIRPORT_NAME	O,MISC,ORGANIZATION,PERSON	2.0
+Montreal / Pierre Elliott Trudeau International Airport	AIRPORT_NAME	O,MISC,ORGANIZATION,PERSON	2.0
+\end{lstlisting}
+
+A diferencia del fragmento de reglas anterior aquí es necesario precisar que el tipo de entidad \texttt{PERSON} es
+reemplazable por una nueva entidad \texttt{AIRPORT\_NAME}.
+En principio para el procesamiento de los correos de vuelos no es necesario extraer el nombre del aeropuerto ya que los
+identificadores IATA anotados como \texttt{AIRPORT\_CODE} son únicos.
+De todas formas la identificación es útil para que el nombre del aeropuerto no sea identificado como \texttt{PERSON} y
+así se facilita la tarea de identificar el nombre del pasajero de la reserva.
+
+Por último se creó una regla de \texttt{TokensRegex} (\url{https://nlp.stanford.edu/software/tokensregex.html}) donde se
+rescata al aeropuerto cuando el texto visible queda con un formato como ``EZE Buenos Aires Departing at'' o ``EZE Buenos
+Aires Arriving at:''.
+Para ello, en el archivo \texttt{contextual-airport.tokensregex.rules} se definió lo siguiente:
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Regla de \texttt{contextual-airport.tokensregex.rules}.},
+    label={lst:contextual-airport-tokensregex}
+]
+ner = { type: "CLASS", value: "edu.stanford.nlp.ling.CoreAnnotations$NamedEntityTagAnnotation" }
+{
+  ruleType: "tokens",
+  pattern: ((([{word:/[A-Z]{3}/}] [{word:/[A-Z][A-Za-z'.-]*/}] [{word:/[A-Z][A-Za-z'.-]*/}]?)) [{word:/Departing|Arriving/}] [{word:/at/}] [{word:/:/}]?),
+  action: Annotate($2, ner, "AIRPORT_CODE"),
+  result: "AIRPORT_CODE"
+}
+\end{lstlisting}
+
+Como se puede apreciar se define un patrón donde primero aparece el código IATA de tres letras, seguido de 0 o más
+palabras y luego las palabras exactas ``Departing'' o ``Arriving''.
+Esta regla permite identificar al aeropuerto según el contexto en el que se ubica, pudiendo anotar únicamente el código
+IATA como \texttt{AIRPORT\_CODE} y descartando el resto (en la parte de \texttt{action} se indica
+\texttt{Annotate(\$2,...)} para anotar el segundo grupo capturado, esto es, ``EZE Buenos Aires''.
+
+A pesar de contar con reglas para la totalidad de códigos de aeropuertos existentes esto trae aparejado el problema de
+los falsos positivos.
+Una sigla en inglés como ``MAY'' que corresponde a un \textit{modal verb} será identificado incorrectamente como el
+``Clarence A. Bain Airport'' en las Bahamas.
+Del mismo modo la cadena ``MAX'' utilizada para indicar el máximo peso aceptado por la aerolínea en el equipaje ahora
+será identificado como el ``Ouro Sogui Airport'' ubicado en Senegal.
+Para estos casos extremos identificados, que siempre corresponden a aeropuertos pequeños, se decidió utilizar la
+propiedad \texttt{ner.additional.regexner.commonWords} para indicarle a CoreNLP las palabras que deben ser tomadas como
+palabras comunes del idioma inglés y así excluirlas de cualquier identificación.
+Las palabras definidas en la implementación son las siguientes:
+
+\begin{lstlisting}[
+    style=basecodestyle,
+    caption={Palabras comunes excluidas por \texttt{regexner}.},
+    label={lst:regexner-common-words}
+]
+GET
+MAY
+VOL
+API
+GST
+HST
+MAX
+\end{lstlisting}
+
+\subsubparagraph{Códigos de Vuelos y Aerolíneas}
+
+Anteriormente se comentó el preprocesamiento que se realiza antes de iniciar el pipeline de CoreNLP y que involucra a
+los códigos de vuelo definidos por IATA.
+Ahora es momento de obtener el token ``AC8633'' y reconocerlo como una entidad de tipo \texttt{FLIGHT\_NUMBER}.
+Para ello se utilizó el \textit{dataset} público de aerolíneas de OpenFlights (\url{https://openflights.org/data.php})
+que ofrece un CSV con más de 6.000 registros que representan a todas las aerolíneas del mundo.
+Por ejemplo:
+
+\begin{lstlisting}[
+    style=basecodestyle,
+    caption={Registro de ejemplo del \textit{dataset} OpenFlights.},
+    label={lst:openflights-example}
+]
+C1,C2,C3,C4,C5,C6,C7,C8
+330,Air Canada,\N,AC,ACA,AIR CANADA,Canada,Y
+\end{lstlisting}
+
+Para cada aerolínea se cuenta con el código de dos letras de IATA (``AC''), el nombre y el país de origen de la misma,
+entre otros.
+Con esta información se puede crear un nuevo conjunto de reglas que modele el comportamiento de encontrar todos los
+códigos de aerolínea (compuesto por dos caracteres alfanuméricos) seguidos de entre 2 y 4 dígitos que corresponden al
+número de vuelo.
+Para la aerolínea en cuestión el archivo de reglas es el siguiente:
+
+\begin{lstlisting}[
+    style=basecodestyle,
+    caption={Regla de \texttt{airlines.rules} para Air Canada.},
+    label={lst:airlines-rules-air-canada}
+]
+AC\d{2,4}	FLIGHT_NUMBER	O,MISC	2.0
+\end{lstlisting}
+
+donde el nuevo tipo de entidad \texttt{FLIGHT\_NUMBER} tiene prioridad por sobre una entidad de tipo \texttt{MISC}.
+Este conjunto se reglas se ubica en el archivo \texttt{airlines.rules}.
+
+Utilizando el mismo \textit{dataset} se crea otro conjunto de reglas, ubicado en el archivo \texttt{airline-names.rules}
+para definir el nuevo tipo de entidad \texttt{AIRLINE\_NAME} y que tenga prioridad por sobre tipos \texttt{MISC} y
+\texttt{ORGANIZATION}.
+
+\begin{lstlisting}[
+    style=basecodestyle,
+    caption={Regla de \texttt{airline-names.rules} para Air Canada.},
+    label={lst:airline-names-rules-air-canada}
+]
+AIR CANADA	AIRLINE_NAME	O,MISC,ORGANIZATION	2.0
+\end{lstlisting}
+
+Nuevamente, si bien no es necesario extraer el nombre de la aerolínea (ya que la primera porción del código de vuelo
+es un identificador único), el hecho de anotar un nombre como nombre de aerolínea ayuda a que existen menos partes del
+contenido sin anotar y que podrían ser candidatas a identificaciones incorrectas.
+
+\subsubparagraph{Código de Reserva (PNR)}
+
+Otro campo relevante para la extracción es el código de reserva.
+Aquí también IATA define el \texttt{PNR} o \textit{Passanger Name Record}
+(\url{https://en.wikipedia.org/wiki/Passenger_name_record}) y consiste en 6 caracteres alfanuméricos.
+Para dificultad de la extracción se recuerda que el código de vuelo (como ``AC8633'') ya está cumpliendo con el formato
+de \texttt{PNR}.
+Es por eso que aquí la estrategia para la extracción es distinta y consiste en identificar el \texttt{PNR} por contexto.
+Se establecen un conjunto de reglas \texttt{TokensRegex} para extraer el \texttt{PNR} cuando aparece luego de frases como
+``Confirmation Number'', ``Booking Code'', ``Booking Reference'', entre otras.
+En el archivo \texttt{pnr.tokensregex.rules} se indican seis reglas.
+El principio del archivo es el siguiente:
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Reglas iniciales de \texttt{pnr.tokensregex.rules}.},
+    label={lst:pnr-tokensregex-rules}
+]
+ner = { type: "CLASS", value: "edu.stanford.nlp.ling.CoreAnnotations$NamedEntityTagAnnotation" }
+$PNR_CODE = "/[A-Z0-9]{6}/"
+$SEPARATOR = "/[:-]/"
+{
+  ruleType: "tokens",
+  pattern: ([{word:/[Bb]ooking/}] [{word:/[Rr]eference/}] [{word:$SEPARATOR}]? ([{word:$PNR_CODE}])),
+  action: Annotate($1, ner, "PNR_CODE"),
+  result: "PNR_CODE"
+}
+\end{lstlisting}
+
+Con estas reglas se define un nuevo tipo de entidad \texttt{PNR\_CODE} listo para su extracción.
+
+\subsubparagraph{SUTime: Fechas y horas}
+
+En un mismo mail de confirmación de reserva pueden aparecer múltiples fechas y horas correspondientes por ejemplo al
+despegue o aterrizaje de cualquiera de los tramos de la reserva.
+Además es común que se indique la fecha en que se realizó la confirmación o incluso la fecha límite hasta donde se
+pueden realizar modificaciones a la reserva sin costo adicional.
+Es por eso que en esta etapa de anotación sólo resulta útil anotar todos los campos correspondientes a fecha y hora como
+\texttt{TIME} y la extracción con contexto se realizará en la siguiente etapa.
+Solo así podremos asociar por ejemplo la fecha y hora de despegue al primer tramo de una reserva y no al segundo.
+
+Las reglas por defecto fueron suficientes para la mayoría de los correos electrónicos, ya que CoreNLP provee la
+biblioteca SUTime (\url{https://nlp.stanford.edu/software/sutime.html}) que permite reconocer por ejemplo fechas con
+múltiples formatos como ``31-12-2026'', ``31/12/2026'' o ``2026-31-12''.
+
+Sólo fue necesaria una regla \texttt{TokensRegex} extra:
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Regla adicional para fechas en boarding passes.},
+    label={lst:sutime-boarding-pass-rule}
+]
+ner = { type: "CLASS", value: "edu.stanford.nlp.ling.CoreAnnotations$NamedEntityTagAnnotation" }
+{
+  ruleType: "tokens",
+  pattern: (([{word:/\d{2}[A-Z]{3}\d{2}/}])),
+  action: Annotate($1, ner, "DATE"),
+  result: "DATE"
+}
+\end{lstlisting}
+
+para que en mails correspondientes a \textit{boarding passes}, una cadena como ``22SEP25'' sea interpretada como
+``22/09/2025''.
+
+\subsubparagraph{Marcadores de tramos}
+
+Por último se define un archivo \texttt{segment-context.rules} con las siguientes dos reglas:
+\begin{lstlisting}[
+    style=basecodestyle,
+    caption={Reglas de \texttt{segment-context.rules}.},
+    label={lst:segment-context-rules}
+]
+Departing	FLIGHT_SEGMENT_MARKER	O,MISC,ORGANIZATION	2.0
+Arriving	FLIGHT_SEGMENT_MARKER	O,MISC,ORGANIZATION	2.0
+\end{lstlisting}
+
+Si bien en la siguiente etapa se podría buscar la palabra exacta ``Departing'' es mejor anotarla como una nueva entidad
+de tipo \texttt{FLIGHT\_SEGMENT\_MARKER} para buscar múltiples entidades de un tipo en particular y así identificar uno
+o más tramos de vuelos dentro de una misma reserva.
+
+\paragraph{Extracción de información}
+
+\subparagraph{Extracción de campos únicos: PNR y Pasajero}
+
+\subparagraph{Extracción de campos múltiples: Segmentos de vuelo}
+
+\subsubparagraph{Cuatro Layouts posibles}
+
 \subsection{Resultados Experimentales}
 
 \section{Conclusiones y Trabajo a Futuro}

@@ -13,23 +13,26 @@
 \tcbuselibrary{breakable}
 \definecolor{celeste}{rgb}{0.7,0.9,1}
 \tcbset{
-  revisionbox/.style={
-    boxrule=0pt,
-    sharp corners,
-    breakable,
-    before upper={\setlength{\parindent}{15pt}}
-  }
+    revisionbox/.style={
+        boxrule=0pt,
+        sharp corners,
+        breakable,
+        before upper={\setlength{\parindent}{15pt}}
+    }
 }
 \newtcolorbox{revisado}{revisionbox, colback=celeste!50}
 \newtcolorbox{corregir}{revisionbox, colback=yellow!50}
 
-\setcounter{tocdepth}{3}% to get subsubsections in toc
+\setcounter{tocdepth}{5}
+\setcounter{secnumdepth}{6}
 
 \usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
 \geometry{a4paper}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{graphicx}
+\usepackage{fvextra}
+\usepackage{listings}
 \usepackage{csquotes}
 \usepackage{microtype}
 
@@ -38,64 +41,64 @@
 
 \usepackage[spanish,es-noshorthands]{babel}
 \addto\captionsspanish{%
-  \renewcommand{\figureautorefname}{Figura}%
-  \renewcommand{\tableautorefname}{Tabla}%
-  \renewcommand{\sectionautorefname}{Sección}%
-  \renewcommand{\subsectionautorefname}{Subsección}%
-  \renewcommand{\subsubsectionautorefname}{Subsubsección}%
+    \renewcommand{\figureautorefname}{Figura}%
+    \renewcommand{\tableautorefname}{Tabla}%
+    \renewcommand{\sectionautorefname}{Sección}%
+    \renewcommand{\subsectionautorefname}{Subsección}%
+    \renewcommand{\subsubsectionautorefname}{Subsubsección}%
 }
 \usepackage[
-  backend=biber,
-  style=apa,
-  sorting=nyt,
-  language=spanish,
-  maxcitenames=99,
-  mincitenames=99
+    backend=biber,
+    style=apa,
+    sorting=nyt,
+    language=spanish,
+    maxcitenames=99,
+    mincitenames=99
 ]{biblatex}
 \DeclareLanguageMapping{spanish}{spanish-apa}
 \DefineBibliographyStrings{spanish}{
-  andothers = {et\addabbrvspace al},
-  urlseen = {Accedido}
+    andothers = {et\addabbrvspace al},
+    urlseen = {Accedido}
 }
 % Para sitios web cargados como @misc, preferimos citar el título sin comillas.
 \DeclareFieldFormat[misc]{citetitle}{#1}
 \newcommand{\legacyurlmonthabbr}[1]{%
-  \ifcase#1\or Jan\or Feb\or Mar\or Apr\or May\or Jun\or Jul\or Aug\or Sep\or Oct\or Nov\or Dec\fi}
+    \ifcase#1\or Jan\or Feb\or Mar\or Apr\or May\or Jun\or Jul\or Aug\or Sep\or Oct\or Nov\or Dec\fi}
 \newcommand{\legacyurldate}{%
-  \mkbibparens{Accedido:\space
+    \mkbibparens{Accedido:\space
     \iffieldundef{urlday}{}{\thefield{urlday}}%
     \iffieldundef{urlmonth}{}{-\legacyurlmonthabbr{\thefield{urlmonth}}}%
     \iffieldundef{urlyear}{}{-\thefield{urlyear}}}}
 \renewbibmacro*{url+urldate}{%
-  \ifthenelse{\iffieldundef{url}\OR\NOT\iffieldundef{doi}}
+    \ifthenelse{\iffieldundef{url}\OR\NOT\iffieldundef{doi}}
     {}
     {\printtext{Recuperado de\space\printfield{url}}%
-     \iffieldundef{urlyear}
-       {}
-       {\space\legacyurldate}}}
+    \iffieldundef{urlyear}
+    {}
+    {\space\legacyurldate}}}
 \DeclareNameWrapperFormat{citehyperref}{\bibhyperref{#1}}
 \DeclareNameWrapperAlias{labelname}{citehyperref}
 \DeclareDelimFormat[textcite]{nameyeardelim}{\addspace}
 \DeclareDelimFormat[cite]{nameyeardelim}{\addspace}
 \makeatletter
 \DeclareCiteCommand{\cite}[\cbx@textcite@init\cbx@textcite]
-  {\gdef\cbx@savedkeys{}%
-   \citetrackerfalse%
-   \pagetrackerfalse%
-   \DeferNextCitekeyHook%
-   \usebibmacro{cite:init}}
-  {\ifthenelse{\iffirstcitekey\AND\value{multicitetotal}>0}
-     {\protected@xappto\cbx@savedcites{()(\thefield{multipostnote})}%
-      \global\clearfield{multipostnote}}
-     {}%
-   \xappto\cbx@savedkeys{\thefield{entrykey},}%
-   \iffieldequals{namehash}{\cbx@lasthash}
-     {}
-     {\stepcounter{textcitetotal}%
-      \savefield{namehash}{\cbx@lasthash}}}
-  {}
-  {\protected@xappto\cbx@savedcites{%
-     [\thefield{prenote}][\thefield{postnote}]{\cbx@savedkeys}}}
+{\gdef\cbx@savedkeys{}%
+\citetrackerfalse%
+\pagetrackerfalse%
+\DeferNextCitekeyHook%
+\usebibmacro{cite:init}}
+{\ifthenelse{\iffirstcitekey\AND\value{multicitetotal}>0}
+{\protected@xappto\cbx@savedcites{()(\thefield{multipostnote})}%
+\global\clearfield{multipostnote}}
+{}%
+\xappto\cbx@savedkeys{\thefield{entrykey},}%
+\iffieldequals{namehash}{\cbx@lasthash}
+{}
+{\stepcounter{textcitetotal}%
+\savefield{namehash}{\cbx@lasthash}}}
+{}
+{\protected@xappto\cbx@savedcites{%
+    [\thefield{prenote}][\thefield{postnote}]{\cbx@savedkeys}}}
 \makeatother
 \addbibresource{references.bib}
 
@@ -104,18 +107,101 @@
 
 \usepackage{xurl}
 \usepackage[hidelinks]{hyperref} % Para autoref
+\hypersetup{bookmarksdepth=5}
+
+\lstdefinestyle{basecodestyle}{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    breakatwhitespace=false,
+    breakautoindent=true,
+    breakindent=0pt,
+    columns=fullflexible,
+    keepspaces=true,
+    showstringspaces=false,
+    captionpos=b,
+    frame=single,
+    framerule=0.4pt,
+    rulecolor=\color{black},
+    upquote=true,
+    literate=
+        {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'\i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+        {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+        {ñ}{{\~n}}1 {Ñ}{{\~N}}1
+        {ü}{{\"u}}1 {Ü}{{\"U}}1
+        {ö}{{\"o}}1 {Ö}{{\"O}}1
+        {–}{{--}}1
+        {“}{{``}}1 {”}{{''}}1 {’}{{'}}1
+}
+
+\lstdefinestyle{javacodestyle}{
+    style=basecodestyle,
+    language=Java,
+    keywordstyle=\color{blue!70!black}\bfseries,
+    stringstyle=\color{green!40!black},
+    commentstyle=\color{gray!70!black}\itshape
+}
+
+\lstdefinelanguage{jsonlike}{
+    morestring=[b]",
+    alsoletter={\$},
+    morekeywords={ner,type,value,ruleType,pattern,action,result,tokens,Annotate},
+    sensitive=true
+}
+
+\lstdefinestyle{jsonlikecodestyle}{
+    style=basecodestyle,
+    language=jsonlike,
+    keywordstyle=\color{blue!70!black}\bfseries,
+    stringstyle=\color{green!40!black}
+}
+
+\lstnewenvironment{javacode}{\lstset{style=javacodestyle}}{}
+\lstnewenvironment{jsonlikecode}{\lstset{style=jsonlikecodestyle}}{}
+\renewcommand{\lstlistingname}{Fragmento}
+\providecommand*{\lstlistingautorefname}{Fragmento}
+
+\DefineVerbatimEnvironment{codeblock}{Verbatim}{
+    fontsize=\small,
+    breaklines=true,
+    frame=single,
+    framesep=2mm
+}
 
 \titleformat{\section}
-  {\normalfont\Large\bfseries}
-  {\thesection}{1em}{}
+{\normalfont\Large\bfseries}
+{\thesection}{1em}{}
 
 \titleformat{\subsection}
-  {\normalfont\large\bfseries}
-  {\thesubsection}{1em}{}
+{\normalfont\large\bfseries}
+{\thesubsection}{1em}{}
 
 \titleformat{\subsubsection}
-  {\normalfont\normalsize\bfseries}
-  {\thesubsubsection}{1em}{}
+{\normalfont\normalsize\bfseries}
+{\thesubsubsection}{1em}{}
+
+\titleformat{\paragraph}[block]
+{\normalfont\normalsize\bfseries}
+{\theparagraph}{1em}{}
+
+\titleformat{\subparagraph}[block]
+{\normalfont\normalsize\bfseries}
+{\thesubparagraph}{1em}{}
+
+\titleclass{\subsubparagraph}{straight}[\subparagraph]
+\newcounter{subsubparagraph}[subparagraph]
+\renewcommand{\thesubsubparagraph}{\thesubparagraph.\arabic{subsubparagraph}}
+\makeatletter
+\providecommand*{\toclevel@subsubparagraph}{6}
+\providecommand*{\theHsubsubparagraph}{\thesubparagraph.\arabic{subsubparagraph}}
+\providecommand*{\l@subsubparagraph}[2]{}
+\makeatother
+\titleformat{\subsubparagraph}[block]
+{\normalfont\normalsize\bfseries}
+{\thesubsubparagraph}{1em}{}
+
+\titlespacing*{\paragraph}{0pt}{\baselineskip}{0.25\baselineskip}
+\titlespacing*{\subparagraph}{0pt}{\baselineskip}{0.25\baselineskip}
+\titlespacing*{\subsubparagraph}{0pt}{\baselineskip}{0.25\baselineskip}
 
 \newcommand{\titulolargo}{Generación de itinerarios de viaje a partir del procesamiento de correos electrónicos de reservas}
 \newcommand{\titulocorto}{TFI - ECD 2024B - Ing. Franco Román Meola}
@@ -131,9 +217,9 @@
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 \fancypagestyle{plain}{%
-  \fancyhf{}
-  \fancyhead[C]{\normalfont\titulocorto}
-  \fancyfoot[C]{\raisebox{-20pt}{\thepage}}
-  \renewcommand{\headrulewidth}{0pt}
-  \renewcommand{\footrulewidth}{0pt}
+    \fancyhf{}
+    \fancyhead[C]{\normalfont\titulocorto}
+    \fancyfoot[C]{\raisebox{-20pt}{\thepage}}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
 }

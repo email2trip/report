@@ -1,7 +1,7 @@
-\section{Experimentación y Resultados}
+\section{Experimentación y Resultados}%
 \label{sec:experimentation-and-results}
 
-\subsection{Dataset Final}
+\subsection{Dataset Final}%
 \label{subsec:final-dataset}
 
 \subsubsection{Anonimización}
@@ -12,7 +12,7 @@
 
 \subsubsection{Creación del dataset estructurado}
 
-\subsection{Implementación del/los Modelo/s}
+\subsection{Implementación del/los Modelo/s}%
 \label{subsec:model-implementation}
 
 \subsubsection{\textit{Pipeline} de extracción (\texttt{extractor-core})}
@@ -42,7 +42,7 @@ City con destino a Toronto y otro desde Toronto hacia la ciudad de Chicago, Esta
         \centering
         \includegraphics[width=\linewidth]{images/eml-yqb-ord-2}
     \end{minipage}
-    \caption{Ejemplo de un correo electrónico de reserva de un vuelo de dos segmentos de Air Canada (primera parte).}
+    \caption{Ejemplo de un correo electrónico de reserva de un vuelo de dos segmentos de Air Canada (primera parte).}%
     \label{fig:eml-yqb-ord-part-a}
 \end{figure}
 
@@ -57,7 +57,7 @@ City con destino a Toronto y otro desde Toronto hacia la ciudad de Chicago, Esta
         \centering
         \includegraphics[width=\linewidth]{images/eml-yqb-ord-4}
     \end{minipage}
-    \caption{Ejemplo de un correo electrónico de reserva de un vuelo de dos segmentos de Air Canada (segunda parte).}
+    \caption{Ejemplo de un correo electrónico de reserva de un vuelo de dos segmentos de Air Canada (segunda parte).}%
     \label{fig:eml-yqb-ord-part-b}
 \end{figure}
 
@@ -150,7 +150,7 @@ otros.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=1.00\textwidth]{images/pipeline}
-    \caption{Diagrama del \textit{pipeline} de CoreNLP}
+    \caption{Diagrama del \textit{pipeline} de CoreNLP}%
     \label{fig:corenlp-pipeline}
 \end{figure}
 
@@ -254,7 +254,7 @@ La estructura de los archivos de reglas consiste en hasta 4 columnas separadas p
 En la primer columna se indica la cadena a corresponder, luego se indica  el tipo de categoría a asociar.
 En la tercer columna se indican las categorías reconocidas que pueden ser reemplazadas (en el ejemplo estamos indicando
 que si fue reconocido como \texttt{MISC} o como \texttt{ORGANIZATION} entonces es más importante \texttt{AIRPORT\_CODE}
-y por lo tanto debería reconocerlo así.
+y por lo tanto debería reconocerlo así).
 Por último con el valor \texttt{2.0} estamos indicando la prioridad, que resultá útil para el desempate cuando dos
 reglas aplican para una misma cadena.
 De esta forma CoreNLP entiende que frente al tag ``YUL'' lo debe reconocer como un nuevo tipo \texttt{AIRPORT\_CODE}.
@@ -314,7 +314,7 @@ Como se puede apreciar se define un patrón donde primero aparece el código IAT
 palabras y luego las palabras exactas ``Departing'' o ``Arriving''.
 Esta regla permite identificar al aeropuerto según el contexto en el que se ubica, pudiendo anotar únicamente el código
 IATA como \texttt{AIRPORT\_CODE} y descartando el resto (en la parte de \texttt{action} se indica
-\texttt{Annotate(\$2,...)} para anotar el segundo grupo capturado, esto es, ``EZE Buenos Aires''.
+\texttt{Annotate(\$2,...)} para anotar el segundo grupo capturado, esto es, ``EZE Buenos Aires'').
 
 A pesar de contar con reglas para la totalidad de códigos de aeropuertos existentes esto trae aparejado el problema de
 los falsos positivos.
@@ -777,7 +777,7 @@ Requirements:
 \end{lstlisting}
 
 En primer lugar se indica la instrucción concreta indicando la ciudad, el país de la ciudad y la cantidad de días.
-A continuación se enumeran los intereses del usuario (en este caso \texttt{CULTURE\_HISTORIC} y \texttt{NATURE}.
+A continuación se enumeran los intereses del usuario (en este caso \texttt{CULTURE\_HISTORIC} y \texttt{NATURE}).
 
 Luego se menciona una serie de requerimientos y recomendaciones que se fueron obteniendo luego de varias pruebas
 interactuando con el modelo.
@@ -1041,7 +1041,7 @@ Si se desea obtener recomendaciones de 3 días para la ciudad de Toronto prioriz
 En este punto ya se cuenta con toda la información necesaria para mostrarle al cliente las recomendaciones de los puntos
 de interés a visitar y las ubicaciones de cada uno de ellos en un mapa.
 
-\subsection{Resultados Experimentales}
+\subsection{Resultados Experimentales}%
 \label{subsec:results}
 
 \subsubsection{Arquitectura}
@@ -1070,5 +1070,5 @@ de interés a visitar y las ubicaciones de cada uno de ellos en un mapa.
 
 \paragraph{Azure Container Apps}
 
-\section{Conclusiones y Trabajo a Futuro}
+\section{Conclusiones y Trabajo a Futuro}%
 \label{sec:conclusions}

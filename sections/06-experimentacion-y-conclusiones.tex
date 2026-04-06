@@ -1,10 +1,21 @@
 \section{Experimentación y Resultados}
+\label{sec:experimentation-and-results}
 
 \subsection{Dataset Final}
+\label{subsec:final-dataset}
+
+\subsubsection{Anonimización}
+
+\subsubsection{Traducción al idioma inglés}
+
+\subsubsection{DVC}
+
+\subsubsection{Creación del dataset estructurado}
 
 \subsection{Implementación del/los Modelo/s}
+\label{subsec:model-implementation}
 
-\subsubsection{Extractor/core}
+\subsubsection{\textit{Pipeline} de extracción (\texttt{extractor-core})}
 
 A continuación se detalla el \textit{pipeline} completo que inicia con un archivo de correo electrónico (de extensión
 \texttt{.eml}) y que finaliza con la extracción de los datos relevantes del mismo.
@@ -14,38 +25,100 @@ pasajero y el detalle de uno o más segmentos de vuelo.
 Cada segmento se compone de un código de vuelo, el aeropuerto de origen, el aeropuerto de destino y la fecha y hora de
 inicio de vuelo.
 
-\paragraph{Archivo \texttt{.eml}, HTML y texto a simple vista}
+\paragraph{Archivo \texttt{.eml}, HTML y obtención de texto a simple vista}
+
+A continuación se presenta un \texttt{.eml} de ejemplo que corresponde a una reserva de la aerolínea Air Canada
+(Ver \autoref{fig:eml-yqb-ord-part-a} y \autoref{fig:eml-yqb-ord-part-b}) que incluye dos segmentos, uno desde Quebec
+City con destino a Toronto y otro desde Toronto hacia la ciudad de Chicago, Estados Unidos.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/eml-yqb-ord-1}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/eml-yqb-ord-2}
+    \end{minipage}
+    \caption{Ejemplo de un correo electrónico de reserva de un vuelo de dos segmentos de Air Canada (primera parte).}
+    \label{fig:eml-yqb-ord-part-a}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/eml-yqb-ord-3}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/eml-yqb-ord-4}
+    \end{minipage}
+    \caption{Ejemplo de un correo electrónico de reserva de un vuelo de dos segmentos de Air Canada (segunda parte).}
+    \label{fig:eml-yqb-ord-part-b}
+\end{figure}
+
+\FloatBarrier
 
 El primer paso consiste en obtener el contenido del correo electrónico y quedarse con solo lo relevante.
 Para ello se utiliza la librería simple-java-email (\url{https://www.simplejavamail.org}) que convierte el contenido de
 un \texttt{.eml} a formato HTML. Para ello se utiliza el método \texttt{org.simplejavamail.api.email.Email\#getHTMLText}
 y se consigue una instancia de \texttt{String} con todo el contenido HTML\@.
+Retomando el mail de ejemplo, y considerando únicamente la sección donde se menciona el primer tramo del vuelo, desde
+YQB a YYZ, el HTML obtenido es el siguiente (Ver \autoref{lst:flight026-first-segment-html}):
 
-A continuación se utiliza la librería Jsoup (\url{https://jsoup.org/}) que consiste en un \textit{parser} html que
+\begin{lstlisting}[
+    style=basecodestyle,
+    language=HTML,
+    caption={Código HTML correspondiente al primer tramo del correo electrónico de AirCanada.},
+    label={lst:flight026-first-segment-html}
+]
+<tr class="3D"ac-single-segment-info-container""><td valign="3D"top"" style="3D"padding-top: 30px; padding-bottom: = 30px; vertical-align: top; ""><table style="3D" font-size: 14px; font-family: Arial; color: #2A2A2A; width: 100%; border: 0px; border-collapse: collapse; "" cellpadding="3D"0"" cellspacing="3D"0"" border="3D"0"" width="3D"100%"" align="3D"= center""><tr><td width="3D"35%"" style="3D"width: 35%;""><p style="3D"font-size: 18px; margin-bottom: 10p= x;""><span style="3D"font-weight: bold""> Quebec City </span> YQB </p><p style="3D"font-size: 18px; margin-bottom: 10p= x;""> 10:50 </p><p class="3D"legal-info secondary-text"">Jean Lesage Int. Quebec </p><p></p></td><td width="3D"35%"" style="3D"width: 35%;""><p style="3D"font-size: 18px; margin-bottom: 10p= x;""><span style="3D"font-weight: bold""> Toronto </span> YYZ </p><p style="3D"font-size: 18px; margin-bottom: 10p= x;""> 12:25 </p><p class="3D"legal-info secondary-text"">Toronto-Pearson Int. , Terminal 1 </p><p></p></td><td width="3D"30%"" style="3D"width: 30%; padding-left= : 10px; border-left: 1px solid #BAA88D; font-size: 12px; line-height: 16px;= color: #4A4F55;""><p style="3D"font-size: 18px; margin-bottom: 5px= ;""><table style="3D" font-size: 14px; font-family: Arial; color: #2A2A2A; width: 100%; border: 0px; border-collapse: collapse; "" cellpadding="3D"0"" cellspacing="3D"0"" border="3D"0"" width="3D"100%"" align="3D"= center""><tr><td width="3D"15px"" style="3D"width: = 15px;""> =09=09=09=09<img style="3D" height: 15px; width: 15px; "" height="3D"15"" src="3D'https://www.aircanada.com/content/dam/aircanada/reve= nue/images/email-confirmation/airlines/ac.gif'"> </td><td style="3D"padding-left: 10px; fo= nt-size: 18px;""> AC1795 </td></tr></table></p><p class="3D"legal-info secondary-text"" style="3D="line-height: 16px; min-height: 16px; margin-bottom: 0;""> 1hr 35m </p> =09<p style="3D"line-height: 16px; min-height: 1= 6px; margin-bottom: 0;""> =09=09Business (I) =09</p><p class="3D"legal-info secondary-text"" style="3D="line-height: 16px; min-height: 16px; margin-bottom: 0;""> Operated by: AIR CANADA ROUGE <a href="3D"h= ttps://www.aircanada.com/ca/en/aco/home/fly/onboard/fleet.html#/!aircraft@a= 319"" target="3D"_blank"">A319-100</a> | <a href="3D"https://www.aircanada.com/= ca/en/aco/home/fly/onboard/wi-fi.html"" target="3D"_blank""><img src="3D"https:= //www.aircanada.com/content/dam/aircanada/revenue/images/availability/wifi.= png"" width="3D"12"" height="3D"12"" style="3D"width:12px; height:12px;MARGIN-RIG= HT: 5px"" alt="3D"Wi-Fi"">Wi-Fi</a></p></td></tr></table> =20 </td></tr>
+\end{lstlisting}
+
+Como se puede apreciar, además de nodos HTML con sus atributos y contenido, existen también fragmentos de texto como
+``=09'' que correspondes a símbolos de \textit{quoted-printable}, una codificación del estándar MIME\@.
+
+A continuación se utiliza la librería Jsoup (\url{https://jsoup.org/}) que consiste en un \textit{parser} HTML que
 ofrece el método \texttt{org.jsoup.nodes.Element\#text()} para aplanar el HTML del mail y quedarse únicamente con el
 texto visible, tal como si se estuviera visualizando el mail desde una aplicación de correo electrónico.
+
+Continuando con la sección del mail de ejemplo, el texto obtenido es el siguiente (Ver \autoref{lst:flight026-first-segment-txt}):
+
+\begin{lstlisting}[
+    style=basecodestyle,
+    caption={Texto preprocesado correspondiente al primer tramo del correo electrónico de AirCanada.},
+    label={lst:flight026-first-segment-txt}
+]
+Depart Sun 24 Jul, 2022 Business Class - Flexible Reward Quebec City YQB 10:50 Jean Lesage Int. Quebec Toronto YYZ 12:25 Toronto-Pearson Int. , Terminal 1 AC1795 1hr 35m Business (I) Operated by: AIR CANADA ROUGE A319-100 | Wi-Fi
+\end{lstlisting}
+
 Esta acción aplica también para todas las secciones posibles según el estándar MIME Multipart
 (\url{https://en.wikipedia.org/wiki/MIME}).
 Un correo electrónico cuenta con varias de estas secciones, algunas contienen adjuntos, otras contienen información de
 reenvío del mail, y algunas incluso codifican el texto en Base64 (\url{https://en.wikipedia.org/wiki/Base64}) de forma
 que la biblioteca procede a decodificarlo.
-
 Es importante destacar que el \textit{pipeline} trabaja únicamente con el texto visible de los mails, ignorando mucho
 más contenido que podría ser relevante para identificar directamente áreas críticas del mail.
 Atributos presentes en los \textit{tags} html, imágenes, adjuntos como archivos PDF y demás contenidos son ignorados
 por el \textit{pipeline}.
 Incluso el asunto del mail es ignorado.
 
-Además, se aplica un preprocesamiento extra para eliminar \textit{footers} conocidos. Por ejemplo aquellos nodos HTML
-identificados con cadenas como \texttt{.footer} son ignorados.
+Además, se aplica un preprocesamiento extra para eliminar \textit{footers} conocidos.
+Por ejemplo aquellos nodos HTML identificados con cadenas como \texttt{.footer} son ignorados.
 Durante la implementación este paso fue relevante para ignorar por ejemplo información de contacto de empresas de
 aerolíneas que pueden confundir al algoritmo NLP (un caso es el nombre del presidente de la compañía, el cual se podría
 confundir con el nombre del pasajero).
 Dado que está comprobado que no existe información útil para el usuario ubicada en esta sección entonces es seguro
 eliminarla.
 
+\subparagraph{Preprocesamiento para códigos de vuelo}
+
 Otro preprocesamiento adicional que se aplica es la búsqueda mediante expresiones regulares de cadenas que puedan
-corresponder con códigos de vuelo.
+corresponder con códigos de vuelo (Ver \autoref{lst:normalize-flight-numbers}).
 Un código de vuelo IATA (\url{https://en.wikipedia.org/wiki/Airline_codes}) consiste en dos letras, seguido de un número
 de entre 2 y 4 cifras.
 Por ejemplo \texttt{AC8633} corresponde al vuelo 8633 de la aerolínea Air Canada.
@@ -55,7 +128,7 @@ o el espacio para que siempre se obtenga la cadena \texttt{AC8633}, facilitando 
 
 \begin{lstlisting}[
     style=javacodestyle,
-    caption={Normalización de códigos de vuelo.},
+    caption={Expresiones regulares utilizadas para la normalización de códigos de vuelo.},
     label={lst:normalize-flight-numbers}
 ]
 private static String normalizeFlightNumbers(String text) {
@@ -68,12 +141,22 @@ private static String normalizeFlightNumbers(String text) {
 \paragraph{Stanford CoreNLP}
 
 Una vez que se cuenta con una instancia de \textit{String} con únicamente el contenido a simple vista de un correo
-electrónico se envía este texto al \textit{pipeline} de Stanford CoreNLP.
-El mismo cuenta con múltiples etapas que detallamos a continuación:
+electrónico se envía este texto al \textit{pipeline} de Stanford CoreNLP (\url{https://stanfordnlp.github.io/CoreNLP/})
+(Ver \autoref{fig:corenlp-pipeline}).
+Stanford CoreNLP es una biblioteca de procesamiento de lenguaje natural desarrollada por Stanford que permite analizar
+texto automáticamente, por ejemplo detectando tokens, lemas, categorías gramaticales, entidades y relaciones, entre
+otros.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.00\textwidth]{images/pipeline}
+    \caption{Diagrama del \textit{pipeline} de CoreNLP}
+    \label{fig:corenlp-pipeline}
+\end{figure}
+
+Como se puede apreciar el mismo cuenta con múltiples etapas que detallamos a continuación:
 
 \subparagraph{Tokenization}
-
-(\url{https://stanfordnlp.github.io/CoreNLP/tokenize.html})
 
 La tokenización consiste en convertir texto en tokens.
 La forma más elemental consiste en dividir cada vez que aparece un espacio.
@@ -87,16 +170,12 @@ inglés.
 
 \subparagraph{Sentence Splitting}
 
-(\url{https://stanfordnlp.github.io/CoreNLP/ssplit.html})
-
 La separación en oraciones consiste en convertir un texto en oraciones.
 Por ejemplo ``Thanks for flying. Flight safe.''.
 será separado en las oraciones ``Thanks for flying.'' y ``Flight safe.''.
 Aquí también CoreNLP realiza la separación en oraciones usando una colección de reglas ya previstas.
 
 \subparagraph{Parts of Speech}
-
-(\url{https://stanfordnlp.github.io/CoreNLP/pos.html})
 
 Partes del discurso asignan \textit{tags} o etiquetas a los \textit{tokens} para marcarlos según su categoría
 gramatical.
@@ -107,15 +186,11 @@ puntuación.
 
 \subparagraph{Lemmatization}
 
-(\url{https://stanfordnlp.github.io/CoreNLP/lemma.html})
-
 Aquí se asocia una palabra con su lema o forma de diccionario.
 Por ejemplo para la palabra ``was'' se mapea por la palabra ``be''.
 Este paso lleva todo el contenido a un solo tiempo verbal para simplificar la tarea de las próximas etapas.
 
 \subparagraph{Named Entity Recognition}
-
-(\url{https://stanfordnlp.github.io/CoreNLP/ner.html})
 
 En esta etapa, la más compleja de todo el pipeline de NLP, se reconocen entidades en el texto como personas o nombres
 de empresas.
@@ -148,12 +223,12 @@ representan a todos los aeropuertos del mundo.
 Se procede a filtrar el mismo para considerar únicamente los aeropuertos que tengan un código IATA (descartando
 aeropuertos pequeños).
 Por ejemplo el aeropuerto ``Montreal / Pierre Elliott Trudeau International Airport'' se identifica con el código IATA
-``YUL''.
+``YUL'' (Ver \autoref{lst:airports-csv-line}).
 
 \begin{lstlisting}[
     style=basecodestyle,
     caption={Registro de ejemplo del \textit{dataset} Our Airports Data.},
-    label={lst:ourairports-example}
+    label={lst:airports-csv-line}
 ]
 id,ident,type,name,latitude_deg,longitude_deg,elevation_ft,continent,iso_country,iso_region,municipality,scheduled_service,icao_code,iata_code,gps_code,local_code,home_link,wikipedia_link,keywords
 1928,CYUL,large_airport,Montreal / Pierre Elliott Trudeau International Airport,45.467837,-73.742294,118,NA,CA,CA-QC,Montréal,yes,CYUL,YUL,CYUL,YUL,http://www.admtl.com/passager/Home.aspx,https://en.wikipedia.org/wiki/Montréal–Trudeau_International_Airport,"YMQ, Dorval Airport"
@@ -163,7 +238,8 @@ Para cada aeropuerto con código IATA se procede a crear un conjunto de reglas p
 reconocer con éxito la entidad \texttt{AIRPORT\_CODE} mencionando todos los códigos de aeropuerto existentes.
 Se creó un archivo \texttt{airport.rules} que asocia tanto el código IATA como la combinación de código IATA seguido del
 nombre de la ciudad donde se ubica el aeropuerto.
-Retomando el ejemplo de Montreal, el contenido del archivo de reglas es el siguiente:
+Retomando el ejemplo de Montreal, el contenido del archivo de reglas es el siguiente
+(Ver \autoref{lst:airport-rules-yul}):
 
 \begin{lstlisting}[
     style=basecodestyle,
@@ -194,7 +270,8 @@ Es por eso que para cada aeropuerto se crean hasta tres reglas adicionales indic
 \texttt{airport-names.rules} donde para un nombre proveniente del dataset como ``Montreal / Pierre Elliott Trudeau
 International Airport'' se incluye no sólo la cadena exacta, sino también la misma sin la palabra ``Airport'' y otra sin
 la cadena ``International Airport''.
-De esta forma, para el aeropuerto en cuestión, se obtienen las siguientes reglas:
+De esta forma, para el aeropuerto en cuestión, se obtienen las siguientes reglas
+(Ver \autoref{lst:airport-names-rules-yul}):
 
 \begin{lstlisting}[
     style=basecodestyle,
@@ -216,11 +293,12 @@ así se facilita la tarea de identificar el nombre del pasajero de la reserva.
 Por último se creó una regla de \texttt{TokensRegex} (\url{https://nlp.stanford.edu/software/tokensregex.html}) donde se
 rescata al aeropuerto cuando el texto visible queda con un formato como ``EZE Buenos Aires Departing at'' o ``EZE Buenos
 Aires Arriving at:''.
-Para ello, en el archivo \texttt{contextual-airport.tokensregex.rules} se definió lo siguiente:
+Para ello, en el archivo \texttt{contextual-airport.tokensregex.rules} se definió lo siguiente
+(Ver \autoref{lst:contextual-airport-tokensregex}):
 
 \begin{lstlisting}[
     style=jsonlikecodestyle,
-    caption={Regla de \texttt{contextual-airport.tokensregex.rules}.},
+    caption={Regla contextual para identificar el código del aeropuerto.},
     label={lst:contextual-airport-tokensregex}
 ]
 ner = { type: "CLASS", value: "edu.stanford.nlp.ling.CoreAnnotations$NamedEntityTagAnnotation" }
@@ -247,21 +325,8 @@ será identificado como el ``Ouro Sogui Airport'' ubicado en Senegal.
 Para estos casos extremos identificados, que siempre corresponden a aeropuertos pequeños, se decidió utilizar la
 propiedad \texttt{ner.additional.regexner.commonWords} para indicarle a CoreNLP las palabras que deben ser tomadas como
 palabras comunes del idioma inglés y así excluirlas de cualquier identificación.
-Las palabras definidas en la implementación son las siguientes:
-
-\begin{lstlisting}[
-    style=basecodestyle,
-    caption={Palabras comunes excluidas por \texttt{regexner}.},
-    label={lst:regexner-common-words}
-]
-GET
-MAY
-VOL
-API
-GST
-HST
-MAX
-\end{lstlisting}
+Las palabras definidas en la implementación son las siguientes: ``API'', ``GET'', ``GST'',  ``HST'', ``MAX'', ``MAY'', y
+``VOL''.
 
 \subsubparagraph{Códigos de Vuelos y Aerolíneas}
 
@@ -270,12 +335,12 @@ los códigos de vuelo definidos por IATA.
 Ahora es momento de obtener el token ``AC8633'' y reconocerlo como una entidad de tipo \texttt{FLIGHT\_NUMBER}.
 Para ello se utilizó el \textit{dataset} público de aerolíneas de OpenFlights (\url{https://openflights.org/data.php})
 que ofrece un CSV con más de 6.000 registros que representan a todas las aerolíneas del mundo.
-Por ejemplo:
+Por ejemplo (Ver \autoref{lst:airlines-csv-line}):
 
 \begin{lstlisting}[
     style=basecodestyle,
     caption={Registro de ejemplo del \textit{dataset} OpenFlights.},
-    label={lst:openflights-example}
+    label={lst:airlines-csv-line}
 ]
 C1,C2,C3,C4,C5,C6,C7,C8
 330,Air Canada,\N,AC,ACA,AIR CANADA,Canada,Y
@@ -286,7 +351,7 @@ entre otros.
 Con esta información se puede crear un nuevo conjunto de reglas que modele el comportamiento de encontrar todos los
 códigos de aerolínea (compuesto por dos caracteres alfanuméricos) seguidos de entre 2 y 4 dígitos que corresponden al
 número de vuelo.
-Para la aerolínea en cuestión el archivo de reglas es el siguiente:
+Para la aerolínea en cuestión el archivo de reglas es el siguiente (Ver \autoref{lst:airlines-rules-air-canada}):
 
 \begin{lstlisting}[
     style=basecodestyle,
@@ -301,7 +366,7 @@ Este conjunto se reglas se ubica en el archivo \texttt{airlines.rules}.
 
 Utilizando el mismo \textit{dataset} se crea otro conjunto de reglas, ubicado en el archivo \texttt{airline-names.rules}
 para definir el nuevo tipo de entidad \texttt{AIRLINE\_NAME} y que tenga prioridad por sobre tipos \texttt{MISC} y
-\texttt{ORGANIZATION}.
+\texttt{ORGANIZATION} (Ver \autoref{lst:airline-names-rules-air-canada}).
 
 \begin{lstlisting}[
     style=basecodestyle,
@@ -326,11 +391,11 @@ Es por eso que aquí la estrategia para la extracción es distinta y consiste en
 Se establecen un conjunto de reglas \texttt{TokensRegex} para extraer el \texttt{PNR} cuando aparece luego de frases como
 ``Confirmation Number'', ``Booking Code'', ``Booking Reference'', entre otras.
 En el archivo \texttt{pnr.tokensregex.rules} se indican seis reglas.
-El principio del archivo es el siguiente:
+El principio del archivo es el siguiente (Ver \autoref{lst:pnr-tokensregex-rules}):
 
 \begin{lstlisting}[
     style=jsonlikecodestyle,
-    caption={Reglas iniciales de \texttt{pnr.tokensregex.rules}.},
+    caption={Una de las reglasp para identificar el código de reserva del vuelo.},
     label={lst:pnr-tokensregex-rules}
 ]
 ner = { type: "CLASS", value: "edu.stanford.nlp.ling.CoreAnnotations$NamedEntityTagAnnotation" }
@@ -360,11 +425,11 @@ Las reglas por defecto fueron suficientes para la mayoría de los correos electr
 biblioteca SUTime (\url{https://nlp.stanford.edu/software/sutime.html}) que permite reconocer por ejemplo fechas con
 múltiples formatos como ``31-12-2026'', ``31/12/2026'' o ``2026-31-12''.
 
-Sólo fue necesaria una regla \texttt{TokensRegex} extra:
+Sólo fue necesaria una regla \texttt{TokensRegex} extra (Ver \autoref{lst:sutime-boarding-pass-rule}):
 
 \begin{lstlisting}[
     style=jsonlikecodestyle,
-    caption={Regla adicional para fechas en boarding passes.},
+    caption={Regla para identificar fechas en \textit{boarding passes}.},
     label={lst:sutime-boarding-pass-rule}
 ]
 ner = { type: "CLASS", value: "edu.stanford.nlp.ling.CoreAnnotations$NamedEntityTagAnnotation" }
@@ -381,10 +446,12 @@ para que en mails correspondientes a \textit{boarding passes}, una cadena como `
 
 \subsubparagraph{Marcadores de tramos}
 
-Por último se define un archivo \texttt{segment-context.rules} con las siguientes dos reglas:
+Por último se define un archivo \texttt{segment-context.rules} con las siguientes dos reglas
+(Ver \autoref{lst:segment-context-rules})
+:
 \begin{lstlisting}[
     style=basecodestyle,
-    caption={Reglas de \texttt{segment-context.rules}.},
+    caption={Dos reglas para identificar los marcadores de tramos.},
     label={lst:segment-context-rules}
 ]
 Departing	FLIGHT_SEGMENT_MARKER	O,MISC,ORGANIZATION	2.0
@@ -397,12 +464,611 @@ o más tramos de vuelos dentro de una misma reserva.
 
 \paragraph{Extracción de información}
 
+La salida del \textit{pipeline} de CoreNLP implementado en \nolinkurl{xyz.email2trip.pipeline.FlightPipeline} consiste en
+una instancia de \nolinkurl{edu.stanford.nlp.pipeline.CoreDocument} que cuenta con un conjunto de entidades anotadas.
+A continuación se indica cómo se realiza la extracción de los campos relevantes a partir de la búsqueda de entidades de
+un tipo en particular.
+
 \subparagraph{Extracción de campos únicos: PNR y Pasajero}
+
+Para el código de reserva (PNR) se busca una entidad de tipo \texttt{PNR\_CODE}.
+En caso de que exista más de una se obtiene la que apareció primero.
+En cuanto al nombre del pasajero primero se buscan las entidades de tipo \texttt{PERSON}.
+Como aquí es común encontrar más de una se deben ponderar todas las entidades bajo un criterio determinístico y así
+elegir la que tiene una mejor puntuación, esto es, la que es más probable que represente el nombre del pasajero.
+En las pruebas, y retomando el ejemplo de la palabra ``Max'' la misma era etiquetada como \texttt{PERSON} con una
+\textit{confidence} mayor que, por ejemplo, el nombre verdadero del pasajero del correo (``Martin Miles Young'').
+CoreNLP ofrece el método \texttt{edu.stanford.nlp.pipeline.CoreEntityMention\#entityTypeConfidences} que permite obtener
+el valor de \textit{confidence} de una entidad candidata para el tipo deseado.
+Por ejemplo una entidad puede tener un valor de \textit{confidence} para \texttt{PERSON} de 0.9 y al mismo tiempo uno de
+0.75 para el tipo \texttt{ORGANIZATION}.
+Es por eso que el proceso para conseguir el nombre del pasajero consiste en obtener los valores de \textit{confidence}
+de todas las entidades para el tipo \texttt{PERSON} y quedarse con el de mayor valor.
+El criterio anterior no fue necesario y se necesitó realizar un filtro extra para darle mayor prioridad a entidades que
+más se parecieran a nombres completos.
+Contando la cantidad de palabras de una entidad se prioriza aquella que tenga al menos dos palabras, para corresponder
+con el patrón de nombre y apellido.
+Así una cadena como ``Max'' no luce como un nombre y apellido pero ``Martin Miles Young'' sí.
 
 \subparagraph{Extracción de campos múltiples: Segmentos de vuelo}
 
-\subsubparagraph{Cuatro Layouts posibles}
+La extracción de los datos del vuelo requiere cierta lógica adicional dado que se espera extraer más de un campo del
+mismo tipo de entidad.
+Por ejemplo para una reserva con un solo vuelo se necesita conocer el aeropuerto de origen o despegue y el aeropuerto de
+destino o aterrizaje.
+Allí ya se necesitan dos entidades de tipo \texttt{AIRPORT\_CODE} donde, por la naturalidad del idioma inglés, la primer
+entidad corresponderá al aeropuerto de origen y la segunda al de destino.
+También se busca una entidad de tipo \texttt{FLIGHT\_NUMBER} para el código del vuelo en cuestión.
+Respecto a la fecha y hora de origen del vuelo, se necesita información de contexto ya que la primer entidad de tipo
+\texttt{DATE} que aparezca en el correo podría representar información distinta.
+Es necesario que la entidad de tipo \texttt{DATE} esté cerca del código del aeropuerto destino.
+Lo mismo aplica para la hora de despegue.
+La lógica mencionada para aeropuerto origen, destino, fecha y hora de origen y código de vuelo puede encapsularse en lo
+que se denomina la identificación de un tramo de vuelo.
+En un único mail de reserva de un vuelo se pueden encontrar uno o más segmentos o tramos.
+Por lo tanto se procederá a identificar tramos donde cada tramo se compone de dos entidades de tipo
+\texttt{AIRPORT\_CODE}, un \texttt{DATE} y un \texttt{TIME} para el origen y un \texttt{FLIGHT\_NUMBER}.
+Para ello se implementaron cuatro \textit{layouts} posibles, es decir, cuatro formas en que podrían aparecer estas
+entidades, contemplando así la totalidad de los correos de reservas presentes en el \textit{dataset}.
+
+\begin{itemize}
+    \item Opción 1: El patrón clásico que utiliza la mayoría de las aerolíneas
+    \begin{itemize}
+        \item Regla: \nolinkurl{AIRPORT ... TIME ... AIRPORT_CODE ... TIME ... FLIGHT_NUMBER}
+        \item Ejemplo: ``LGA 08:35 YUL 09:59 AC8633''
+    \end{itemize}
+    \item Opción 2: Otra forma bastante utilizada donde primero aparece el código del vuelo
+    \begin{itemize}
+        \item Regla: \nolinkurl{FLIGHT_NUMBER ... AIRPORT_CODE ... TIME ... AIRPORT_CODE ... TIME}
+        \item Ejemplo: ``AC132 YVR Vancouver Departing at 13:00 YYZ Toronto Arriving at 20:28''
+    \end{itemize}
+    \item Opción 3: Un layout partido donde las fechas y horas aparecen al final
+    \begin{itemize}
+        \item Regla: \nolinkurl{AIRPORT_CODE ... AIRPORT_CODE ... FLIGHT_NUMBER ... DATE TIME ... DATE TIME}
+        \item Ejemplo: ``EZE ATL DL110 Departs 07/20/2020 8:20 PM Arrives 07/21/2020 5:48 AM''
+    \end{itemize}
+    \item Opción 4: El más utilizado por los correos de tipo boarding pass donde primero aparece la fecha del embarque
+    \begin{itemize}
+        \item Regla: \nolinkurl{DATE ... FLIGHT_NUMBER ... AIRPORT_CODE ... TIME ... AIRPORT_CODE ... TIME}
+        \item Ejemplo: ``22SEP25 OS208 FRA 12:50 VIE 14:15''
+    \end{itemize}
+\end{itemize}
+
+En todas ellas los \texttt{...} aceptan cero o más entidades de cualquier tipo distinto a los buscados.
+El último paso es evitar conservar dos segmentos que resultan equivalentes, esto es, que tienen los mismos datos.
+Esto es común en confirmaciones de vuelos donde la información aparece primero con los datos del pasajero y luego
+aparece por segunda vez sólo para indicar la política de equipaje para cada segmento.
+Una vez que se extrajeron los campos relevantes de una reserva se envía esa información al proceso de enriquecimiento o
+\textit{enrichment} para conseguir más información a partir de los identificadores únicos que resultan algunas de las
+entidades identificadas.
+
+\subparagraph{Resultado Final}
+
+Retomando el correo electrónico de ejemplo de dos segmentos, luego de la extracción se obtiene la siguiente salida en
+formato JSON (Ver \autoref{lst:output-extractor-core-json}):
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Salida del \textit{pipeline} de extracción en formato JSON.},
+    label={lst:output-extractor-core-json}
+]
+{
+  "pnr": "1ABCDE",
+  "passenger": "Martin Miles Young",
+  "segments": [
+    {
+      "flightNumber": "AC1795",
+      "departureAirport": "YQB",
+      "arrivalAirport": "YYZ",
+      "departureDate": "2022-07-24",
+      "departureTime": "10:50"
+    },
+    {
+      "flightNumber": "AC8909",
+      "departureAirport": "YYZ",
+      "arrivalAirport": "ORD",
+      "departureDate": "2022-07-24",
+      "departureTime": "14:55"
+    }
+  ]
+}
+\end{lstlisting}
+
+\subsubsection{Enriquecimiento de información \texttt{extractor-enricher}}
+
+Con los mismos datasets de vuelos y aerolíneas utilizados para la creación de reglas de CoreNLP se puede enriquecer el
+JSON obtenido.
+
+Para los aeropuertos, a partir del código IATA, se pueden obtener las coordenadas geográficas para poder ubicarlo más
+adelante en un mapa.
+También el nombre completo del aeropuerto, la provincia y el país donde está ubicado.
+El \textit{dataset} incluye además, para los aeropuertos más importantes, \textit{links} útiles que redirigen al sitio
+web del aeropuerto o a la página de Wikipedia correspondiente.
+
+En cuanto a las aerolíneas, utilizando las dos primeras letras del código de vuelo se puede obtener no sólo el nombre
+completo de la aerolínea sino también el país de origen de la misma.
+
+Para la implementación se cargan en memoria ambos \textit{datasets} ya que entre ambos no alcanzan los 90.000 registros.
+Así, a partir del resultado final de la etapa de extracción, se consigue un JSON enriquecido como el que se presenta a
+continuación (Ver \autoref{lst:output-extractor-enrich-json}, en la salida se ocultan algunos campos repetidos):
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Salida del módulo de enriquecimiento en formato JSON.},
+    label={lst:output-extractor-enrich-json}
+]
+{
+  "extraction": {
+    "extraction": { ...
+    },
+    "enrichment": {
+      "segments": [
+        {
+          "flightNumber": "AC1795",
+          "departureDate": "2022-07-24",
+          "departureTime": "10:50",
+          "departureAirport": {
+            "code": "YQB",
+            "name": "Quebec Jean Lesage International Airport",
+            "city": "Quebec",
+            "countryCode": "CA",
+            "countryName": "Canada",
+            "latitude": 46.7911,
+            "longitude": -71.393303,
+            "homeLink": "http://www.aeroportdequebec.com/",
+            "wikipediaLink": "https://en.wikipedia.org/wiki/Qu%C3%A9bec/Jean_Lesage_International_Airport"
+          },
+          "arrivalAirport": {
+            "code": "YYZ",
+            "name": "Toronto Pearson International Airport",
+            "city": "Toronto",
+            "countryCode": "CA",
+            "countryName": "Canada",
+            "latitude": 43.675935,
+            "longitude": -79.629421,
+            "homeLink": "http://www.torontopearson.com/",
+            "wikipediaLink": "https://en.wikipedia.org/wiki/Toronto_Pearson_International_Airport"
+          },
+          "airline": {
+            "code": "AC",
+            "name": "Air Canada",
+            "alias": null,
+            "country": "Canada",
+            "countryCode": "CA"
+          }
+        },
+        {
+          "flightNumber": "AC8909",
+          "departureDate": "2022-07-24",
+          "departureTime": "14:55",
+          "departureAirport": { ...
+          },
+          "arrivalAirport": {
+            "code": "ORD",
+            "name": "Chicago O'Hare International Airport",
+            "city": "Chicago",
+            "countryCode": "US",
+            "countryName": "United States",
+            "latitude": 41.9786,
+            "longitude": -87.9048,
+            "homeLink": "https://www.flychicago.com/ohare/home/pages/default.aspx",
+            "wikipediaLink": "https://en.wikipedia.org/wiki/O'Hare_International_Airport"
+          },
+          "airline": { ...
+          }
+        }
+      ]
+    }
+  }
+}
+\end{lstlisting}
+
+\subsubsection{Recomendación de puntos de interés \texttt{extractor-recommender}}
+
+Esta sección cubre la funcionalidad adicional de ofrecer recomendaciones de puntos de interés que el usuario podría
+visitar en cada una de las ciudades destino de la reserva (ciudades según los aeropuertos destino de cada segmento).
+
+En lugar de utilizar una base de datos de POIs (\textit{points of interests}) se optó por utilizar un 
+\textit{Large Language Model} (LLM) de forma local al que se le solicitan recomendaciones de POIs para un destino y se
+exige que la respuesta del modelo sea estructurada en formato JSON.
+
+\paragraph{Intereses del Usuario}
+
+Las recomendaciones sobre lugares a visitar dependen de las preferencias o intereses de cada persona.
+Algunas pueden preferir lugares más relacionados a la naturaleza mientras que a otros les interesen más las compras y
+elijan visitar tiendas o mercados.
+Es por eso que se definió una forma de categorizar a los usuarios en función de los intereses de una forma simple.
+Se definen cinco categorías de intereses:
+
+\begin{itemize}
+    \item \texttt{CULTURE\_HISTORIC}: Museos o centros históricos
+    \item \texttt{NATURE}: Parques Nacionales, plazas, lagos
+    \item \texttt{SHOPPING}: Tiendas y mercados
+    \item \texttt{NIGHTLIFE}: Vida nocturna
+    \item \texttt{RELIGIOUS}: Iglesias y conventos.
+\end{itemize}
+
+El usuario al momento de solicitar una recomendación puede elegir hasta dos de estos intereses.
+El proceso de recomendación deberá priorizar los puntos de interés que se ajustan a los intereses del usuario, sin
+impedir que pudieran recomendarse también algunos puntos de interés más relacionados a intereses no seleccionados.
+
+\paragraph{\textit{Stack} LLM: qwen2.5 + Ollama  + Spring AI}
+
+Para esta implementación se decidió utilizar como modelo LLM a qwen2.5:1.5b.
+Es un modelo de la familia Qwen desarrollado por Alibaba.
+En cuanto a tamaño y capacidad, la versión 1.5B (1.500 millones de parámetros aprendidos) cuenta con la ventaja de que
+puede ejecutarse localmente sin necesidad de contar con una \textit{GPU} potente y se destaca en la generación de texto
+estructurado JSON.
+Pero al mismo tiempo es más propenso a cometer errores ``alucinaciones''.
+
+El modelo se ejecuta en Ollama, una herramienta que permite ejecutar modelos LLM local, tanto en CPU como en GPU,
+exponiendo una \textit{API HTTP} para interactuar con el modelo y así facilitar la integración en aplicaciones.
+En la implementación se utiliza Ollama dentro de un contenedor de Docker por lo que el modelo se ejecuta sólo en CPU\@.
+Sin embargo el uso de Ollama permite que, al momento de realizar el \textit{deploy} de la aplicación en algún proveedor
+\textit{cloud} se puede definir una propiedad y así dejar de utilizar Ollama local y usar una API pública y
+paga.
+
+Para interactuar con el LLM desde código Java se utiliza el \textit{framework} Spring AI\@.
+Esta biblioteca se encarga de pedirle al modelo que la salida cumpla con un \textit{schema} para lograr la salida en
+formato JSON esperada.
+
+El \textit{prompt} cuenta con tres secciones, el \textit{prompt} de sistema (\textit{system prompt}), el \textit{prompt}
+del usuario y el \textit{prompt} para que la respuesta tenga la estructura deseada.
+
+\subparagraph{\textit{system prompt}}
+
+El \textit{prompt} de sistema es fijo para todas las recomendaciones de todos los usuarios.
+En la implementación se utilizó lo siguiente (Ver \autoref{lst:system-prompt-txt}):
+
+\begin{lstlisting}[
+    style=basecodestyle,
+    caption={\textit{System prompt} para que el LLM se comporte como un asistente de viajes.},
+    label={lst:system-prompt-txt}
+]
+You are a travel itinerary assistant.
+Keep descriptions short and practical.
+Prefer famous landmarks, neighborhoods, museums, parks, markets, and viewpoints.
+Use canonical place names that can be geocoded later.
+\end{lstlisting}
+
+Como se puede apreciar se establecen instrucciones generales para guiar al modelo en el estilo de respuesta, todavía
+sin mencionar la estructura.
+
+\subparagraph{\textit{user prompt}}
+
+El \textit{prompt} del usuario contendrá la instrucción concreta y será parametrizado con los intereses del usuario,
+la ciudad deseada y la cantidad de días elegidos.
+Para todas las recomendaciones se decidió fijar el valor fijo de tres puntos de interés por día.
+
+Un ejemplo de \textit{prompt} de usuario para armar un itinerario de 3 días en la ciudad de Montreal, Canadá es el
+siguiente (Ver \autoref{lst:user-prompt-txt}):
+
+\begin{lstlisting}[
+    style=basecodestyle,
+    caption={\textit{User prompt} para que el LLM responda con recomendaciones para armar un itinerario concreto.},
+    label={lst:user-prompt-txt}
+]
+Build a sightseeing itinerary for Montreal, Canada for 3 days.
+
+User interests: Culture & Historic, Nature
+
+Requirements:
+- Return exactly 3 days in the itinerary.
+- Each day must include:
+  - day: the day number starting at 1
+  - title: a short title
+  - summary: a one-sentence summary
+  - places: exactly 3 places to visit for that day
+- Each place must include:
+  - name
+  - description: one concise sentence
+  - category: one of CULTURE_HISTORIC, NATURE, SHOPPING, NIGHTLIFE, RELIGIOUS, NONE
+- Avoid temporary events or unstable recommendations.
+- The city field must be "Montreal".
+- The country field must be "Canada".
+- The days field must be 3.
+- Every single day must have exactly 3 places.
+- Favor places aligned with the user interests when possible.
+- If the user interests are not provided or do not clearly apply, fall back to the city's general highlights.
+- You only know these allowed category values: CULTURE_HISTORIC, NATURE, SHOPPING, NIGHTLIFE, RELIGIOUS, NONE
+- Do not use any other category values beyond CULTURE_HISTORIC, NATURE, SHOPPING, NIGHTLIFE, RELIGIOUS, NONE.
+- Set category to the best-fitting general category for the POI, even if it is not one of the user's preferred interests.
+- If a POI does not clearly fit any category, set category to NONE.
+\end{lstlisting}
+
+En primer lugar se indica la instrucción concreta indicando la ciudad, el país de la ciudad y la cantidad de días.
+A continuación se enumeran los intereses del usuario (en este caso \texttt{CULTURE\_HISTORIC} y \texttt{NATURE}.
+
+Luego se menciona una serie de requerimientos y recomendaciones que se fueron obteniendo luego de varias pruebas
+interactuando con el modelo.
+Como se puede apreciar en el \textit{prompt} se pide organizar las recomendaciones por día, donde para cada día se
+indica el número de día, un título y una breve descripción.
+Cada día contará con exactamente tres puntos de interés.
+Cada punto de interés debe contar con el nombre, una oración que lo describa y si se ajusta a una de las cinco
+categorías establecidas.
+
+A continuación todas las demás oraciones son instrucciones para que el modelo no cometa errores.
+Si bien varias de ellas parecen redundantes, se fueron agregando luego de varias pruebas, siempre con la intención de
+reforzar la instrucción y obtener el resultado esperado en el primer intento.
+Allí se puede ver la instrucción ``Favor places aligned with the user interests when possible.'' para que priorice los
+puntos de intereses que el usuario espera.
+
+\subparagraph{prompt de Spring AI}
+
+Por último, Spring AI completa el \textit{prompt} agregando una tercera sección luego del \textit{system prompt} y el
+\textit{user prompt}.
+Aquí el \textit{framework} le exige al modelo que la respuesta debe ser estructurada y le provee el \textit{schema}
+JSON correspondiente.
+
+Retomando el ejemplo de recomendaciones de Montreal, la tercera sección consiste en lo siguiente
+(Ver \autoref{lst:spring-ai-prompt-txt}):
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={\textit{Prompt} creado por SpringAI para que el LLM se ajuste a la salida estructurada esperada.},
+    label={lst:spring-ai-prompt-txt}
+]
+Your response should be in JSON format.
+Do not include any explanations, only provide a RFC8259 compliant JSON response following this format without deviation.
+Do not include markdown code blocks in your response.
+Remove the ```json markdown from the output.
+Here is the JSON Schema instance your output must adhere to:
+`{
+  "$schema" : "https://json-schema.org/draft/2020-12/schema",
+  "type" : "object",
+  "properties" : {
+    "itinerary" : {
+      "type" : "array",
+      "items" : {
+        "type" : "object",
+        "properties" : {
+          "day" : {
+            "type" : "integer"
+          },
+          "places" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "properties" : {
+                "category" : {
+                  "type" : "string"
+                },
+                "description" : {
+                  "type" : "string"
+                },
+                "name" : {
+                  "type" : "string"
+                }
+              },
+              "required" : [ "category", "description", "name" ],
+              "additionalProperties" : false
+            }
+          },
+          "summary" : {
+            "type" : "string"
+          },
+          "title" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "day", "places", "summary", "title" ],
+        "additionalProperties" : false
+      }
+    }
+  },
+  "required" : [ "itinerary" ],
+  "additionalProperties" : false
+}```
+\end{lstlisting}
+
+Al igual que el \textit{system prompt} esta sección es fija e invariante para todas las recomendaciones.
+Se puede ver cómo se indican los tipos de datos esperados (por ejemplo que el día debe ser un número pero el nombre debe
+ser un \texttt{String}), se explicita que los campos son obligatorios y se mencionan los nombres que deben tener las
+propiedades del JSON\@.
+
+\paragraph{Resultado Final}
+
+Si por ejemplo se desea obtener recomendaciones de 3 días para la ciudad de Toronto priorizando los intereses
+\texttt{CULTURE\_HISTORIC} y \texttt{NATURE} se obtiene un JSON como el siguiente
+(Ver \autoref{lst:output-core-recommender-json}, en la salida se ocultan algunos campos):
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Salida del recomendador en formato JSON.},
+    label={lst:output-core-recommender-json}
+]
+{
+  "city": "Toronto",
+  "country": "Canada",
+  "days": 3,
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Day 1: Historic and Nature Exploration, Shopping",
+      "summary": "Start your day with Parliament Hill's historic buildings followed by a walk in Rouge National Urban Park. End the day at Bay Street for shopping and culture.",
+      "places": [
+        {
+          "name": "Parliament Hill",
+          "description": "Explore the historic Parliament Buildings and visit the CN Tower for panoramic views.",
+          "category": "CULTURE_HISTORIC"
+        },
+        {
+          "name": "Rouge National Urban Park",
+          "description": "Enjoy a scenic walk along the Esplanade or explore the nearby Rouge National Urban Park.",
+          "category": "NATURE"
+        },
+        {
+          "name": "Bay Street",
+          "description": "Visit Bay Street for shopping and browse through boutiques, art galleries, and specialty shops.",
+          "category": "SHOPPING"
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "title": "Day 2: Skyline, History, and Nature Exploration",
+      "summary": "Start your day with the CN Tower's panoramic view followed by a visit to the Canadian Museum of History. End the day exploring more nature in Rouge National Urban Park or visiting the Toronto Islands.",
+      "places": [
+        {
+          "name": "CN Tower",
+          "description": "Visit the CN Tower for a breathtaking view of Toronto's skyline. Explore the Sky Garden or take a ride on the SkyPod.",
+          "category": "NATURE"
+        },
+        { ... },
+        { ... }
+      ]
+    },
+    { ... }
+  ]
+}
+\end{lstlisting}
+
+\subsubsection{Geocodificación de los puntos de interés}
+
+Para poder mostrar las recomendaciones obtenidas en un mapa es necesario contar con las coordenadas geográficas
+(latitud y longitud) de cada punto de interés.
+
+Inicialmente se le solicitaba a el LLM para que conteste también con las coordenadas de cada punto recomendado
+pero los resultados resultaron siempre incorrectos.
+Una LLM no es una fuente confiable de datos geoespaciales precisos ya que las respuestas que genera son siempre
+probabilísticas y puede ``alucinar'' coordenadas inexistentes.
+Por ejemplo en las pruebas para la ciudad de Toronto, todas las coordenadas que respondía el LLM estaban
+desplazadas varios kilómetros y no sirven para lo que se espera en esta implementación.
+
+Es por eso que se decidió utilizar un servicio de geocodificación para que, a partir del nombre del punto de interés, la
+ciudad y el país se obtengan las coordenadas geográficas precisas de ese punto.
+La API de Nominatim (\url{https://nominatim.org/release-docs/develop/api/Overview/}) ofrece un uso gratuito con
+la limitación de geolocalizar una cadena de texto por segundo.
+En la implementación se tienen en cuenta estas restricciones por lo que el proceso de localizar todos los puntos de
+interés de un itinerario puede demorar varios segundos.
+Para eliminar esta restricción se puede utilizar el acceso pago.
+
+Para cada geocodificación se realiza un \textit{request} HTTP a la API \textit{Rest} de Nominatim usando el path
+\texttt{/search} donde el texto de consulta o \textit{query} es siempre el nombre del punto de interés, seguido del
+nombre de la ciudad y luego del nombre del país, separado por coma.
+Por ejemplo para el punto de interés ``CN Tower'' de la ciudad de Toronto en Canadá la \textit{query} es la cadena
+``CN Tower, Toronto, Canada''.
+En el \textit{request} se indica además que el formato de respuesta debe ser \texttt{jsonv2} y que la cantidad de
+resultados es una.
+Así la respuesta consiste en un JSON con sólo tres campos: \texttt{lat}, \texttt{lon} y \texttt{display name}
+que corresponde al nombre completo y en esta implementación no es utilizado.
+
+Un ejemplo de respuesta para la geocodificación del punto de interés ``Rouge National Urban Park'' es el siguiente
+(Ver \autoref{lst:api-nominatim-response-json}):
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Ejemplo de respuesta de la API de Nominatim.},
+    label={lst:api-nominatim-response-json}
+]
+{
+  "lat": 43.8902655,
+  "lon": -79.1989858,
+  "displayName": "Rouge National Urban Park, Markham, Whitchurch-Stouffville, York Region, Golden Horseshoe, Ontario, Canada"
+}
+\end{lstlisting}
+
+Para algunas recomendaciones de el LLM, dado que no coincide con el nombre exacto que el servicio de
+geocodifcación espera, no se podrán conseguir las coordenadas geográficas.
+En la implementación se decidió utilizar las coordenadas del aeropuerto para marcar al menos la zona de la ciudad donde
+el punto de interés se encuentra.
+
+\subsubsection{Resultado Final}
+
+Si se desea obtener recomendaciones de 3 días para la ciudad de Toronto priorizando los intereses
+\texttt{CULTURE\_HISTORIC} y \texttt{NATURE} se obtiene un JSON como el siguiente
+(Ver \autoref{lst:output-extractor-server-json}, en la salida se ocultan algunos campos):
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Resultado final luego de la extracción, enriquecimiento, recomendación y geolocalización, en formato JSON.},
+    label={lst:output-extractor-server-json}
+]
+{
+  "city": "Toronto",
+  "country": "Canada",
+  "days": 3,
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Day 1: Historic and Nature Exploration, Shopping",
+      "summary": "Start your day with Parliament Hill's historic buildings followed by a walk in Rouge National Urban Park. End the day at Bay Street for shopping and culture.",
+      "places": [
+        {
+          "name": "Parliament Hill",
+          "description": "Explore the historic Parliament Buildings and visit the CN Tower for panoramic views.",
+          "category": "CULTURE_HISTORIC",
+          "latitude": 43.7816987,
+          "longitude": -79.7272275
+        },
+        {
+          "name": "Rouge National Urban Park",
+          "description": "Enjoy a scenic walk along the Esplanade or explore the nearby Rouge National Urban Park.",
+          "category": "NATURE",
+          "latitude": 43.8902655,
+          "longitude": -79.1989858
+        },
+        {
+          "name": "Bay Street",
+          "description": "Visit Bay Street for shopping and browse through boutiques, art galleries, and specialty shops.",
+          "category": "SHOPPING",
+          "latitude": 43.6440864,
+          "longitude": -79.3783678
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "title": "Day 2: Skyline, History, and Nature Exploration",
+      "summary": "Start your day with the CN Tower's panoramic view followed by a visit to the Canadian Museum of History. End the day exploring more nature in Rouge National Urban Park or visiting the Toronto Islands.",
+      "places": [
+        {
+          "name": "CN Tower",
+          "description": "Visit the CN Tower for a breathtaking view of Toronto's skyline. Explore the Sky Garden or take a ride on the SkyPod.",
+          "category": "NATURE",
+          "latitude": 43.6425637,
+          "longitude": -79.3870872
+        },
+        { ... },
+        { ... }
+      ]
+    },
+    { ... }
+  ]
+}
+\end{lstlisting}
+
+En este punto ya se cuenta con toda la información necesaria para mostrarle al cliente las recomendaciones de los puntos
+de interés a visitar y las ubicaciones de cada uno de ellos en un mapa.
 
 \subsection{Resultados Experimentales}
+\label{subsec:results}
+
+\subsubsection{Arquitectura}
+
+\paragraph{Persistencia: Base de Datos}
+
+\subparagraph{Flyway}
+
+\paragraph{Back-End: Spring Boot}
+
+\subparagraph{Spring Data}
+
+\subparagraph{Spring Security}
+
+\paragraph{Front-End: Vanilla JS}
+
+\subparagraph{Thymeleaf}
+
+\subparagraph{MediaWiki}
+
+\subsubsection{Deployment: email2trip.xyz}
+
+\paragraph{Docker}
+
+\paragraph{Terraform}
+
+\paragraph{Azure Container Apps}
 
 \section{Conclusiones y Trabajo a Futuro}
+\label{sec:conclusions}

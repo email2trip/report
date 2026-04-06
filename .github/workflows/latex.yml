@@ -9,6 +9,9 @@ on:
       - '.github/workflows/latex.yml'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build_report:
     runs-on: ubuntu-24.04
@@ -58,10 +61,10 @@ jobs:
         git push origin ${{ steps.get_tag.outputs.tag_name }}
     
     - name: Create GitHub Release
-      uses: softprops/action-gh-release@v2
-      with:
-        tag_name: ${{ steps.get_tag.outputs.tag_name }}
-        name: Release ${{ steps.get_tag.outputs.tag_name }}
-        files: build/email2trip-report.pdf
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TAG_NAME: ${{ steps.get_tag.outputs.tag_name }}
+      run: |
+        gh release create "$TAG_NAME" build/email2trip-report.pdf \
+          --title "Release $TAG_NAME" \
+          --verify-tag

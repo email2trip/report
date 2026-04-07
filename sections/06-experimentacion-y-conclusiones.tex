@@ -64,7 +64,7 @@ City con destino a Toronto y otro desde Toronto hacia la ciudad de Chicago, Esta
 \FloatBarrier
 
 El primer paso consiste en obtener el contenido del correo electrónico y quedarse con solo lo relevante.
-Para ello se utiliza la librería simple-java-email (\url{https://www.simplejavamail.org}) que convierte el contenido de
+Para ello se utiliza la librería simple-java-email~\cite{simple-java-mail} que convierte el contenido de
 un \texttt{.eml} a formato HTML. Para ello se utiliza el método \texttt{org.simplejavamail.api.email.Email\#getHTMLText}
 y se consigue una instancia de \texttt{String} con todo el contenido HTML\@.
 Retomando el mail de ejemplo, y considerando únicamente la sección donde se menciona el primer tramo del vuelo, desde
@@ -82,7 +82,7 @@ YQB a YYZ, el HTML obtenido es el siguiente (Ver \autoref{lst:flight026-first-se
 Como se puede apreciar, además de nodos HTML con sus atributos y contenido, existen también fragmentos de texto como
 ``=09'' que correspondes a símbolos de \textit{quoted-printable}, una codificación del estándar MIME\@.
 
-A continuación se utiliza la librería Jsoup (\url{https://jsoup.org/}) que consiste en un \textit{parser} HTML que
+A continuación se utiliza la librería Jsoup~\cite{jsoup} que consiste en un \textit{parser} HTML que
 ofrece el método \texttt{org.jsoup.nodes.Element\#text()} para aplanar el HTML del mail y quedarse únicamente con el
 texto visible, tal como si se estuviera visualizando el mail desde una aplicación de correo electrónico.
 
@@ -96,10 +96,9 @@ Continuando con la sección del mail de ejemplo, el texto obtenido es el siguien
 Depart Sun 24 Jul, 2022 Business Class - Flexible Reward Quebec City YQB 10:50 Jean Lesage Int. Quebec Toronto YYZ 12:25 Toronto-Pearson Int. , Terminal 1 AC1795 1hr 35m Business (I) Operated by: AIR CANADA ROUGE A319-100 | Wi-Fi
 \end{lstlisting}
 
-Esta acción aplica también para todas las secciones posibles según el estándar MIME Multipart
-(\url{https://en.wikipedia.org/wiki/MIME}).
+Esta acción aplica también para todas las secciones posibles según el estándar MIME Multipart~\cite{mime-wikipedia}.
 Un correo electrónico cuenta con varias de estas secciones, algunas contienen adjuntos, otras contienen información de
-reenvío del mail, y algunas incluso codifican el texto en Base64 (\url{https://en.wikipedia.org/wiki/Base64}) de forma
+reenvío del mail, y algunas incluso codifican el texto en Base64~\cite{base64-wikipedia} de forma
 que la biblioteca procede a decodificarlo.
 Es importante destacar que el \textit{pipeline} trabaja únicamente con el texto visible de los mails, ignorando mucho
 más contenido que podría ser relevante para identificar directamente áreas críticas del mail.
@@ -119,7 +118,7 @@ eliminarla.
 
 Otro preprocesamiento adicional que se aplica es la búsqueda mediante expresiones regulares de cadenas que puedan
 corresponder con códigos de vuelo (Ver \autoref{lst:normalize-flight-numbers}).
-Un código de vuelo IATA (\url{https://en.wikipedia.org/wiki/Airline_codes}) consiste en dos letras, seguido de un número
+Un código de vuelo IATA~\cite{iata-airline-codes} consiste en dos letras, seguido de un número
 de entre 2 y 4 cifras.
 Por ejemplo \texttt{AC8633} corresponde al vuelo 8633 de la aerolínea Air Canada.
 En caso de que el mail contenga cadenas como \texttt{AC-8633} o \texttt{AC 8633} este preprocesamiento elimina el guion
@@ -141,7 +140,7 @@ private static String normalizeFlightNumbers(String text) {
 \paragraph{Stanford CoreNLP}
 
 Una vez que se cuenta con una instancia de \textit{String} con únicamente el contenido a simple vista de un correo
-electrónico se envía este texto al \textit{pipeline} de Stanford CoreNLP (\url{https://stanfordnlp.github.io/CoreNLP/})
+electrónico se envía este texto al \textit{pipeline} de Stanford CoreNLP~\cite{stanford-corenlp}
 (Ver \autoref{fig:corenlp-pipeline}).
 Stanford CoreNLP es una biblioteca de procesamiento de lenguaje natural desarrollada por Stanford que permite analizar
 texto automáticamente, por ejemplo detectando tokens, lemas, categorías gramaticales, entidades y relaciones, entre
@@ -212,13 +211,12 @@ adicionales para facilitar el reconocimiento de nuevos tipos de entidades.
 
 \subsubparagraph{Aeropuertos}
 
-Un aeropuerto de pasajeros se identifica por un código de tres letras denominado \textit{IATA Code}
-(\url{https://en.wikipedia.org/wiki/IATA_airport_code}).
+Un aeropuerto de pasajeros se identifica por un código de tres letras denominado \textit{IATA Code}~\cite{iata-airport-code}.
 A excepción de aeropuertos muy pequeños, cualquier aeropuerto cuenta con un identificador único de tres letras emitido
 por IATA.
 
-Para esta implementación se utilizó el \textit{dataset} público de Our Airports Data
-(\url{https://ourairports.com/data/}) que ofrece la descarga de un archivo CSV con más de 84.000 registros que
+Para esta implementación se utilizó el \textit{dataset} público de Our Airports Data~\cite{ourairports-data} que ofrece
+la descarga de un archivo CSV con más de 84.000 registros que
 representan a todos los aeropuertos del mundo.
 Se procede a filtrar el mismo para considerar únicamente los aeropuertos que tengan un código IATA (descartando
 aeropuertos pequeños).
@@ -290,7 +288,7 @@ identificadores IATA anotados como \texttt{AIRPORT\_CODE} son únicos.
 De todas formas la identificación es útil para que el nombre del aeropuerto no sea identificado como \texttt{PERSON} y
 así se facilita la tarea de identificar el nombre del pasajero de la reserva.
 
-Por último se creó una regla de \texttt{TokensRegex} (\url{https://nlp.stanford.edu/software/tokensregex.html}) donde se
+Por último se creó una regla de \texttt{TokensRegex}~\cite{stanford-tokensregex} donde se
 rescata al aeropuerto cuando el texto visible queda con un formato como ``EZE Buenos Aires Departing at'' o ``EZE Buenos
 Aires Arriving at:''.
 Para ello, en el archivo \texttt{contextual-airport.tokensregex.rules} se definió lo siguiente
@@ -333,7 +331,7 @@ Las palabras definidas en la implementación son las siguientes: ``API'', ``GET'
 Anteriormente se comentó el preprocesamiento que se realiza antes de iniciar el pipeline de CoreNLP y que involucra a
 los códigos de vuelo definidos por IATA.
 Ahora es momento de obtener el token ``AC8633'' y reconocerlo como una entidad de tipo \texttt{FLIGHT\_NUMBER}.
-Para ello se utilizó el \textit{dataset} público de aerolíneas de OpenFlights (\url{https://openflights.org/data.php})
+Para ello se utilizó el \textit{dataset} público de aerolíneas de OpenFlights~\cite{openflights-data}
 que ofrece un CSV con más de 6.000 registros que representan a todas las aerolíneas del mundo.
 Por ejemplo (Ver \autoref{lst:airlines-csv-line}):
 
@@ -383,8 +381,8 @@ contenido sin anotar y que podrían ser candidatas a identificaciones incorrecta
 \subsubparagraph{Código de Reserva (PNR)}
 
 Otro campo relevante para la extracción es el código de reserva.
-Aquí también IATA define el \texttt{PNR} o \textit{Passanger Name Record}
-(\url{https://en.wikipedia.org/wiki/Passenger_name_record}) y consiste en 6 caracteres alfanuméricos.
+Aquí también IATA define el \texttt{PNR} o \textit{Passanger Name Record}~\cite{passenger-name-record} y consiste en 6
+caracteres alfanuméricos.
 Para dificultad de la extracción se recuerda que el código de vuelo (como ``AC8633'') ya está cumpliendo con el formato
 de \texttt{PNR}.
 Es por eso que aquí la estrategia para la extracción es distinta y consiste en identificar el \texttt{PNR} por contexto.
@@ -422,7 +420,7 @@ Es por eso que en esta etapa de anotación sólo resulta útil anotar todos los 
 Solo así podremos asociar por ejemplo la fecha y hora de despegue al primer tramo de una reserva y no al segundo.
 
 Las reglas por defecto fueron suficientes para la mayoría de los correos electrónicos, ya que CoreNLP provee la
-biblioteca SUTime (\url{https://nlp.stanford.edu/software/sutime.html}) que permite reconocer por ejemplo fechas con
+biblioteca SUTime~\cite{stanford-sutime} que permite reconocer por ejemplo fechas con
 múltiples formatos como ``31-12-2026'', ``31/12/2026'' o ``2026-31-12''.
 
 Sólo fue necesaria una regla \texttt{TokensRegex} extra (Ver \autoref{lst:sutime-boarding-pass-rule}):
@@ -971,7 +969,7 @@ desplazadas varios kilómetros y no sirven para lo que se espera en esta impleme
 
 Es por eso que se decidió utilizar un servicio de geocodificación para que, a partir del nombre del punto de interés, la
 ciudad y el país se obtengan las coordenadas geográficas precisas de ese punto.
-La API de Nominatim (\url{https://nominatim.org/release-docs/develop/api/Overview/}) ofrece un uso gratuito con
+La API de Nominatim~\cite{nominatim-api-overview} ofrece un uso gratuito con
 la limitación de geolocalizar una cadena de texto por segundo.
 En la implementación se tienen en cuenta estas restricciones por lo que el proceso de localizar todos los puntos de
 interés de un itinerario puede demorar varios segundos.

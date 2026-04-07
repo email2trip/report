@@ -462,6 +462,40 @@ Si bien en la siguiente etapa se podría buscar la palabra exacta ``Departing'' 
 de tipo \texttt{FLIGHT\_SEGMENT\_MARKER} para buscar múltiples entidades de un tipo en particular y así identificar uno
 o más tramos de vuelos dentro de una misma reserva.
 
+\subparagraph{Resultado Final}
+
+Retomando el \autoref{lst:flight026-first-segment-txt} se muestran a continuación las entidades identificadas al final
+de esta etapa:
+
+\begin{tcolorbox}[
+    colback=black!2,
+    colframe=black!35,
+    title={Entidades reconocidas en un fragmento de texto de una reserva aérea},
+    breakable
+]
+
+\medskip
+\noindent
+
+Depart \entitydate{Sun 24 Jul, 2022} Business Class - Flexible Reward \entitystateorprovince{Quebec} City
+\entityairportcode{YQB} \entitytime{10:50} \entityperson{Jean Lesage Int.} \entityorganization{Quebec Toronto}
+\entityairportcode{YYZ} \entitytime{12:25} Toronto-Pearson Int. , Terminal \entitynumber{1} \entitypnrcode{AC1795}
+\entityduration{1hr} \entitynumber{35m} Business (I) Operated by: \entityairlinename{AIR CANADA} ROUGE A319-100 | Wi-Fi
+
+\medskip
+\noindent
+
+\end{tcolorbox}
+
+En la salida se puede ver como sólo analizando una parte del correo electrónico se obtienen identificaciones incorrectas
+como es el caso de ``Jean Lessage Int.'' que es incorrectamente anotado como \texttt{PERSON}.
+Al procesar el mail completo, donde efectivamente sí se encuentra el nombre del pasajero, este será priorizado en la
+siguiente etapa.
+
+En negro se identifican todas los tipos de entidades que vienen por defecto en CoreNLP\@.
+Allí también se aprecian etiquetados incorrectos como tratar a ``Quebec Toronto'' como una organización donde no sólo
+deberían ser dos entidades distintas sino que además ninguna de ellas es una organización.
+
 \paragraph{Extracción de información}
 
 La salida del \textit{pipeline} de CoreNLP implementado en \nolinkurl{xyz.email2trip.pipeline.FlightPipeline} consiste en
@@ -1046,7 +1080,21 @@ de interés a visitar y las ubicaciones de cada uno de ellos en un mapa.
 
 \subsubsection{Arquitectura}
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio,trim=190 190 190 190,clip]{docs/diagram}
+    \caption{Diagrama de arquitectura.}%
+    \label{fig:architecture-diagram}
+\end{figure}
+
 \paragraph{Persistencia: Base de Datos}
+
+\begin{figure}[htbp]
+    \centering
+    \resizebox{0.96\textwidth}{!}{\input{images/db-model-diagram.tikz}}
+    \caption{Modelo relacional de la base de datos.}%
+    \label{fig:db-model-diagram}
+\end{figure}
 
 \subparagraph{Flyway}
 

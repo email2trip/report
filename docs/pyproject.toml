@@ -1,0 +1,14 @@
+[project]
+name = "docs"
+version = "0.1.0"
+description = "Diagram Generator"
+requires-python = ">=3.12"
+
+[dependency-groups]
+diagrams = [
+    "diagrams",
+    "python-dotenv",
+]
+
+[tool.uv]
+package = false

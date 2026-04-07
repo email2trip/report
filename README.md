@@ -85,3 +85,17 @@ El informe está dividido en varios archivos para separar configuración de cont
 - `frontmatter/titlepage.tex`: portada.
 - `sections/`: secciones del informe.
 - `references.bib`: bibliografía usada por `biblatex`/`biber`.
+
+# Diagrama de Arquitectura
+
+El diagrama de arquitectura se genera con [mingrammer/diagrams](https://diagrams.mingrammer.com) y está ubicado en `docs/`.
+
+Para crearlo ejecutar los siguientes comandos:
+
+```bash
+cd docs/
+brew install graphviz
+uv sync --group diagrams
+uv run diagram.py
+```
+Los íconos fueron obtenidos de https://svgl.app/

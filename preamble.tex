@@ -22,6 +22,34 @@
 }
 \newtcolorbox{revisado}{revisionbox, colback=celeste!50}
 \newtcolorbox{corregir}{revisionbox, colback=yellow!50}
+\newtcbox{\inlineentitybox}[1][]{%
+    on line,
+    boxrule=0.8pt,
+    arc=2pt,
+    boxsep=1pt,
+    left=3pt,
+    right=3pt,
+    top=1pt,
+    bottom=1pt,
+    #1
+}
+\newcommand{\entitytag}[3]{%
+    \inlineentitybox[colframe=#1!75!black,colback=#1!10]{\strut #3}%
+    \textsuperscript{\textcolor{#1!75!black}{\textsf{#2}}}%
+}
+\newcommand{\entityairportcode}[1]{\entitytag{blue}{AIRPORT\_CODE}{#1}}
+\newcommand{\entityflightnumber}[1]{\entitytag{cyan}{FLIGHT\_NUMBER}{#1}}
+\newcommand{\entitypnrcode}[1]{\entitytag{violet}{PNR\_CODE}{#1}}
+\newcommand{\entityperson}[1]{\entitytag{red}{PERSON}{#1}}
+\newcommand{\entitydate}[1]{\entitytag{orange}{DATE}{#1}}
+\newcommand{\entitytime}[1]{\entitytag{green}{TIME}{#1}}
+\newcommand{\entityflightsegmentmarker}[1]{\entitytag{yellow}{TIME}{#1}}
+\newcommand{\entityairportname}[1]{\entitytag{teal}{AIRPORT\_NAME}{#1}}
+\newcommand{\entityairlinename}[1]{\entitytag{magenta}{AIRLINE\_NAME}{#1}}
+\newcommand{\entitystateorprovince}[1]{\entitytag{black}{STATE\_OR\_PROVINCE}{#1}}
+\newcommand{\entityorganization}[1]{\entitytag{black}{ORGANIZATION}{#1}}
+\newcommand{\entitynumber}[1]{\entitytag{black}{NUMBER}{#1}}
+\newcommand{\entityduration}[1]{\entitytag{black}{DURATION}{#1}}
 
 \setcounter{tocdepth}{5}
 \setcounter{secnumdepth}{6}
@@ -31,10 +59,13 @@
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{colortbl}
 \usepackage{fvextra}
 \usepackage{listings}
 \usepackage{csquotes}
 \usepackage{microtype}
+\usetikzlibrary{arrows.meta,fit,positioning,shapes.multipart}
 
 \setlength{\parskip}{0.25\baselineskip} % Espacio entre párrafos
 \setlength{\parindent}{15pt} % Sangría en la primera línea de cada párrafo
@@ -208,6 +239,7 @@
 
 \usepackage{fancyhdr}
 \usepackage{float}
+\usepackage{pdflscape}
 \usepackage{placeins}
 
 \setlength{\headheight}{14pt}

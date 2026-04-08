@@ -724,14 +724,16 @@ El usuario al momento de solicitar una recomendación puede elegir hasta dos de 
 El proceso de recomendación deberá priorizar los puntos de interés que se ajustan a los intereses del usuario, sin
 impedir que pudieran recomendarse también algunos puntos de interés más relacionados a intereses no seleccionados.
 
-\paragraph{\textit{Stack} LLM: qwen2.5 + Ollama  + Spring AI}
+\paragraph{\textit{Stack} LLM: Gemma 4 + Ollama + Spring AI}
 
-Para esta implementación se decidió utilizar como modelo LLM a qwen2.5:1.5b.
-Es un modelo de la familia Qwen desarrollado por Alibaba.
-En cuanto a tamaño y capacidad, la versión 1.5B (1.500 millones de parámetros aprendidos) cuenta con la ventaja de que
-puede ejecutarse localmente sin necesidad de contar con una \textit{GPU} potente y se destaca en la generación de texto
-estructurado JSON.
-Pero al mismo tiempo es más propenso a cometer errores ``alucinaciones''.
+Para esta implementación se decidió utilizar Gemma 4 E4B como LLM. Es un modelo \textit{state of the art} que pertenece
+a la familia de modelos abiertos desarrollados por Google DeepMind.
+Ofrece compatibilidad con más de 140 idiomas y la versión E4B cuenta con 4.500 millones de parámetros totales efectivos.
+De acorde a lo enunciado en la tarjeta del modelo, Gemma 4 se recomienda para tareas como la generación de texto, la
+programación y el razonamiento.
+La variedad de modelos (en función de la cantidad de parámetros) permite que estos puedan ser implementados en entornos
+que van desde teléfonos de alta gama hasta laptops y servidores, es decir, sin necesidad de contar con una \textit{GPU}
+potente.
 
 El modelo se ejecuta en Ollama, una herramienta que permite ejecutar modelos LLM local, tanto en CPU como en GPU,
 exponiendo una \textit{API HTTP} para interactuar con el modelo y así facilitar la integración en aplicaciones.
@@ -743,6 +745,8 @@ paga.
 Para interactuar con el LLM desde código Java se utiliza el \textit{framework} Spring AI\@.
 Esta biblioteca se encarga de pedirle al modelo que la salida cumpla con un \textit{schema} para lograr la salida en
 formato JSON esperada.
+Además permite el reemplazo de un modelo LLM por otro, incluso de distintos fabricantes, sin necesidad de realizar
+cambios en la implementación.
 
 El \textit{prompt} cuenta con tres secciones, el \textit{prompt} de sistema (\textit{system prompt}), el \textit{prompt}
 del usuario y el \textit{prompt} para que la respuesta tenga la estructura deseada.

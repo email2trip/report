@@ -12,7 +12,7 @@ with (Diagram(show=False, filename="diagram")):
             postgres = Custom("PostgreSQL", "./icons/postgresql.png")
         with Cluster("Ollama"):
             with Cluster(""):
-                qwen = Custom("LLM","./icons/qwen.png")
+                qwen = Custom("LLM","./icons/gemma.png")
     nominatim = Custom("Nominatim","./icons/openstreetmap.png")
     # mediawiki = Custom("MediaWiki","./icons/mediawiki.png")
     springBoot >> postgres

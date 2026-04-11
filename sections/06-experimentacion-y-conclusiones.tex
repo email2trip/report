@@ -724,7 +724,8 @@ El usuario al momento de solicitar una recomendación puede elegir hasta dos de 
 El proceso de recomendación deberá priorizar los puntos de interés que se ajustan a los intereses del usuario, sin
 impedir que pudieran recomendarse también algunos puntos de interés más relacionados a intereses no seleccionados.
 
-\paragraph{\textit{Stack} LLM: Gemma 4 + Ollama + Spring AI}
+\paragraph{\textit{Stack} LLM: Gemma 4 + Ollama + Spring AI}%
+\label{par:stack-llm}
 
 Para esta implementación se decidió utilizar Gemma 4 E4B como LLM. Es un modelo \textit{state of the art} que pertenece
 a la familia de modelos abiertos desarrollados por Google DeepMind.
@@ -1080,7 +1081,127 @@ de interés a visitar y las ubicaciones de cada uno de ellos en un mapa.
 \subsection{Resultados Experimentales}%
 \label{subsec:results}
 
+\subsubsection{Aplicación Web: \texttt{email2trip}}
+
+Para el despliegue del \textit{pipeline} de extracción y recomendaciones se decidió implementar una aplicación web
+donde un usuario puede registrarse (Ver \autoref{fig:web-register-login}) y luego acceder con un usuario y contraseña.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/web-register}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/web-login}
+    \end{minipage}
+    \caption{Pantallas de registro y login}%
+    \label{fig:web-register-login}
+\end{figure}
+
+Luego al presionar ``New Trip'' podrá arrastrar al navegador un archivo .eml con el correo electrónico sobre el
+cual se desea hacer la extracción de información.
+El usuario deberá exportar el correo en formato .eml usando la opción exportar de un cliente de escritorio de correo
+electrónico (como Microsoft Outlook, Mozilla Thunderbird o Apple Mail) o desde un webmail (como GMail u Outlook.com).
+Elegido el archivo basta con presionar ``Create Trip'' para que se dispare el \textit{pipeline} de extracción.
+
+Todos los correos electrónicos procesados con éxito son asociados al usuario logueado y persistidos en la base de datos
+para que puedan ser consultados en la sección ``My Trips'' (Ver \autoref{fig:web-home}).
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.00\textwidth]{images/web-home}
+    \caption{Página Principal}%
+    \label{fig:web-home}
+\end{figure}
+
+Allí se listan todos los viajes creados a partir de la extracción, donde para cada correo electrónico se genera un
+viaje distinto.
+Además se ofrece el filtro por año de viaje.
+Para cada viaje se indica el destino final (la ciudad correspondiente al aeropuerto de destino del último segmento),
+el país del destino final, un nombre autogenerado (por ejemplo ``Trip to Montréal'') que el usuario puede modificar,
+las fechas de inicio y fin del viaje, la cantidad de segmentos que tiene el viaje y la cantidad de itinerarios de POIs
+generados.
+
+En la página principal, además de la sección ``My Trips'', se cuenta con la sección ``My Interests'' (Ver
+\autoref{fig:web-interests}) donde el usuario puede consultar sus dos intereses seleccionados y cambiarlos por
+cualquiera de las cinco opciones disponibles.
+Tal como se mencionó en~\autoref{par:stack-llm}, estas preferencias son utilizadas para la obtención de recomendaciones
+de POIs.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.00\textwidth]{images/web-interests}
+    \caption{Edición de los intereses del usuario}%
+    \label{fig:web-interests}
+\end{figure}
+
+Al hacer click en uno de los viajes de ``My Trips'' se ofrece la vista con el detalle de un viaje.
+En la parte superior se ofrecen opciones para renombrar el viaje y para eliminarlo.
+La sección ``Flights'' (Ver \autoref{fig:web-trip-flights}) muestra con un mapa cada uno de los segmentos de vuelo del
+viaje, donde para cada segmento, se lista toda la información relevante que extrajo el \textit{pipeline}.
+Para el mapa se utilizó Leaflet con un mapa interactivo que utiliza una cartografía base minimalista donde sólo aparecen
+límites y nombres de países, ciudades y provincias importantes.
+Al final se ofrece también el nombre del pasajero y el código de reserva.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.00\textwidth]{images/web-trip-flights}
+    \caption{Detalles de los segmentos aéreos del viaje}%
+    \label{fig:web-trip-flights}
+\end{figure}
+
+La sección ``Activities'' \autoref{fig:web-trip-activities} es la que dispara el sistema de recomendaciones de POIs usando una LLM.
+En primer lugar se ofrece la opción de elegir la cantidad de días deseada (entre 1 y 7) y luego corresponde elegir la
+ciudad sobre la cual se buscan recomendaciones.
+Sólo se ofrecen como opciones de ciudades a aquellas que corresponden con el o los aeropuertos destinos.
+Una vez definido los días y la ciudad basta con presionar la opción ``Generate'' para conseguir un itinerario con las
+recomendaciones basadas según los intereses del usuario indicados en ``My Interests''.
+
+Las recomendaciones se organizan por días (se puede seleccionar ``Day 1'', ``Day 2'', etc.) donde cada día cuenta con un
+título y subtítulo que actúan como una breve descripción de las actividades del día.
+Se ofrece un mapa interactivo donde se ubican geográficamente los puntos de interés de forma que el usuario puede
+utilizar las flechas para ir conociendo el detalle de cada uno de los puntos de interés recomendados para ese día.
+El detalle del POI consiste en el nombre, si está asociado o no a uno de los intereses de preferencia del usuario y una
+breve descripción.
+Para este mapa también se utiliza Leaflet, pero ahora con un mapa base de OpenStreetMap de tipo ciudad donde se muestra
+por ejemplo los nombres de barrios, calles, monumentos y demás puntos de interés.
+
+Si el usuario lo desea puede presionar ``Save'' y así persistir el itinerario completo con las recomendaciones obtenidas
+para consultarlo más adelante.
+La implementación permite almacenar un itinerario de recomendaciones por ciudad destino por viaje.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.00\textwidth]{images/web-trip-activities}
+    \caption{Detalles de las recomendaciones de POIs del viaje}%
+    \label{fig:web-trip-activities}
+\end{figure}
+
 \subsubsection{Arquitectura}
+
+Para la implementación de la aplicación web se decidió utilizar la siguiente arquitectura:
+
+\begin{itemize}
+    \item Aplicación Web (WebApp)
+    \begin{itemize}
+        \item Vanilla JS para el \textit{front-end} de la aplicación web
+        \item Spring Boot para la lógica del servidor \textit{back-end}, ofreciendo los endpoints de extracción y
+recomendaciones
+    \end{itemize}
+    \item Base de Datos (DB): Una base relacional para conseguir la persistencia requerida por el \textit{back-end}
+    \item Ollama: Herramienta que sirve el LLM de las recomendaciones que invoca el \textit{back-end}
+    \item APIs externas
+    \begin{itemize}
+        \item Nominatim: Para la geolocalización de puntos de interés, invocada por el \textit{back-end}
+        \item MediaWiki: Para la obtención de una imagen representativa del viaje (visible en ``My Trips'', invocada por
+el \textit{front-end}
+    \end{itemize}
+\end{itemize}
+
+A continuación se presenta el diagrama de arquitectura correspondiente (Ver \autoref{fig:architecture-diagram}):
 
 \begin{figure}[htbp]
     \centering
@@ -1091,6 +1212,42 @@ de interés a visitar y las ubicaciones de cada uno de ellos en un mapa.
 
 \paragraph{Persistencia: Base de Datos}
 
+Se requiere una base de datos relacional para poder almacenar los datos del usuario y cada uno de sus viajes, incluyendo
+los resultados de todas las extracciones y los puntos de interés de todas las recomendaciones generadas.
+Se decidió utilizar PostgreSQL porque es la base de datos relacional más popular.
+
+Respecto al manejo de usuarios registrados en la aplicación se modela la tabla \texttt{user\_account} donde, para cada
+usuario, se almacena la dirección de correo electrónico (que actúa al mismo tiempo como nombre de usuario) y un
+\textit{hash} de la contraseña del usuario.
+
+Cada usuario cuenta con uno o más viajes, modelados por la tabla \texttt{trip}.
+Esta tabla cuenta con el nombre del viaje, el nombre del pasajero, el código de reserva, las fechas de inicio y fin
+del viaje y los nombres de la ciudad y país destino del viaje.
+
+Cabe mencionar que, para facilitar la implementación, existen campos en las tablas de la base que podrían ser obtenidos
+con una invocación al servicio de \textit{enrichment}.
+Sin embargo se opta por la persistencia de esta información para reducir las invocaciones al servicio indicado.
+Además se facilita la implementación dado que la estructura de la tabla coincide con el archivo ``JSON'' que se obtiene
+a la salida del \textit{pipeline} de extracción.
+
+Cada viaje cuenta con uno o más segmentos de vuelo, modelados por la tabla \texttt{trip\_segment}.
+Cada segmento cuenta con el número de vuelo y toda la información relevante tanto para el origen como para el destino
+del segmento.
+Esto incluye fecha y hora, código y nombre del aeropuerto, ciudad y país del aeropuerto, latitud y longitud del
+aeropuerto y links útiles del aeropuerto (como el sitio web del mismo o el enlace a una entrada de Wikipedia sobre el
+aeropuerto).
+
+Por último es necesario almacenar las recomendaciones de POIs.
+Para cada recomendación se persiste una tupla en la tabla \texttt{trip\_saved\_recommendation} donde se indica la
+ciudad, el país y la cantidad de días elegida.
+Para cada día de una recomendación existe un registro en la tabla \texttt{trip\_saved\_recommendation\_day}, incluyendo
+dos campos de texto con título y el resumen de ese día.
+Finalmente, para cada punto de interés de un día de una recomendación, la tabla
+\texttt{trip\_saved\_recommendation\_place} lista el nombre, la descripción del POI, la categoría (según los cinco
+intereses posibles ya mencionados) y las coordenadas geográficas (latitud y longitud) del mismo.
+
+A continuación se presenta el modelo relacional correspondiente (Ver \autoref{fig:db-model-diagram}):
+
 \begin{figure}[htbp]
     \centering
     \resizebox{0.96\textwidth}{!}{\input{images/db-model-diagram.tikz}}
@@ -1100,11 +1257,138 @@ de interés a visitar y las ubicaciones de cada uno de ellos en un mapa.
 
 \subparagraph{Flyway}
 
+Para el modelado de la base de datos se utilizó Flyway, una herramienta que permite definir scripts SQL incrementales,
+de forma que, al iniciar la aplicación, se ejecutan automáticamente los scripts que falten.
+Esto facilita el agregado de nuevas tablas y campos y permite el versionado del \textit{schema} de la base de datos.
+
+Por ejemplo, el primer \textit{script}, llamado \nolinkurl{V1\_\_create\_user\_account.sql} contiene únicamente la
+definición de la tabla que modela a los usuarios (Ver \autoref{lst:flyway-1}) ya que es lo único que se necesitaba
+para realizar una primera implementación de la funcionalidad de registro y login.
+
+\begin{lstlisting}[
+    style=sqlcodestyle,
+    language=SQL,
+    caption={Script de Flyway con la creación de la tabla de usuarios.},
+    label={lst:flyway-1}
+]
+CREATE TABLE user_account (
+    id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    CONSTRAINT uk_user_account_email UNIQUE (email)
+);
+\end{lstlisting}
+
+En la etapa final de la implementación se necesitó agregar los campos latitud y longitud para los POIs de las
+recomendaciones.
+Para ello se creó el script \nolinkurl{V5\_\_add\_recommendation\_place\_coordinates.sql} (Ver \autoref{lst:flyway-5})
+con la sentencia \texttt{ALTER TABLE} correspondiente.
+
+\begin{lstlisting}[
+    style=sqlcodestyle,
+    language=SQL,
+    caption={Script de Flyway con el agregado de coordenadas de POIs},
+    label={lst:flyway-5}
+]
+ALTER TABLE trip_saved_recommendation_place
+    ADD COLUMN latitude DOUBLE PRECISION,
+    ADD COLUMN longitude DOUBLE PRECISION;
+\end{lstlisting}
+
 \paragraph{Back-End: Spring Boot}
+
+Para la implementación del \textit{back-end} se decidió utilizar Spring Boot porque facilita la implementación de
+aplicaciones web escritas en el lenguaje Java.
+Spring Boot se desataca por reducir la configuración necesaria para conseguir una aplicación web desplegada gracias a
+dependencias por defecto, convenciones establecidas y la autoconfiguración.
+Permite integrar de forma sencilla varios componentes necesarios como APIs REST, acceso a base datos, seguridad, entre
+otras.
+
+El \textit{back-end} se separó en seis módulos distintos, utilizando la herramienta Maven para organizar proyectos Java.
+A continuación el detalle de los módulos de \textit{back-end}, donde los tres primeros ya fueron explicados en detalle
+en secciones anteriores:
+
+\begin{itemize}
+    \item \texttt{extractor-core}: Contiene todo lo relacionado al \textit{pipeline} de extracción de Stanford NLP
+    \item \texttt{extractor-enricher}: Enriquecimiento de la información
+    \item \texttt{extractor-recommender}: Recomendación de puntos de interés
+    \item \texttt{extractor-server}: Implementación del \textit{back-end} que invoca los tres módulos anteriores,
+administra el acceso de los usuarios y logra la persistencia en la base de datos.
+    \item \texttt{extractor-api}: Conjunto de clases comunes al proyecto (definiciones compartidas por más de un módulo)
+    \item \texttt{extractor-common}: Métodos utilitarios utilizados por más de un módulo (como la lectura de un CSV)
+\end{itemize}
 
 \subparagraph{Spring Data}
 
+Se utilizó Spring Data para simplificar la comunicación entre la el \textit{back-end} y la base de datos.
+Permite abstraer gran parte del código fuente necesario para la interacción con la base mediante la definición de
+repositorios con interfaces, de forma que el \textit{framework} genera automáticamente el comportamiento necesario.
+
+Por ejemplo, se definió un \texttt{TripRepository} (Ver \autoref{lst:spring-data-trip-repository}) con sólo dos
+operaciones, de forma que Spring Data genera automáticamente las \textit{queries} a la base, sólo analizando el nombre
+que se le dio a los métodos (que siguen una convención ya definida por la herramienta).
+
+\begin{lstlisting}[
+    style=sqlcodestyle,
+    language=Java,
+    caption={Repositorio de Viajes usando Spring Data},
+    label={lst:spring-data-trip-repository}
+]
+public interface TripRepository extends JpaRepository<Trip, Long> {
+
+    List<Trip> findAllByUserEmailOrderByIdDesc(String email);
+
+    Optional<Trip> findByIdAndUserEmail(Long id, String email);
+
+}
+\end{lstlisting}
+
+Así no se necesitan implementar manualmente \textit{queries} de \texttt{SELECT} para conseguir todos los viajes de
+un usuario, basta con invocar a \texttt{findAllByUserEmailOrderByIdDesc} dado que se indica que el tipo de dato de
+retorno es una lista de viajes (\texttt{List<Trip>}) y sólo se necesita el identificador del usuario (el email).
+
 \subparagraph{Spring Security}
+
+Otra herramienta de la familia Spring es Spring Security, que apunta a gestionar de una forma sencilla la seguridad
+de las aplicaciones en cuanto a la autentiación y autorización.
+Su función principal es controlar quién puede acceder al sistema y qué acciones puede realizar el usuario una vez
+logueado.
+
+Para la implementación basta con definir un método donde se indiquen los \textit{endpoints} que requieren autentiación
+y cuales no (Ver \autoref{lst:spring-security-filter-chain}). Por ejemplo se indica que todos pueden acceder a
+\texttt{/login} y \texttt{/register} de forma que todo lo que no está mencionado se restringe automáticamente (como
+por ejemplo el endpoint de \texttt{core-enricher}).
+
+\begin{lstlisting}[
+    style=sqlcodestyle,
+    language=Java,
+    caption={Lógica de autenticación usando Spring Security},
+    label={lst:spring-security-filter-chain}
+]
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+            .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers("/", "/login", "/register", "/error").permitAll()
+                    .requestMatchers("/api/auth/register").permitAll()
+                    .requestMatchers("/assets/**").permitAll()
+                    .anyRequest().authenticated()
+            )
+            .csrf(CsrfConfigurer::spa)
+            .formLogin(form -> form
+                    .loginPage("/login")
+                    ...
+                    .permitAll()
+            )
+            ...
+}
+\end{lstlisting}
+
+Como se ve en el fragmento de código, se utilizó un mecanismo de autenticación basado en tokens Cross-Site Request
+Forgery (CSRF) que consisten en valores únicos generados por el servidor y verificados en cada solicitud que modifique
+el estado de la aplicación.
+De esta forma, en caso de que un atacante envíe una petición maliciosa, al no tener el token esperado la operación será
+rechazada.
 
 \paragraph{Front-End: Vanilla JS}
 

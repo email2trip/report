@@ -4,32 +4,29 @@
 \subsection{Dataset Final}%
 \label{subsec:final-dataset}
 
-\subsubsection{Anonimización}
+El \textit{dataset} cuenta con 31 mails distintos de aerolíneas que totalizan un total de 41 tramos aéreos.
+En esta sección se mencionan los tipos distintos de mails que existen, el proceso de anonimización realizado para
+que en el \textit{dataset} no aparezcan datos sensibles de los pasajeros que voluntariamente se prestaron a compartir
+sus correos electrónicos, la traducción al idioma inglés de correos que originalmente estaban en español y el uso de
+una herramienta para llevar un control de versiones del \textit{dataset}.
 
-\subsubsection{Traducción al idioma inglés}
+\subsubsection{Correos de aerolíneas}
 
-\subsubsection{DVC}
+Los correos electrónicos de aerolíneas pueden ser agrupados en tres tipos: confirmación de reserva, recordatorio de
+\textit{check-in} y ticket de embarque o \textit{boarding pass}.
+A continuación se detallan las particularidades de los tres y los campos relevantes que se esperan extraer.
 
-\subsubsection{Creación del dataset estructurado}
+\paragraph{Confirmación de Reserva}
 
-\subsection{Implementación del/los Modelo/s}%
-\label{subsec:model-implementation}
-
-\subsubsection{\textit{Pipeline} de extracción (\texttt{extractor-core})}
-
-A continuación se detalla el \textit{pipeline} completo que inicia con un archivo de correo electrónico (de extensión
-\texttt{.eml}) y que finaliza con la extracción de los datos relevantes del mismo.
-
-Para el caso de correos electrónicos correspondientes a vuelos se busca obtener el código de la reserva, el nombre del
-pasajero y el detalle de uno o más segmentos de vuelo.
-Cada segmento se compone de un código de vuelo, el aeropuerto de origen, el aeropuerto de destino y la fecha y hora de
-inicio de vuelo.
-
-\paragraph{Archivo \texttt{.eml}, HTML y obtención de texto a simple vista}
+Una reserva de confirmación es aquella que se obtiene luego de haber realizado la compra del pasaje aéreo.
+De estos correos se espera extraer el código de la reserva, el nombre del pasajero y todo lo relevante para el tramo
+o los tramos que la reserva implique.
+Para cada tramo se espera extraer el código de aeropuerto de origen y destino, la fecha y hora de origen del tramo, el
+código del vuelo y la aerolínea.
 
 A continuación se presenta un \texttt{.eml} de ejemplo que corresponde a una reserva de la aerolínea Air Canada
 (Ver \autoref{fig:eml-yqb-ord-part-a} y \autoref{fig:eml-yqb-ord-part-b}) que incluye dos segmentos, uno desde Quebec
-City con destino a Toronto y otro desde Toronto hacia la ciudad de Chicago, Estados Unidos.
+City con destino a Toronto y otro desde Toronto hacia la ciudad de Chicago, Estados Unidos:
 
 \begin{figure}[H]
     \centering
@@ -61,9 +58,203 @@ City con destino a Toronto y otro desde Toronto hacia la ciudad de Chicago, Esta
     \label{fig:eml-yqb-ord-part-b}
 \end{figure}
 
+En el \textit{dataset} se incluyen correos electrónicos de reservas de las aerolíneas Air Canada (en dos versiones
+distintas) y Delta.
+
 \FloatBarrier
 
-El primer paso consiste en obtener el contenido del correo electrónico y quedarse con solo lo relevante.
+\paragraph{Recordatorio de \textit{check-in}}
+
+Los recordatorios de \textit{check-in} son aquellos correos electrónicos que el pasajero recibe cuando ya puede realizar
+el \textit{check-in} para el primer tramo del vuelo reservado.
+Los campos a extraer son los mismos que con el tipo anterior.
+
+A continuación se presenta un \texttt{.eml} de ejemplo que corresponde a un recordatorio de la aerolínea American
+Airlines (\autoref{fig:eml-reminder-yqb-ord}) que incluye un segmento desde Quebec
+City con destino a la ciudad de Chicago, Estados Unidos:
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/eml-reminder-yqb-ord-1}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/eml-reminder-yqb-ord-2}
+    \end{minipage}
+    \caption{Ejemplo de un correo electrónico de recordatorio de \textit{check-in} de un vuelo de un tramo de American
+Airlines.}%
+    \label{fig:eml-reminder-yqb-ord}
+\end{figure}
+
+En el \textit{dataset} se incluyen correos electrónicos de recordatorios de \textit{check-in} de las aerolíneas Air
+Canada (en dos versiones distintas) y American Airlines.
+
+\FloatBarrier
+
+\paragraph{Ticket de Embarque (\textit{boarding pass})}
+
+Los \textit{boarding pass} corresponden a los correos electrónicos que el pasajero recibe una vez realizado el
+\textit{check-in}.
+Los campos a extraer también coinciden con los dos tipos anteriores, con la particularidad de que aquí siempre se
+estará mencionando a un único tramo.
+
+A continuación se presenta un \texttt{.eml} de ejemplo que corresponde a un \textit{boarding pass} de la aerolínea
+Austrian del grupo Lufthansa (\autoref{fig:eml-boardingpass-fra-vie}) que incluye un segmento desde Fráncfort (Alemania)
+con destino a la ciudad de Viena (Austria):
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.24\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/eml-boarding-pass-fra-vie-1}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.24\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/eml-boarding-pass-fra-vie-2}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.24\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/eml-boarding-pass-fra-vie-3}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.24\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/eml-boarding-pass-fra-vie-4}
+    \end{minipage}
+    \caption{Ejemplo de un correo electrónico de \textit{boarding-pass} de un vuelo de un tramo de Austrian.}%
+    \label{fig:eml-boardingpass-fra-vie}
+\end{figure}
+
+En el \textit{dataset} se incluyen correos electrónicos de ticket de embarque (\textit{boarding pass} de las aerolíneas
+del grupo Lufthansa: Austrian y Lufthansa (donde ambas reutilizan la misma estructura).
+
+\FloatBarrier
+
+\subsubsection{Anonimización}
+
+Durante la implementación se cuenta con un directorio local \texttt{private\_inbox/} que se ignora en Git y DVC donde
+se encuentran los mails originales que contienen datos sensibles de los pasajeros como su nombre y apellido, el número
+de ticket del vuelo, el número de afiliado a un programa de millas, los últimos dígitos de la tarjeta de crédito con la
+que se realizó la compra, entre otros.
+
+El primer paso en la anonimización consiste en eliminar todos los archivos adjuntos que contenga el correo electrónico.
+Es común que las aerolíneas incluyan un PDF con un resumen de todos los datos de la reserva del vuelo y otro PDF con los
+detalles de facturación correspondientes.
+Se implementó un script de Python \texttt{remove\_sensitive.py} que se encarga de eliminar todos los adjuntos de un .eml
+y crear así otro .eml en un directorio distinto sin esos adjuntos.
+El script se encarga de analizar todos los .eml presentes en \texttt{private\_inbox/} y dejar los .eml sin los adjuntos
+en el directorio \texttt{raw/}.
+
+Luego se hace una búsqueda y reemplazo manual de todos los datos sensibles que aparecen en el contenido del .eml y estos
+datos se reemplazan por valores ficticios predefinidos:
+
+\begin{itemize}
+    \item Nombre: Martin Miles Young
+    \item Mail: martin.young@sample.com
+    \item Código de Reserva (PNR): Cualquier alfanumérico (por ejemplo ABC1DE)
+    \item Ticket Number: 1234567890123
+\end{itemize}
+
+\subsubsection{Traducción al idioma inglés}
+
+\begin{pendiente}
+\end{pendiente}
+
+\subsubsection{DVC}
+
+Data Version Control (DVC) existe como una alternativa a Git pero pensada para el versionado de \textit{datasets},
+modelos y archivos grandes, complementando a Git sin sobrecargarlo.
+
+Para esta implementación se creó un repositorio \texttt{dataset} dentro de la organización email2trip en DagsHub.
+Se puede acceder desde https://dagshub.com/email2trip/dataset/.
+
+Así para cada archivo de extensión .eml existe uno de extensión .dvc.
+Este repositorio está sincronizado con el repositorio \texttt{dataset} de GitHub (Ver
+\autoref{fig:dataset-dvc-git-remote}) de forma que cada vez que se desee agregar un nuevo correo electrónico se debe
+cargar en el repositorio Git el archivo de extensión .dvc y el archivo del correo electrónico .eml debe cargarse
+únicamente en el repositorio DVC\@.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/dataset-dvc-remote}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/dataset-git-remote}
+    \end{minipage}
+    \caption{Repositorio \texttt{dataset} en DagsHub y GitHub.com.}%
+    \label{fig:dataset-dvc-git-remote}
+\end{figure}
+
+A continuación un ejemplo de los comandos necesarios para registrar en ambos repositorios un nuevo archivo que formará
+parte del \texttt{dataset} (Ver \autoref{lst:dvc-bash-add}):
+
+\begin{lstlisting}[
+    style=basecodestyle,
+    caption={Comandos necesarios para versionar un nuevo archivo del \textit{dataset} usando Git y DVC.},
+    label={lst:dvc-bash-add}
+]
+dvc add data/raw/flight_999.eml
+git add data/raw/flight_999.eml.dvc
+git commit -m "Added Email 999"
+git push origin main
+git push dagshub main
+dvc push
+\end{lstlisting}
+
+\FloatBarrier
+
+\subsubsection{Creación del \textit{dataset} estructurado}
+
+Por último es necesario crear un archivo donde se relacione cada archivo .eml con los datos reales que se esperan
+extraer del mismo.
+Para ello se creó en el directorio \texttt{structured/} un archivo CSV (Ver \autoref{lst:dataset-csv}) donde se indica
+el tipo de correo electrónico, todos los valores de los campos relevantes presentes en el correo, el nombre del archivo
+.eml y el idioma del mismo.
+
+\begin{lstlisting}[
+    style=basecodestyle,
+    caption={Ejemplo de las primeras líneas del archivo CSV del \textit{dataset}.},
+    label={lst:dataset-csv}
+]
+id,type,booking,origin_airport,destination_airport,date,passenger_name,flight_code,depart_time,arrival_time,raw_filename,language
+1,flight_confirmation,1ABCDE,LGA,YUL,2022-07-17,Martin Miles Young,AC8633,08:35,09:59,flight_001.eml,en
+2,flight_confirmation,ABC1DE,ZRH,VIE,2026-01-28,Martin Miles Young,OS136,12:40,14:00,flight_002.eml,en
+3,flight_confirmation,AB123C,VIE,CDG,2026-01-19,Martin Miles Young,OS361,07:10,09:15,flight_003.eml,en
+4,flight_confirmation,AB123C,CDG,VIE,2026-01-22,Martin Miles Young,OS368,20:10,22:05,flight_003.eml,en
+\end{lstlisting}
+
+\subsection{Implementación del/los Modelo/s}%
+\label{subsec:model-implementation}
+
+En esta sección se detalla el proceso de implementación de la solución completa, incluyendo desde la lógica de
+extracción de campos relevantes en un texto usando procesamiento de lenguaje natural (NLP) hasta el despligue
+de la aplicación web en una nube pública para que un usuario pueda registrarse en la aplicación, reenviar sus
+correos electrónicos y obtener un itinerario de viaje integral.
+
+\subsubsection{\textit{Pipeline} de extracción (\texttt{extractor-core})}
+
+A continuación se detalla el \textit{pipeline} completo que inicia con un archivo de correo electrónico (de extensión
+\texttt{.eml}) y que finaliza con la extracción de los datos relevantes del mismo.
+
+Para el caso de correos electrónicos correspondientes a vuelos se busca obtener el código de la reserva, el nombre del
+pasajero y el detalle de uno o más segmentos de vuelo.
+Cada segmento se compone de un código de vuelo, el aeropuerto de origen, el aeropuerto de destino y la fecha y hora de
+inicio de vuelo.
+
+\paragraph{Archivo \texttt{.eml}, HTML y obtención de texto a simple vista}
+
+Retomando el ejemplo del correo electrónico de reserva (Ver \autoref{fig:eml-yqb-ord-part-a} y
+\autoref{fig:eml-yqb-ord-part-b}), el primer paso consiste en obtener el contenido del correo electrónico y quedarse con
+solo lo relevante.
 Para ello se utiliza la librería ~\cite{simple-java-mail} que convierte el contenido de
 un \texttt{.eml} a formato HTML. Para ello se utiliza el método \texttt{org.simplejavamail.api.email.Email\#getHTMLText}
 y se consigue una instancia de \texttt{String} con todo el contenido HTML\@.
@@ -154,6 +345,8 @@ otros.
 \end{figure}
 
 Como se puede apreciar el mismo cuenta con múltiples etapas que detallamos a continuación:
+
+\FloatBarrier
 
 \subparagraph{Tokenization}
 
@@ -1180,7 +1373,10 @@ La implementación permite almacenar un itinerario de recomendaciones por ciudad
     \label{fig:web-trip-activities}
 \end{figure}
 
-\subsubsection{Arquitectura}
+\FloatBarrier
+
+\subsubsection{Arquitectura}%
+\label{subsubsec:architecture}
 
 Para la implementación de la aplicación web se decidió utilizar la siguiente arquitectura:
 
@@ -1209,6 +1405,8 @@ A continuación se presenta el diagrama de arquitectura correspondiente (Ver \au
     \caption{Diagrama de arquitectura.}%
     \label{fig:architecture-diagram}
 \end{figure}
+
+\FloatBarrier
 
 \paragraph{Persistencia: Base de Datos}
 
@@ -1255,6 +1453,8 @@ A continuación se presenta el modelo relacional correspondiente (Ver \autoref{f
     \label{fig:db-model-diagram}
 \end{figure}
 
+\FloatBarrier
+
 \subparagraph{Flyway}
 
 Para el modelado de la base de datos se utilizó Flyway, una herramienta que permite definir scripts SQL incrementales,
@@ -1267,7 +1467,6 @@ para realizar una primera implementación de la funcionalidad de registro y logi
 
 \begin{lstlisting}[
     style=sqlcodestyle,
-    language=SQL,
     caption={Script de Flyway con la creación de la tabla de usuarios.},
     label={lst:flyway-1}
 ]
@@ -1286,7 +1485,6 @@ con la sentencia \texttt{ALTER TABLE} correspondiente.
 
 \begin{lstlisting}[
     style=sqlcodestyle,
-    language=SQL,
     caption={Script de Flyway con el agregado de coordenadas de POIs},
     label={lst:flyway-5}
 ]
@@ -1329,8 +1527,7 @@ operaciones, de forma que Spring Data genera automáticamente las \textit{querie
 que se le dio a los métodos (que siguen una convención ya definida por la herramienta).
 
 \begin{lstlisting}[
-    style=sqlcodestyle,
-    language=Java,
+    style=javacodestyle,
     caption={Repositorio de Viajes usando Spring Data},
     label={lst:spring-data-trip-repository}
 ]
@@ -1360,8 +1557,7 @@ y cuales no (Ver \autoref{lst:spring-security-filter-chain}). Por ejemplo se ind
 por ejemplo el endpoint de \texttt{core-enricher}).
 
 \begin{lstlisting}[
-    style=sqlcodestyle,
-    language=Java,
+    style=javacodestyle,
     caption={Lógica de autenticación usando Spring Security},
     label={lst:spring-security-filter-chain}
 ]
@@ -1392,17 +1588,177 @@ rechazada.
 
 \paragraph{Front-End: Vanilla JS}
 
-\subparagraph{Thymeleaf}
+La interfaz de usuario requerida para la implementación cuenta con solo cuatro vistas: registro, login, listado de
+viajes y detalle de un viaje.
+Dada la simpleza del requerimiento se decidió utilizar Javascript nativo (Vanilla JS) para conseguir una aplicación
+web, en principio pensada para \textit{desktop} pero con funcionalidad \textit{responsive} para poder ser utilizada
+también desde dispositivos móviles con pantallas más pequeñas.
 
-\subparagraph{MediaWiki}
+En el directorio \texttt{assets/} del módulo \texttt{extractor-client} se ubican los archivos Javascript y CSS
+necesarios.
+Además se utilizó Bootstrap, un framework front-end de componentes y reglas CSS que permite construir aplicaciones web
+\texttt{responsive} consistentes a partir de estilos y componentes ya definidos.
+
+Los archivos de extensión HTML se encuentran ubicados en el directorio \texttt{templates/} del módulo
+\texttt{extractor-server}.
+Esto es así porque se decidió utilizar Thymeleaf, un motor de plantillas para Java que permite generar HTML de forma
+dinámica, insertando así datos provenientes del servidor dentro de plantillas HTML de forma sencilla que luego se
+renderizan en la página.
+
+Por último, y como ya se mencionó en \autoref{subsubsec:architecture} desde el \textit{front-end} se invoca a la API
+de MediaWiki para conseguir una imagen de la ciudad que corresponde al destino final del viaje.
+Esta imagen se puede ver en la sección ``My Trips''.
+La API es gratuita y para esta implementación se realiza un \texttt{request} GET (Ver \autoref{lst:js-mediawiki})
+probando primero con la cadena \texttt{Ciudad, País}.
+En caso de obtener un resultado se intenta luego con las cadenas \texttt{Ciudad (País)} y \texttt{Ciudad}.
+La respuesta de la API es un JSON que contiene la URL directa del recurso buscado, esto es, la imagen representativa
+de una ciudad.
+Para reducir las invocaciones a la API se implementa una caché a nivel de la sesión del lado del navegador.
+
+\begin{lstlisting}[
+    style=javacodestyle,
+    caption={Uso de la API de MediaWiki para imagen de una ciudad},
+    label={lst:js-mediawiki}
+]
+const fetchImageUrlForTitle = async (title) => {
+    const url = new URL("https://en.wikipedia.org/w/api.php");
+    url.searchParams.set("action", "query");
+    url.searchParams.set("format", "json");
+    url.searchParams.set("origin", "*");
+    url.searchParams.set("redirects", "1");
+    url.searchParams.set("prop", "pageimages");
+    url.searchParams.set("piprop", "thumbnail");
+    url.searchParams.set("pithumbsize", "640");
+    url.searchParams.set("titles", title);
+
+    const response = await fetch(url);
+};
+\end{lstlisting}
 
 \subsubsection{Deployment: email2trip.xyz}
 
+En esta sección se detalla el uso de Docker para orquestar los servicios necesarios, Terraform para definir la
+infraestructura en la nube necesaria y las particularidades del proveedor de servicios en la nube elegido, Azure.
+Para el despliegue de la aplicación web se utilizará el dominio http://email2trip.xyz.
+
 \paragraph{Docker}
 
+Para facilitar el despliegue de la aplicación se utiliza Docker.
+Para ello se define un archivo Dockerfile (Ver \autoref{lst:docker-dockerfile}) en la raíz del proyecto
+\texttt{extractor-parent} que se encarga de crear
+la imagen con todos los módulos del proyecto en dos etapas, lo que se conoce como \textit{multi-stage build}.
+En la primera etapa se compila la aplicación por completo, a partir de la imagen base \texttt{eclipse-temurin:25-jdk}.
+En lugar de ejecutar la aplicación sobre la misma imagen utilizada para la compilación, se provee solo el .jar
+resultante a una imagen más liviana, a partir de la imagen base \texttt{eclipse-temurin:25-jre}, reduciendo así el
+tamaño final del contenedor.
+Por último se inicia la aplicación mediante el comando \texttt{java -jar app.jar}.
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Archivo Dockerfile (se omiten varias líneas (...) correspondientes a la etapa \texttt{build})},
+    label={lst:docker-dockerfile}
+]
+FROM eclipse-temurin:25-jdk AS build
+
+WORKDIR /workspace
+
+(...)
+
+RUN --mount=type=cache,target=/root/.m2 \
+    ./mvnw -pl server -am package -Dmaven.test.skip=true
+
+(...)
+
+FROM eclipse-temurin:25-jre
+
+WORKDIR /app
+
+COPY --from=build /workspace/server/target/extractor-server-1.0-SNAPSHOT.jar app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+
+\end{lstlisting}
+
+En el archivo de Docker Compose \texttt{compose.yaml} (Ver \autoref{lst:docker-compose}), también ubicado en la raíz del
+proyecto, se define la orquestación completa del entorno de ejecución de la aplicación.
+Docker Compose es una herramienta que permite definir cómo se deben iniciar contenedores de Docker utilizando un
+único archivo YAML\@.
+
+En primer lugar se puede ver cómo se indica que se debe instanciar un contenedor con la base de datos, esto es,
+utilizando una imagen de Postgres 18, en el servicio \texttt{postgres}.
+En \texttt{environment} se indican las propiedades que deben ser reemplazadas en ejecución.
+Estos valores están definidos en un archivo .env para centralizar las variables de configuración del entorno,
+evitando que estén constantes en el código y permitiendo contar con más de un archivo .env para realizar el despliegue
+de la aplicación en distintos ambientes (por ejemplo un ambiente local y otro en la nube).
+
+Luego el servicio \texttt{ollama} se define a partir de la imagen Ollama 0.20.
+Para la descarga a demanda del modelo LLM requerido se define otro servicio \texttt{ollama-pull} que descarga el modelo
+y luego finaliza su ejecución.
+
+Por último el servicio \texttt{webapp} es el que sirve la aplicación web, tanto el \texttt{back-end} como el
+\texttt{front-end}.
+Como se puede apreciar, para que este servicio funcione, necesita que se le indiquen las credenciales de la base de
+datos, la URL del servicio de Ollama, y las credenciales para consumir la API de Nominatim.
+
+En todos los servicios se definen los puertos correspondientes en la sección \texttt{ports} y el volumen compartido
+en la sección \texttt{volumes}.
+Se agregaron verificaciones de \texttt{healthcheck} y \texttt{depends\_on} para que los servicios se inicien en el orden
+correspondiente.
+Esto evita por ejemplo que la aplicación web inicie antes de que la base de datos esté lista o para obtener un mensaje
+cuando alguno de los contenedores finaliza su ejecución de forma inesperada.
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Archivo compose.yaml (se omiten varias líneas (...))},
+    label={lst:docker-compose}
+]
+services:
+  postgres:
+    image: postgres:18-alpine
+    (...)
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres:/var/lib/postgresql
+  ollama:
+    image: ollama/ollama:0.20.3
+    (...)
+    ports:
+      - "${OLLAMA_PORT}:${OLLAMA_PORT}"
+    volumes:
+      - ollama:/root/.ollama
+  ollama-pull:
+    image: ollama/ollama:0.20.3
+    (...)
+    entrypoint: ["/bin/sh", "-c", "ollama pull ${OLLAMA_MODEL}"]
+    volumes:
+      - ollama:/root/.ollama
+  webapp:
+    image: extractor-webapp:latest
+    build:
+      context: .
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    volumes:
+      - ./logs:/app/logs
+
+volumes:
+  ollama:
+  postgres:
+\end{lstlisting}
+
 \paragraph{Terraform}
+\begin{pendiente}
+\end{pendiente}
 
 \paragraph{Azure Container Apps}
+\begin{pendiente}
+\end{pendiente}
 
 \section{Conclusiones y Trabajo a Futuro}%
 \label{sec:conclusions}
+
+\begin{pendiente}
+\end{pendiente}

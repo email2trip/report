@@ -4,7 +4,7 @@
 \subsection{Dataset Final}%
 \label{subsec:final-dataset}
 
-El \textit{dataset} cuenta con 31 mails distintos de aerolíneas que totalizan un total de 41 tramos aéreos.
+El \textit{dataset} cuenta con 31 mails distintos de aerolíneas que totalizan 41 tramos aéreos.
 En esta sección se mencionan los tipos distintos de mails que existen, el proceso de anonimización realizado para
 que en el \textit{dataset} no aparezcan datos sensibles de los pasajeros que voluntariamente se prestaron a compartir
 sus correos electrónicos, la traducción al idioma inglés de correos que originalmente estaban en español y el uso de
@@ -18,7 +18,7 @@ A continuación se detallan las particularidades de los tres y los campos releva
 
 \paragraph{Confirmación de Reserva}
 
-Una reserva de confirmación es aquella que se obtiene luego de haber realizado la compra del pasaje aéreo.
+Una confirmación de reserva es aquella que se obtiene luego de haber realizado la compra del pasaje aéreo.
 De estos correos se espera extraer el código de la reserva, el nombre del pasajero y todo lo relevante para el tramo
 o los tramos que la reserva implique.
 Para cada tramo se espera extraer el código de aeropuerto de origen y destino, la fecha y hora de origen del tramo, el
@@ -126,11 +126,11 @@ con destino a la ciudad de Viena (Austria):
         \centering
         \includegraphics[width=\linewidth]{images/eml-boarding-pass-fra-vie-4}
     \end{minipage}
-    \caption{Ejemplo de un correo electrónico de \textit{boarding-pass} de un vuelo de un tramo de Austrian.}%
+    \caption{Ejemplo de un correo electrónico de \textit{boarding pass} de un vuelo de un tramo de Austrian.}%
     \label{fig:eml-boardingpass-fra-vie}
 \end{figure}
 
-En el \textit{dataset} se incluyen correos electrónicos de ticket de embarque (\textit{boarding pass} de las aerolíneas
+En el \textit{dataset} se incluyen correos electrónicos de ticket de embarque (\textit{boarding pass}) de las aerolíneas
 del grupo Lufthansa: Austrian y Lufthansa (donde ambas reutilizan la misma estructura).
 
 \FloatBarrier
@@ -236,7 +236,7 @@ id,type,booking,origin_airport,destination_airport,date,passenger_name,flight_co
 \label{subsec:model-implementation}
 
 En esta sección se detalla el proceso de implementación de la solución completa, incluyendo desde la lógica de
-extracción de campos relevantes en un texto usando procesamiento de lenguaje natural (NLP) hasta el despligue
+extracción de campos relevantes en un texto usando procesamiento de lenguaje natural (NLP) hasta el despliegue
 de la aplicación web en una nube pública para que un usuario pueda registrarse en la aplicación, reenviar sus
 correos electrónicos y obtener un itinerario de viaje integral.
 
@@ -264,14 +264,14 @@ YQB a YYZ, el HTML obtenido es el siguiente (Ver \autoref{lst:flight026-first-se
 \begin{lstlisting}[
     style=basecodestyle,
     language=HTML,
-    caption={Código HTML correspondiente al primer tramo del correo electrónico de AirCanada.},
+    caption={Código HTML correspondiente al primer tramo del correo electrónico de Air Canada.},
     label={lst:flight026-first-segment-html}
 ]
 <tr class="3D"ac-single-segment-info-container""><td valign="3D"top"" style="3D"padding-top: 30px; padding-bottom: = 30px; vertical-align: top; ""><table style="3D" font-size: 14px; font-family: Arial; color: #2A2A2A; width: 100%; border: 0px; border-collapse: collapse; "" cellpadding="3D"0"" cellspacing="3D"0"" border="3D"0"" width="3D"100%"" align="3D"= center""><tr><td width="3D"35%"" style="3D"width: 35%;""><p style="3D"font-size: 18px; margin-bottom: 10p= x;""><span style="3D"font-weight: bold""> Quebec City </span> YQB </p><p style="3D"font-size: 18px; margin-bottom: 10p= x;""> 10:50 </p><p class="3D"legal-info secondary-text"">Jean Lesage Int. Quebec </p><p></p></td><td width="3D"35%"" style="3D"width: 35%;""><p style="3D"font-size: 18px; margin-bottom: 10p= x;""><span style="3D"font-weight: bold""> Toronto </span> YYZ </p><p style="3D"font-size: 18px; margin-bottom: 10p= x;""> 12:25 </p><p class="3D"legal-info secondary-text"">Toronto-Pearson Int. , Terminal 1 </p><p></p></td><td width="3D"30%"" style="3D"width: 30%; padding-left= : 10px; border-left: 1px solid #BAA88D; font-size: 12px; line-height: 16px;= color: #4A4F55;""><p style="3D"font-size: 18px; margin-bottom: 5px= ;""><table style="3D" font-size: 14px; font-family: Arial; color: #2A2A2A; width: 100%; border: 0px; border-collapse: collapse; "" cellpadding="3D"0"" cellspacing="3D"0"" border="3D"0"" width="3D"100%"" align="3D"= center""><tr><td width="3D"15px"" style="3D"width: = 15px;""> =09=09=09=09<img style="3D" height: 15px; width: 15px; "" height="3D"15"" src="3D'https://www.aircanada.com/content/dam/aircanada/reve= nue/images/email-confirmation/airlines/ac.gif'"> </td><td style="3D"padding-left: 10px; fo= nt-size: 18px;""> AC1795 </td></tr></table></p><p class="3D"legal-info secondary-text"" style="3D="line-height: 16px; min-height: 16px; margin-bottom: 0;""> 1hr 35m </p> =09<p style="3D"line-height: 16px; min-height: 1= 6px; margin-bottom: 0;""> =09=09Business (I) =09</p><p class="3D"legal-info secondary-text"" style="3D="line-height: 16px; min-height: 16px; margin-bottom: 0;""> Operated by: AIR CANADA ROUGE <a href="3D"h= ttps://www.aircanada.com/ca/en/aco/home/fly/onboard/fleet.html#/!aircraft@a= 319"" target="3D"_blank"">A319-100</a> | <a href="3D"https://www.aircanada.com/= ca/en/aco/home/fly/onboard/wi-fi.html"" target="3D"_blank""><img src="3D"https:= //www.aircanada.com/content/dam/aircanada/revenue/images/availability/wifi.= png"" width="3D"12"" height="3D"12"" style="3D"width:12px; height:12px;MARGIN-RIG= HT: 5px"" alt="3D"Wi-Fi"">Wi-Fi</a></p></td></tr></table> =20 </td></tr>
 \end{lstlisting}
 
 Como se puede apreciar, además de nodos HTML con sus atributos y contenido, existen también fragmentos de texto como
-``=09'' que correspondes a símbolos de \textit{quoted-printable}, una codificación del estándar MIME\@.
+``=09'' que corresponde a símbolos de \textit{quoted-printable}, una codificación del estándar MIME\@.
 
 A continuación se utiliza la librería ~\cite{jsoup} que consiste en un \textit{parser} HTML que
 ofrece el método \texttt{org.jsoup.nodes.Element\#text()} para aplanar el HTML del mail y quedarse únicamente con el
@@ -281,7 +281,7 @@ Continuando con la sección del mail de ejemplo, el texto obtenido es el siguien
 
 \begin{lstlisting}[
     style=basecodestyle,
-    caption={Texto preprocesado correspondiente al primer tramo del correo electrónico de AirCanada.},
+    caption={Texto preprocesado correspondiente al primer tramo del correo electrónico de Air Canada.},
     label={lst:flight026-first-segment-txt}
 ]
 Depart Sun 24 Jul, 2022 Business Class - Flexible Reward Quebec City YQB 10:50 Jean Lesage Int. Quebec Toronto YYZ 12:25 Toronto-Pearson Int. , Terminal 1 AC1795 1hr 35m Business (I) Operated by: AIR CANADA ROUGE A319-100 | Wi-Fi
@@ -302,7 +302,7 @@ Por ejemplo aquellos nodos HTML identificados con cadenas como \texttt{.footer} 
 Durante la implementación este paso fue relevante para ignorar por ejemplo información de contacto de empresas de
 aerolíneas que pueden confundir al algoritmo NLP (un caso es el nombre del presidente de la compañía, el cual se podría
 confundir con el nombre del pasajero).
-Dado que está comprobado que no existe información útil para el usuario ubicada en esta sección entonces es seguro
+Dado que está comprobado que no existe información útil para el usuario ubicada en esta sección, entonces es seguro
 eliminarla.
 
 \subparagraph{Preprocesamiento para códigos de vuelo}
@@ -363,8 +363,8 @@ inglés.
 \subparagraph{Sentence Splitting}
 
 La separación en oraciones consiste en convertir un texto en oraciones.
-Por ejemplo ``Thanks for flying. Flight safe.''.
-será separado en las oraciones ``Thanks for flying.'' y ``Flight safe.''.
+Por ejemplo ``Thanks for flying. Fly safe.''.
+será separado en las oraciones ``Thanks for flying.'' y ``Fly safe.''.
 Aquí también CoreNLP realiza la separación en oraciones usando una colección de reglas ya previstas.
 
 \subparagraph{Parts of Speech}
@@ -372,7 +372,7 @@ Aquí también CoreNLP realiza la separación en oraciones usando una colección
 Partes del discurso asignan \textit{tags} o etiquetas a los \textit{tokens} para marcarlos según su categoría
 gramatical.
 Por ejemplo para el texto ``Marie was born in Paris.'' se etiqueta a ``Marie'' como \texttt{NNP}
-(nombre propio singular), ``was'' como \texttt{VDB} (verbo pasado), ``born'' como \texttt{VBN} (verbo participio pasado),
+(nombre propio singular), ``was'' como \texttt{VBD} (verbo pasado), ``born'' como \texttt{VBN} (verbo participio pasado),
 ``in'' como \texttt{IN} (preposición), ``París'' nuevamente como \texttt{NNP} y el punto final ``.'' como signo de
 puntuación.
 
@@ -446,7 +446,7 @@ En la primer columna se indica la cadena a corresponder, luego se indica  el tip
 En la tercer columna se indican las categorías reconocidas que pueden ser reemplazadas (en el ejemplo estamos indicando
 que si fue reconocido como \texttt{MISC} o como \texttt{ORGANIZATION} entonces es más importante \texttt{AIRPORT\_CODE}
 y por lo tanto debería reconocerlo así).
-Por último con el valor \texttt{2.0} estamos indicando la prioridad, que resultá útil para el desempate cuando dos
+Por último con el valor \texttt{2.0} estamos indicando la prioridad, que resulta útil para el desempate cuando dos
 reglas aplican para una misma cadena.
 De esta forma CoreNLP entiende que frente al tag ``YUL'' lo debe reconocer como un nuevo tipo \texttt{AIRPORT\_CODE}.
 
@@ -503,9 +503,9 @@ ner = { type: "CLASS", value: "edu.stanford.nlp.ling.CoreAnnotations$NamedEntity
 
 Como se puede apreciar se define un patrón donde primero aparece el código IATA de tres letras, seguido de 0 o más
 palabras y luego las palabras exactas ``Departing'' o ``Arriving''.
-Esta regla permite identificar al aeropuerto según el contexto en el que se ubica, pudiendo anotar únicamente el código
-IATA como \texttt{AIRPORT\_CODE} y descartando el resto (en la parte de \texttt{action} se indica
-\texttt{Annotate(\$2,...)} para anotar el segundo grupo capturado, esto es, ``EZE Buenos Aires'').
+Esta regla permite identificar al aeropuerto según el contexto en el que se ubica, pudiendo anotar únicamente el texto
+correspondiente al aeropuerto como \texttt{AIRPORT\_CODE} y descartando el resto (en la parte de \texttt{action} se
+indica \texttt{Annotate(\$2,...)} para anotar el segundo grupo capturado, esto es, ``EZE Buenos Aires'').
 
 A pesar de contar con reglas para la totalidad de códigos de aeropuertos existentes esto trae aparejado el problema de
 los falsos positivos.
@@ -586,7 +586,7 @@ El principio del archivo es el siguiente (Ver \autoref{lst:pnr-tokensregex-rules
 
 \begin{lstlisting}[
     style=jsonlikecodestyle,
-    caption={Una de las reglasp para identificar el código de reserva del vuelo.},
+    caption={Una de las reglas para identificar el código de reserva del vuelo.},
     label={lst:pnr-tokensregex-rules}
 ]
 ner = { type: "CLASS", value: "edu.stanford.nlp.ling.CoreAnnotations$NamedEntityTagAnnotation" }
@@ -679,7 +679,7 @@ Depart \entitydate{Sun 24 Jul, 2022} Business Class - Flexible Reward \entitysta
 \end{tcolorbox}
 
 En la salida se puede ver como sólo analizando una parte del correo electrónico se obtienen identificaciones incorrectas
-como es el caso de ``Jean Lessage Int.'' que es incorrectamente anotado como \texttt{PERSON}.
+como es el caso de ``Jean Lesage Int.'' que es incorrectamente anotado como \texttt{PERSON}.
 Al procesar el mail completo, donde efectivamente sí se encuentra el nombre del pasajero, este será priorizado en la
 siguiente etapa.
 
@@ -893,7 +893,7 @@ continuación (Ver \autoref{lst:output-extractor-enrich-json}, en la salida se o
 Esta sección cubre la funcionalidad adicional de ofrecer recomendaciones de puntos de interés que el usuario podría
 visitar en cada una de las ciudades destino de la reserva (ciudades según los aeropuertos destino de cada segmento).
 
-En lugar de utilizar una base de datos de POIs (\textit{points of interests}) se optó por utilizar un 
+En lugar de utilizar una base de datos de POIs (\textit{points of interest}) se optó por utilizar un
 \textit{Large Language Model} (LLM) de forma local al que se le solicitan recomendaciones de POIs para un destino y se
 exige que la respuesta del modelo sea estructurada en formato JSON.
 
@@ -920,25 +920,24 @@ impedir que pudieran recomendarse también algunos puntos de interés más relac
 \paragraph{\textit{Stack} LLM: Gemma 4 + Ollama + Spring AI}%
 \label{par:stack-llm}
 
-Para esta implementación se decidió utilizar Gemma 4 E4B como LLM. Es un modelo \textit{state of the art} que pertenece
+Para esta implementación se decidió utilizar Gemma 4 E4B como LLM. Es un modelo recientemente lanzado que pertenece
 a la familia de modelos abiertos desarrollados por Google DeepMind.
 Ofrece compatibilidad con más de 140 idiomas y la versión E4B cuenta con 4.500 millones de parámetros totales efectivos.
-De acorde a lo enunciado en la tarjeta del modelo, Gemma 4 se recomienda para tareas como la generación de texto, la
+De acuerdo a lo enunciado en la tarjeta del modelo, Gemma 4 se recomienda para tareas como la generación de texto, la
 programación y el razonamiento.
 La variedad de modelos (en función de la cantidad de parámetros) permite que estos puedan ser implementados en entornos
 que van desde teléfonos de alta gama hasta laptops y servidores, es decir, sin necesidad de contar con una \textit{GPU}
 potente.
 
-El modelo se ejecuta en Ollama, una herramienta que permite ejecutar modelos LLM local, tanto en CPU como en GPU,
+El modelo se ejecuta en Ollama, una herramienta que permite ejecutar modelos localmente, tanto en CPU como en GPU,
 exponiendo una \textit{API HTTP} para interactuar con el modelo y así facilitar la integración en aplicaciones.
 En la implementación se utiliza Ollama dentro de un contenedor de Docker por lo que el modelo se ejecuta sólo en CPU\@.
 Sin embargo el uso de Ollama permite que, al momento de realizar el \textit{deploy} de la aplicación en algún proveedor
-\textit{cloud} se puede definir una propiedad y así dejar de utilizar Ollama local y usar una API pública y
-paga.
+\textit{cloud} se puede definir una propiedad y así dejar de utilizar Ollama local y usar una API de pago.
 
 Para interactuar con el LLM desde código Java se utiliza el \textit{framework} Spring AI\@.
-Esta biblioteca se encarga de pedirle al modelo que la salida cumpla con un \textit{schema} para lograr la salida en
-formato JSON esperada.
+Esta biblioteca se encarga de pedirle al modelo que la salida cumpla con un \textit{schema} para lograr la salida
+esperada en formato JSON\@.
 Además permite el reemplazo de un modelo LLM por otro, incluso de distintos fabricantes, sin necesidad de realizar
 cambios en la implementación.
 
@@ -1021,7 +1020,7 @@ A continuación todas las demás oraciones son instrucciones para que el modelo 
 Si bien varias de ellas parecen redundantes, se fueron agregando luego de varias pruebas, siempre con la intención de
 reforzar la instrucción y obtener el resultado esperado en el primer intento.
 Allí se puede ver la instrucción ``Favor places aligned with the user interests when possible.'' para que priorice los
-puntos de intereses que el usuario espera.
+puntos de interés que el usuario espera.
 
 \subparagraph{prompt de Spring AI}
 
@@ -1114,35 +1113,35 @@ Si por ejemplo se desea obtener recomendaciones de 3 días para la ciudad de Tor
   "itinerary": [
     {
       "day": 1,
-      "title": "Day 1: Historic and Nature Exploration, Shopping",
-      "summary": "Start your day with Parliament Hill's historic buildings followed by a walk in Rouge National Urban Park. End the day at Bay Street for shopping and culture.",
+      "title": "Downtown History and Waterfront Views",
+      "summary": "Explore Toronto's core history and enjoy scenic views along the waterfront.",
       "places": [
         {
-          "name": "Parliament Hill",
-          "description": "Explore the historic Parliament Buildings and visit the CN Tower for panoramic views.",
+          "name": "Royal Ontario Museum",
+          "description": "A major museum featuring world cultures and natural history exhibits.",
           "category": "CULTURE_HISTORIC"
         },
         {
-          "name": "Rouge National Urban Park",
-          "description": "Enjoy a scenic walk along the Esplanade or explore the nearby Rouge National Urban Park.",
-          "category": "NATURE"
+          "name": "Nathan Phillips Square",
+          "description": "A prominent public square featuring the iconic Toronto City Hall.",
+          "category": "CULTURE_HISTORIC"
         },
         {
-          "name": "Bay Street",
-          "description": "Visit Bay Street for shopping and browse through boutiques, art galleries, and specialty shops.",
-          "category": "SHOPPING"
+          "name": "Harbourfront Centre",
+          "description": "An area along the lake offering views and public spaces for recreation.",
+          "category": "NATURE"
         }
       ]
     },
     {
       "day": 2,
-      "title": "Day 2: Skyline, History, and Nature Exploration",
-      "summary": "Start your day with the CN Tower's panoramic view followed by a visit to the Canadian Museum of History. End the day exploring more nature in Rouge National Urban Park or visiting the Toronto Islands.",
+      "title": "Cultural Immersion and Green Spaces",
+      "summary": "Dive into diverse neighborhoods and relax in Toronto's beautiful green spaces.",
       "places": [
         {
-          "name": "CN Tower",
-          "description": "Visit the CN Tower for a breathtaking view of Toronto's skyline. Explore the Sky Garden or take a ride on the SkyPod.",
-          "category": "NATURE"
+          "name": "St. Lawrence Market",
+          "description": "A historic market offering local goods and culinary experiences.",
+          "category": "SHOPPING"
         },
         { ... },
         { ... }
@@ -1158,9 +1157,9 @@ Si por ejemplo se desea obtener recomendaciones de 3 días para la ciudad de Tor
 Para poder mostrar las recomendaciones obtenidas en un mapa es necesario contar con las coordenadas geográficas
 (latitud y longitud) de cada punto de interés.
 
-Inicialmente se le solicitaba a el LLM para que conteste también con las coordenadas de cada punto recomendado
+Inicialmente se le solicitaba al LLM para que conteste también con las coordenadas de cada punto recomendado
 pero los resultados resultaron siempre incorrectos.
-Una LLM no es una fuente confiable de datos geoespaciales precisos ya que las respuestas que genera son siempre
+Un LLM no es una fuente confiable de datos geoespaciales precisos ya que las respuestas que genera son siempre
 probabilísticas y puede ``alucinar'' coordenadas inexistentes.
 Por ejemplo en las pruebas para la ciudad de Toronto, todas las coordenadas que respondía el LLM estaban
 desplazadas varios kilómetros y no sirven para lo que se espera en esta implementación.
@@ -1171,20 +1170,20 @@ La API de ~\cite{nominatim-api-overview} ofrece un uso gratuito con
 la limitación de geolocalizar una cadena de texto por segundo.
 En la implementación se tienen en cuenta estas restricciones por lo que el proceso de localizar todos los puntos de
 interés de un itinerario puede demorar varios segundos.
-Para eliminar esta restricción se puede utilizar el acceso pago.
+Para eliminar esta restricción se puede utilizar un proveedor pago o el despliegue de una instancia propia.
 
-Para cada geocodificación se realiza un \textit{request} HTTP a la API \textit{Rest} de Nominatim usando el path
+Para cada geocodificación se realiza un \textit{request} HTTP a la API REST de Nominatim usando el path
 \texttt{/search} donde el texto de consulta o \textit{query} es siempre el nombre del punto de interés, seguido del
 nombre de la ciudad y luego del nombre del país, separado por coma.
 Por ejemplo para el punto de interés ``CN Tower'' de la ciudad de Toronto en Canadá la \textit{query} es la cadena
 ``CN Tower, Toronto, Canada''.
 En el \textit{request} se indica además que el formato de respuesta debe ser \texttt{jsonv2} y que la cantidad de
 resultados es una.
-Así la respuesta consiste en un JSON con sólo tres campos: \texttt{lat}, \texttt{lon} y \texttt{display name}
-que corresponde al nombre completo y en esta implementación no es utilizado.
+Así la respuesta consiste en un JSON con tres campos relevantes: \texttt{lat}, \texttt{lon} y \texttt{display\_name}
+(que corresponde al nombre completo y en esta implementación no es utilizado).
 
-Un ejemplo de respuesta para la geocodificación del punto de interés ``Rouge National Urban Park'' es el siguiente
-(Ver \autoref{lst:api-nominatim-response-json}):
+Un ejemplo de respuesta para la geocodificación del punto de interés ``Royal Ontario Museum, Toronto, Canada'' es el
+siguiente (Ver \autoref{lst:api-nominatim-response-json}):
 
 \begin{lstlisting}[
     style=jsonlikecodestyle,
@@ -1192,14 +1191,14 @@ Un ejemplo de respuesta para la geocodificación del punto de interés ``Rouge N
     label={lst:api-nominatim-response-json}
 ]
 {
-  "lat": 43.8902655,
-  "lon": -79.1989858,
-  "displayName": "Rouge National Urban Park, Markham, Whitchurch-Stouffville, York Region, Golden Horseshoe, Ontario, Canada"
+  "lat": 43.6676565,
+  "lon": -79.3946988,
+  "display_name": "Royal Ontario Museum, 100, Queen's Park, University, University-Rosedale, Toronto, Golden Horseshoe, Ontario, M5S 2C6, Canada"
 }
 \end{lstlisting}
 
-Para algunas recomendaciones de el LLM, dado que no coincide con el nombre exacto que el servicio de
-geocodifcación espera, no se podrán conseguir las coordenadas geográficas.
+Para algunas recomendaciones del LLM, dado que no coincide con el nombre exacto que el servicio de
+geocodificación espera, no se podrán conseguir las coordenadas geográficas.
 En la implementación se decidió utilizar las coordenadas del aeropuerto para marcar al menos la zona de la ciudad donde
 el punto de interés se encuentra.
 
@@ -1221,48 +1220,33 @@ Si se desea obtener recomendaciones de 3 días para la ciudad de Toronto prioriz
   "itinerary": [
     {
       "day": 1,
-      "title": "Day 1: Historic and Nature Exploration, Shopping",
-      "summary": "Start your day with Parliament Hill's historic buildings followed by a walk in Rouge National Urban Park. End the day at Bay Street for shopping and culture.",
+      "title": "Downtown History and Waterfront Views",
+      "summary": "Explore Toronto's core history and enjoy scenic views along the waterfront.",
       "places": [
         {
-          "name": "Parliament Hill",
-          "description": "Explore the historic Parliament Buildings and visit the CN Tower for panoramic views.",
+          "name": "Royal Ontario Museum",
+          "description": "A major museum featuring world cultures and natural history exhibits.",
           "category": "CULTURE_HISTORIC",
-          "latitude": 43.7816987,
-          "longitude": -79.7272275
+          "latitude": 43.6676565,
+          "longitude": -79.3946988
         },
         {
-          "name": "Rouge National Urban Park",
-          "description": "Enjoy a scenic walk along the Esplanade or explore the nearby Rouge National Urban Park.",
+          "name": "Nathan Phillips Square",
+          "description": "A prominent public square featuring the iconic Toronto City Hall.",
+          "category": "CULTURE_HISTORIC",
+          "latitude": 43.6527083,
+          "longitude": -79.3838423
+        },
+        {
+          "name": "Harbourfront Centre",
+          "description": "An area along the lake offering views and public spaces for recreation.",
           "category": "NATURE",
-          "latitude": 43.8902655,
-          "longitude": -79.1989858
-        },
-        {
-          "name": "Bay Street",
-          "description": "Visit Bay Street for shopping and browse through boutiques, art galleries, and specialty shops.",
-          "category": "SHOPPING",
-          "latitude": 43.6440864,
-          "longitude": -79.3783678
+          "latitude": 43.6397544,
+          "longitude": -79.381371
         }
       ]
     },
-    {
-      "day": 2,
-      "title": "Day 2: Skyline, History, and Nature Exploration",
-      "summary": "Start your day with the CN Tower's panoramic view followed by a visit to the Canadian Museum of History. End the day exploring more nature in Rouge National Urban Park or visiting the Toronto Islands.",
-      "places": [
-        {
-          "name": "CN Tower",
-          "description": "Visit the CN Tower for a breathtaking view of Toronto's skyline. Explore the Sky Garden or take a ride on the SkyPod.",
-          "category": "NATURE",
-          "latitude": 43.6425637,
-          "longitude": -79.3870872
-        },
-        { ... },
-        { ... }
-      ]
-    },
+    { ... },
     { ... }
   ]
 }
@@ -1346,12 +1330,13 @@ Al final se ofrece también el nombre del pasajero y el código de reserva.
     \label{fig:web-trip-flights}
 \end{figure}
 
-La sección ``Activities'' \autoref{fig:web-trip-activities} es la que dispara el sistema de recomendaciones de POIs usando una LLM.
+La sección ``Activities'' \autoref{fig:web-trip-activities} es la que dispara el sistema de recomendaciones de POIs
+usando un LLM\@.
 En primer lugar se ofrece la opción de elegir la cantidad de días deseada (entre 1 y 7) y luego corresponde elegir la
 ciudad sobre la cual se buscan recomendaciones.
-Sólo se ofrecen como opciones de ciudades a aquellas que corresponden con el o los aeropuertos destinos.
-Una vez definido los días y la ciudad basta con presionar la opción ``Generate'' para conseguir un itinerario con las
-recomendaciones basadas según los intereses del usuario indicados en ``My Interests''.
+Sólo se ofrecen como opciones de ciudades a aquellas que corresponden con el o los aeropuertos de destino.
+Una vez definidos los días y la ciudad basta con presionar la opción ``Generate'' para conseguir un itinerario con las
+recomendaciones basadas en los intereses del usuario indicados en ``My Interests''.
 
 Las recomendaciones se organizan por días (se puede seleccionar ``Day 1'', ``Day 2'', etc.) donde cada día cuenta con un
 título y subtítulo que actúan como una breve descripción de las actividades del día.
@@ -1392,8 +1377,8 @@ recomendaciones
     \item APIs externas
     \begin{itemize}
         \item Nominatim: Para la geolocalización de puntos de interés, invocada por el \textit{back-end}
-        \item MediaWiki: Para la obtención de una imagen representativa del viaje (visible en ``My Trips'', invocada por
-el \textit{front-end}
+        \item MediaWiki: Para la obtención de una imagen representativa del viaje (visible en ``My Trips''), invocada
+por el \textit{front-end}
     \end{itemize}
 \end{itemize}
 
@@ -1497,10 +1482,10 @@ ALTER TABLE trip_saved_recommendation_place
 
 Para la implementación del \textit{back-end} se decidió utilizar Spring Boot porque facilita la implementación de
 aplicaciones web escritas en el lenguaje Java.
-Spring Boot se desataca por reducir la configuración necesaria para conseguir una aplicación web desplegada gracias a
+Spring Boot se destaca por reducir la configuración necesaria para conseguir una aplicación web desplegada gracias a
 dependencias por defecto, convenciones establecidas y la autoconfiguración.
-Permite integrar de forma sencilla varios componentes necesarios como APIs REST, acceso a base datos, seguridad, entre
-otras.
+Permite integrar de forma sencilla varios componentes necesarios como APIs REST, acceso a base de datos, seguridad,
+entre otras.
 
 El \textit{back-end} se separó en seis módulos distintos, utilizando la herramienta Maven para organizar proyectos Java.
 A continuación el detalle de los módulos de \textit{back-end}, donde los tres primeros ya fueron explicados en detalle
@@ -1518,7 +1503,7 @@ administra el acceso de los usuarios y logra la persistencia en la base de datos
 
 \subparagraph{Spring Data}
 
-Se utilizó Spring Data para simplificar la comunicación entre la el \textit{back-end} y la base de datos.
+Se utilizó Spring Data para simplificar la comunicación entre el \textit{back-end} y la base de datos.
 Permite abstraer gran parte del código fuente necesario para la interacción con la base mediante la definición de
 repositorios con interfaces, de forma que el \textit{framework} genera automáticamente el comportamiento necesario.
 
@@ -1547,12 +1532,12 @@ retorno es una lista de viajes (\texttt{List<Trip>}) y sólo se necesita el iden
 \subparagraph{Spring Security}
 
 Otra herramienta de la familia Spring es Spring Security, que apunta a gestionar de una forma sencilla la seguridad
-de las aplicaciones en cuanto a la autentiación y autorización.
+de las aplicaciones en cuanto a la autenticación y autorización.
 Su función principal es controlar quién puede acceder al sistema y qué acciones puede realizar el usuario una vez
 logueado.
 
-Para la implementación basta con definir un método donde se indiquen los \textit{endpoints} que requieren autentiación
-y cuales no (Ver \autoref{lst:spring-security-filter-chain}). Por ejemplo se indica que todos pueden acceder a
+Para la implementación basta con definir un método donde se indiquen los \textit{endpoints} que requieren autenticación
+y cuáles no (Ver \autoref{lst:spring-security-filter-chain}). Por ejemplo se indica que todos pueden acceder a
 \texttt{/login} y \texttt{/register} de forma que todo lo que no está mencionado se restringe automáticamente (como
 por ejemplo el endpoint de \texttt{core-enricher}).
 
@@ -1580,9 +1565,9 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
 }
 \end{lstlisting}
 
-Como se ve en el fragmento de código, se utilizó un mecanismo de autenticación basado en tokens Cross-Site Request
-Forgery (CSRF) que consisten en valores únicos generados por el servidor y verificados en cada solicitud que modifique
-el estado de la aplicación.
+Como se ve en el fragmento de código, se utilizó una protección contra solicitudes maliciosas basada en tokens
+Cross-Site Request Forgery (CSRF) que consisten en valores únicos generados por el servidor y verificados en cada
+solicitud que modifique el estado de la aplicación.
 De esta forma, en caso de que un atacante envíe una petición maliciosa, al no tener el token esperado la operación será
 rechazada.
 
@@ -1590,11 +1575,11 @@ rechazada.
 
 La interfaz de usuario requerida para la implementación cuenta con solo cuatro vistas: registro, login, listado de
 viajes y detalle de un viaje.
-Dada la simpleza del requerimiento se decidió utilizar Javascript nativo (Vanilla JS) para conseguir una aplicación
+Dada la simpleza del requerimiento se decidió utilizar JavaScript nativo (Vanilla JS) para conseguir una aplicación
 web, en principio pensada para \textit{desktop} pero con funcionalidad \textit{responsive} para poder ser utilizada
 también desde dispositivos móviles con pantallas más pequeñas.
 
-En el directorio \texttt{assets/} del módulo \texttt{extractor-client} se ubican los archivos Javascript y CSS
+En el directorio \texttt{assets/} del módulo \texttt{extractor-client} se ubican los archivos JavaScript y CSS
 necesarios.
 Además se utilizó Bootstrap, un framework front-end de componentes y reglas CSS que permite construir aplicaciones web
 \texttt{responsive} consistentes a partir de estilos y componentes ya definidos.
@@ -1694,13 +1679,13 @@ evitando que estén constantes en el código y permitiendo contar con más de un
 de la aplicación en distintos ambientes (por ejemplo un ambiente local y otro en la nube).
 
 Luego el servicio \texttt{ollama} se define a partir de la imagen Ollama 0.20.
-Para la descarga a demanda del modelo LLM requerido se define otro servicio \texttt{ollama-pull} que descarga el modelo
+Para la descarga a demanda del modelo LLM requerido se define otro servicio \texttt{ollama-init} que descarga el modelo
 y luego finaliza su ejecución.
 
 Por último el servicio \texttt{webapp} es el que sirve la aplicación web, tanto el \texttt{back-end} como el
 \texttt{front-end}.
 Como se puede apreciar, para que este servicio funcione, necesita que se le indiquen las credenciales de la base de
-datos, la URL del servicio de Ollama, y las credenciales para consumir la API de Nominatim.
+datos, la URL del servicio de Ollama, y la configuración de la API de Nominatim.
 
 En todos los servicios se definen los puertos correspondientes en la sección \texttt{ports} y el volumen compartido
 en la sección \texttt{volumes}.
@@ -1729,10 +1714,22 @@ services:
       - "${OLLAMA_PORT}:${OLLAMA_PORT}"
     volumes:
       - ollama:/root/.ollama
-  ollama-pull:
+  ollama-init:
     image: ollama/ollama:0.20.3
     (...)
-    entrypoint: ["/bin/sh", "-c", "ollama pull ${OLLAMA_MODEL}"]
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        ollama serve &
+        server_pid=$$!
+        until ollama list >/dev/null 2>&1; do
+          sleep 1
+        done
+        ollama pull ${OLLAMA_MODEL}
+        kill $$server_pid
+        wait $$server_pid || true
+        sleep "${OLLAMA_BOOTSTRAP_COOLDOWN_SECONDS}"
     volumes:
       - ollama:/root/.ollama
   webapp:

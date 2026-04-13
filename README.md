@@ -99,3 +99,26 @@ uv sync --group diagrams
 uv run diagram.py
 ```
 Los íconos fueron obtenidos de https://svgl.app/
+
+## Exportar a Word con Pandoc
+
+Requisitos
+- [pandoc](https://pandoc.org/)
+
+Instalación en macOS con Homebrew:
+
+```bash
+brew install pandoc
+```
+
+Creación del archivo `report.docx` con `pandoc`:
+
+```bash
+pandoc report.tex \
+  --from=latex \
+  --to=docx \
+  --output=report.docx \
+  --resource-path=. \
+  --bibliography=references.bib \
+  --citeproc
+```

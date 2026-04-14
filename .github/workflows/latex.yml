@@ -24,6 +24,7 @@ jobs:
       uses: xu-cheng/latex-action@v4
       with:
         root_file: report.tex
+        texlive_version: 2026
 
     - name: Prepare artifact
       run: |

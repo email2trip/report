@@ -62,7 +62,6 @@
 \usepackage{graphicx}
 \usepackage{tikz}
 \usepackage{colortbl}
-\usepackage{fvextra}
 \usepackage{listings}
 \usepackage{csquotes}
 \usepackage{microtype}
@@ -138,7 +137,7 @@
 \titlelabel{\thetitle\quad}  % Esto elimina el punto
 
 \usepackage{xurl}
-\usepackage[hidelinks,hypertexnames=false]{hyperref} % Para autoref
+\usepackage[hidelinks,hypertexnames=false,unicode=true]{hyperref} % Para autoref
 \hypersetup{bookmarksdepth=5}
 
 \lstdefinestyle{basecodestyle}{
@@ -247,13 +246,6 @@
 \renewcommand{\lstlistingname}{Fragmento}
 \providecommand*{\lstlistingautorefname}{Fragmento}
 
-\DefineVerbatimEnvironment{codeblock}{Verbatim}{
-    fontsize=\small,
-    breaklines=true,
-    frame=single,
-    framesep=2mm
-}
-
 \titleformat{\section}
 {\normalfont\Large\bfseries}
 {\thesection}{1em}{}
@@ -292,6 +284,15 @@
 
 \newcommand{\titulolargo}{Generación de itinerarios de viaje a partir del procesamiento de correos electrónicos de reservas}
 \newcommand{\titulocorto}{TFI - ECD 2024B - Ing. Franco Román Meola}
+\newcommand{\autor}{Ing. Franco Román Meola (52163)}
+\newcommand{\tutor}{Dra. Leticia Irene Gómez}
+\newcommand{\pdfasunto}{Trabajo Final Integrador de la Especialización en Ciencia de Datos}
+
+\hypersetup{
+    pdftitle={\titulolargo},
+    pdfauthor={\autor},
+    pdfsubject={\pdfasunto}
+}
 
 \usepackage{fancyhdr}
 \usepackage{float}

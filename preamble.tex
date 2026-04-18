@@ -60,6 +60,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{graphicx}
+\usepackage{caption}
 \usepackage{tikz}
 \usepackage{colortbl}
 \usepackage{listings}
@@ -135,9 +136,20 @@
 
 \usepackage{titlesec}
 \titlelabel{\thetitle\quad}  % Esto elimina el punto
+\captionsetup[figure]{
+    justification=centering,
+    singlelinecheck=false
+}
+\newcommand{\figsource}[1]{\\Fuente: #1}
+\newcommand{\sourcelink}[2]{#1 \href{#2}{\nolinkurl{#2}}}
+\NewDocumentCommand{\figcaption}{m g}{%
+    \IfNoValueTF{#2}
+        {\caption{#1\figsource{Elaboración propia.}}}
+        {\caption{#1\figsource{#2}}}%
+}
 
 \usepackage{xurl}
-\usepackage[hidelinks,hypertexnames=false,unicode=true]{hyperref} % Para autoref
+\usepackage[hidelinks,hypertexnames=false,unicode=true,breaklinks=true]{hyperref}
 \hypersetup{bookmarksdepth=5}
 
 \lstdefinestyle{basecodestyle}{

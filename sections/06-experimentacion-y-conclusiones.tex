@@ -18,7 +18,7 @@ donde un usuario puede registrarse (Ver \autoref{fig:web-register-login}) y lueg
         \centering
         \includegraphics[width=\linewidth]{images/web-login}
     \end{minipage}
-    \caption{Pantallas de registro y login}%
+    \figcaption{Pantallas de registro y login}%
     \label{fig:web-register-login}
 \end{figure}
 
@@ -34,7 +34,7 @@ para que puedan ser consultados en la sección ``My Trips'' (Ver \autoref{fig:we
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=1.00\textwidth]{images/web-home}
-    \caption{Página Principal}%
+    \figcaption{Página Principal}%
     \label{fig:web-home}
 \end{figure}
 
@@ -55,7 +55,7 @@ de POIs.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=1.00\textwidth]{images/web-interests}
-    \caption{Edición de los intereses del usuario}%
+    \figcaption{Edición de los intereses del usuario}%
     \label{fig:web-interests}
 \end{figure}
 
@@ -70,7 +70,7 @@ Al final se ofrece también el nombre del pasajero y el código de reserva.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=1.00\textwidth]{images/web-trip-flights}
-    \caption{Detalles de los segmentos aéreos del viaje}%
+    \figcaption{Detalles de los segmentos aéreos del viaje}%
     \label{fig:web-trip-flights}
 \end{figure}
 
@@ -98,7 +98,7 @@ La implementación permite almacenar un itinerario de recomendaciones por ciudad
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=1.00\textwidth]{images/web-trip-activities}
-    \caption{Detalles de las recomendaciones de POIs del viaje}%
+    \figcaption{Detalles de las recomendaciones de POIs del viaje}%
     \label{fig:web-trip-activities}
 \end{figure}
 
@@ -131,7 +131,7 @@ A continuación se presenta el diagrama de arquitectura correspondiente (Ver \au
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio,trim=190 190 190 190,clip]{docs/diagram}
-    \caption{Diagrama de arquitectura.}%
+    \figcaption{Diagrama de arquitectura.}%
     \label{fig:architecture-diagram}
 \end{figure}
 
@@ -178,7 +178,7 @@ A continuación se presenta el modelo relacional correspondiente (Ver \autoref{f
 \begin{figure}[htbp]
     \centering
     \resizebox{0.96\textwidth}{!}{\input{images/db-model-diagram.tikz}}
-    \caption{Modelo relacional de la base de datos.}%
+    \figcaption{Modelo relacional de la base de datos.}%
     \label{fig:db-model-diagram}
 \end{figure}
 
@@ -364,7 +364,8 @@ const fetchImageUrlForTitle = async (title) => {
 };
 \end{lstlisting}
 
-\subsection{Deployment: email2trip.xyz}
+\subsection{Deployment: email2trip.xyz}%
+\label{subsec:deployment}
 
 En esta sección se detalla el uso de Docker para orquestar los servicios necesarios, Terraform para definir la
 infraestructura en la nube necesaria y las particularidades del proveedor de servicios en la nube elegido, Azure.

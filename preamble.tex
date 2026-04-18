@@ -53,7 +53,7 @@
 \newcommand{\entityduration}[1]{\entitytag{black}{DURATION}{#1}}
 
 \setcounter{tocdepth}{5}
-\setcounter{secnumdepth}{6}
+\setcounter{secnumdepth}{7}
 
 \usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
 \geometry{a4paper}
@@ -278,9 +278,22 @@
 {\normalfont\normalsize\bfseries}
 {\thesubsubparagraph}{1em}{}
 
+\titleclass{\subsubsubparagraph}{straight}[\subsubparagraph]
+\newcounter{subsubsubparagraph}[subsubparagraph]
+\renewcommand{\thesubsubsubparagraph}{\thesubsubparagraph.\arabic{subsubsubparagraph}}
+\makeatletter
+\providecommand*{\toclevel@subsubsubparagraph}{7}
+\providecommand*{\theHsubsubsubparagraph}{\thesubsubparagraph.\arabic{subsubsubparagraph}}
+\providecommand*{\l@subsubsubparagraph}[2]{}
+\makeatother
+\titleformat{\subsubsubparagraph}[block]
+{\normalfont\normalsize\bfseries}
+{\thesubsubsubparagraph}{1em}{}
+
 \titlespacing*{\paragraph}{0pt}{\baselineskip}{0.25\baselineskip}
 \titlespacing*{\subparagraph}{0pt}{\baselineskip}{0.25\baselineskip}
 \titlespacing*{\subsubparagraph}{0pt}{\baselineskip}{0.25\baselineskip}
+\titlespacing*{\subsubsubparagraph}{0pt}{\baselineskip}{0.25\baselineskip}
 
 \newcommand{\titulolargo}{Generación de itinerarios de viaje a partir del procesamiento de correos electrónicos de reservas}
 \newcommand{\titulocorto}{TFI - ECD 2024B - Ing. Franco Román Meola}

@@ -5,7 +5,8 @@
 \label{subsec:webapp}
 
 Para el despliegue del \textit{pipeline} de extracción y recomendaciones se decidió implementar una aplicación web
-donde un usuario puede registrarse (Ver \autoref{fig:web-register-login}) y luego acceder con un usuario y contraseña.
+donde un usuario puede registrarse y luego acceder con un usuario y contraseña.
+Ambas pantallas se pueden ver en la \autoref{fig:web-register-login}.
 
 \begin{figure}[H]
     \centering
@@ -29,7 +30,7 @@ electrónico (como Microsoft Outlook, Mozilla Thunderbird o Apple Mail) o desde 
 Elegido el archivo basta con presionar ``Create Trip'' para que se dispare el \textit{pipeline} de extracción.
 
 Todos los correos electrónicos procesados con éxito son asociados al usuario logueado y persistidos en la base de datos
-para que puedan ser consultados en la sección ``My Trips'' (Ver \autoref{fig:web-home}).
+para que puedan ser consultados en la sección ``My Trips'' que puede apreciarse en la \autoref{fig:web-home}.
 
 \begin{figure}[htbp]
     \centering
@@ -46,11 +47,11 @@ el país del destino final, un nombre autogenerado (por ejemplo ``Trip to Montr�
 las fechas de inicio y fin del viaje, la cantidad de segmentos que tiene el viaje y la cantidad de itinerarios de POIs
 generados.
 
-En la página principal, además de la sección ``My Trips'', se cuenta con la sección ``My Interests'' (Ver
-\autoref{fig:web-interests}) donde el usuario puede consultar sus dos intereses seleccionados y cambiarlos por
-cualquiera de las cinco opciones disponibles.
-Tal como se mencionó en~\autoref{subpar:stack-llm}, estas preferencias son utilizadas para la obtención de recomendaciones
-de POIs.
+En la página principal, además de la sección ``My Trips'', se cuenta con la sección ``My Interests''.
+Tal como se puede ver en la \autoref{fig:web-interests}, el usuario puede consultar sus dos intereses seleccionados y
+cambiarlos por cualquiera de las cinco opciones disponibles.
+De acuerdo a lo ya mencionado en~\autoref{subpar:stack-llm}, estas preferencias son utilizadas para la obtención de
+recomendaciones de POIs.
 
 \begin{figure}[htbp]
     \centering
@@ -61,8 +62,9 @@ de POIs.
 
 Al hacer click en uno de los viajes de ``My Trips'' se ofrece la vista con el detalle de un viaje.
 En la parte superior se ofrecen opciones para renombrar el viaje y para eliminarlo.
-La sección ``Flights'' (Ver \autoref{fig:web-trip-flights}) muestra con un mapa cada uno de los segmentos de vuelo del
-viaje, donde para cada segmento, se lista toda la información relevante que extrajo el \textit{pipeline}.
+En la \autoref{fig:web-trip-flights} se puede apreciar la sección ``Flights'', que cuenta con un mapa cada uno de los
+segmentos de vuelo del viaje, donde para cada segmento, se lista toda la información relevante que extrajo el
+\textit{pipeline}.
 Para el mapa se utilizó Leaflet con un mapa interactivo que utiliza una cartografía base minimalista donde sólo aparecen
 límites y nombres de países, ciudades y provincias importantes.
 Al final se ofrece también el nombre del pasajero y el código de reserva.
@@ -74,8 +76,8 @@ Al final se ofrece también el nombre del pasajero y el código de reserva.
     \label{fig:web-trip-flights}
 \end{figure}
 
-La sección ``Activities'' \autoref{fig:web-trip-activities} es la que dispara el sistema de recomendaciones de POIs
-usando un LLM\@.
+En la \autoref{fig:web-trip-activities} se puede apreciar la sección ``Activities'', que es la que dispara el sistema de
+recomendaciones de POIs usando un LLM\@.
 En primer lugar se ofrece la opción de elegir la cantidad de días deseada (entre 1 y 7) y luego corresponde elegir la
 ciudad sobre la cual se buscan recomendaciones.
 Sólo se ofrecen como opciones de ciudades a aquellas que corresponden con el o los aeropuertos de destino.
@@ -126,7 +128,7 @@ por el \textit{front-end}
     \end{itemize}
 \end{itemize}
 
-A continuación se presenta el diagrama de arquitectura correspondiente (Ver \autoref{fig:architecture-diagram}):
+En la \autoref{fig:architecture-diagram} se detalla el diagrama de arquitectura correspondiente.
 
 \begin{figure}[htbp]
     \centering
@@ -173,7 +175,7 @@ Finalmente, para cada punto de interés de un día de una recomendación, la tab
 \texttt{trip\_saved\_recommendation\_place} lista el nombre, la descripción del POI, la categoría (según los cinco
 intereses posibles ya mencionados) y las coordenadas geográficas (latitud y longitud) del mismo.
 
-A continuación se presenta el modelo relacional correspondiente (Ver \autoref{fig:db-model-diagram}):
+En la \autoref{fig:db-model-diagram} se detalla el modelo relacional correspondiente.
 
 \begin{figure}[htbp]
     \centering

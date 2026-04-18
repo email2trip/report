@@ -74,8 +74,8 @@ llevar un registro de todos los cambios realizados en el tiempo.
 
 Se creó una organización en~\cite{github} denominada \texttt{email2trip} que contiene todos los repositorios necesarios
 para el proyecto.
-Dentro de la organización creó un repositorio privado (\texttt{extractor}) que actuó como servidor remoto del
-repositorio Git local (Ver \autoref{fig:extractor-git-remote}).
+En la \autoref{fig:extractor-git-remote} se puede ver el repositorio privado (\texttt{extractor}) que forma parte de
+la organización y actuó como servidor remoto del repositorio Git local.
 
 En este proyecto su aplicación permitió revertir cambios cuando fue necesario, trabajar en distintas funcionalidades de
 manera paralela mediante el uso de ramas o \textit{branches} y organizar la creación de los entregables de cada
@@ -101,8 +101,9 @@ mismo reporte (\texttt{report}).
 
 Las incidencias o \textit{issues} fueron la herramienta para crear cada una de las tareas que formaron parte del
 \textit{backlog}.
-Cada \textit{issue} (Ver \autoref{fig:github-issues}) cuenta con una descripción y referencias a los cambios realizados
-en el código fuente para resolver esa tarea, además de poder categorizarlas con etiquetas o \textit{labels}.
+Como puede apreciarse en la \autoref{fig:github-issues} cada \textit{issue} cuenta con una descripción y referencias a
+los cambios realizados en el código fuente para resolver esa tarea, además de poder categorizarlas con etiquetas o
+\textit{labels}.
 
 \end{corregir}
 
@@ -116,8 +117,8 @@ en el código fuente para resolver esa tarea, además de poder categorizarlas co
 \begin{corregir}
 
 GitHub Projects permite organizar el desarrollo mediante tableros Kanban que están poblados por cada una de las
-\textit{issues} del proyecto.
-En una vista general del tablero o \textit{board layout} (Ver \autoref{fig:github-projects-board}) se pueden distinguir
+\textit{issues} del proyecto, como se muestra en la \autoref{fig:github-projects-board}.
+En una vista general del tablero o \textit{board layout} se pueden distinguir
 las \textit{issues} por estado: si están todavía pendientes de análisis, en desarrollo, en etapa de pruebas o ya
 finalizada, dado que ya fueron integradas a la implementación final.
 
@@ -132,9 +133,9 @@ finalizada, dado que ya fueron integradas a la implementación final.
 
 \begin{revisado}
 
-También se ofrece una vista del ciclo de vida de desarrollo o \textit{roadmap}
-(Ver \autoref{fig:github-projects-roadmap}) donde se puede apreciar la dimensión tiempo en cantidad de semanas y cómo
-las tareas se fueron resolviendo en cada momento.
+En la \autoref{fig:github-projects-roadmap} se puede ver una vista del ciclo de vida de desarrollo o \textit{roadmap}
+donde se puede apreciar la dimensión tiempo en cantidad de semanas y cómo las tareas se fueron resolviendo en cada
+momento.
 
 \end{revisado}
 
@@ -168,9 +169,9 @@ o los tramos que la reserva implique.
 Para cada tramo se espera extraer el código de aeropuerto de origen y destino, la fecha y hora de origen del tramo, el
 código del vuelo y la aerolínea.
 
-A continuación se presenta un \texttt{.eml} de ejemplo que corresponde a una reserva de la aerolínea Air Canada
-(Ver \autoref{fig:eml-yqb-ord-part-a} y \autoref{fig:eml-yqb-ord-part-b}) que incluye dos segmentos, uno desde Quebec
-City con destino a Toronto y otro desde Toronto hacia la ciudad de Chicago, Estados Unidos:
+En la \autoref{fig:eml-yqb-ord-part-a} y \autoref{fig:eml-yqb-ord-part-b} se presenta un \texttt{.eml} de ejemplo que
+corresponde a una reserva de la aerolínea Air Canada que incluye dos segmentos, uno desde Quebec City con destino a
+Toronto y otro desde Toronto hacia la ciudad de Chicago, Estados Unidos.
 
 \begin{figure}[H]
     \centering
@@ -213,9 +214,9 @@ Los recordatorios de \textit{check-in} son aquellos correos electrónicos que el
 el \textit{check-in} para el primer tramo del vuelo reservado.
 Los campos a extraer son los mismos que con el tipo anterior.
 
-A continuación se presenta un \texttt{.eml} de ejemplo que corresponde a un recordatorio de la aerolínea American
-Airlines (\autoref{fig:eml-reminder-yqb-ord}) que incluye un segmento desde Quebec
-City con destino a la ciudad de Chicago, Estados Unidos:
+En la  \autoref{fig:eml-reminder-yqb-ord} se presenta un \texttt{.eml} de ejemplo que corresponde a un recordatorio de
+la aerolínea American Airlines que incluye un segmento desde Quebec City con destino a la ciudad de Chicago,
+Estados Unidos:
 
 \begin{figure}[H]
     \centering
@@ -245,9 +246,9 @@ Los \textit{boarding pass} corresponden a los correos electrónicos que el pasaj
 Los campos a extraer también coinciden con los dos tipos anteriores, con la particularidad de que aquí siempre se
 estará mencionando a un único tramo.
 
-A continuación se presenta un \texttt{.eml} de ejemplo que corresponde a un \textit{boarding pass} de la aerolínea
-Austrian del grupo Lufthansa (\autoref{fig:eml-boardingpass-fra-vie}) que incluye un segmento desde Fráncfort (Alemania)
-con destino a la ciudad de Viena (Austria):
+En la \autoref{fig:eml-boardingpass-fra-vie} se presenta un \texttt{.eml} de ejemplo que corresponde a un
+\textit{boarding pass} de la aerolínea Austrian del grupo Lufthansa () que incluye un segmento desde Fráncfort
+(Alemania) con destino a la ciudad de Viena (Austria):
 
 \begin{figure}[H]
     \centering
@@ -321,9 +322,9 @@ Para esta implementación se creó un repositorio \texttt{dataset} dentro de la 
 Se puede acceder desde https://dagshub.com/email2trip/dataset/.
 
 Así para cada archivo de extensión .eml existe uno de extensión .dvc.
-Este repositorio está sincronizado con el repositorio \texttt{dataset} de GitHub (Ver
-\autoref{fig:dataset-dvc-git-remote}) de forma que cada vez que se desee agregar un nuevo correo electrónico se debe
-cargar en el repositorio Git el archivo de extensión .dvc y el archivo del correo electrónico .eml debe cargarse
+Este repositorio DVC está sincronizado con el repositorio Git \texttt{dataset} de GitHub, donde ambos se pueden apreciar
+en la \autoref{fig:dataset-dvc-git-remote}, de forma que cada vez que se desee agregar un nuevo correo electrónico se
+debe cargar en el repositorio Git el archivo de extensión .dvc y el archivo del correo electrónico .eml debe cargarse
 únicamente en el repositorio DVC\@.
 
 \begin{figure}[H]
@@ -478,8 +479,7 @@ private static String normalizeFlightNumbers(String text) {
 \subparagraph{Stanford CoreNLP}
 
 Una vez que se cuenta con una instancia de \textit{String} con únicamente el contenido a simple vista de un correo
-electrónico se envía este texto al \textit{pipeline} de ~\cite{stanford-corenlp}
-(Ver \autoref{fig:corenlp-pipeline}).
+electrónico se envía este texto al \textit{pipeline} de ~\cite{stanford-corenlp}.
 Stanford CoreNLP es una biblioteca de procesamiento de lenguaje natural desarrollada por Stanford que permite analizar
 texto automáticamente, por ejemplo detectando tokens, lemas, categorías gramaticales, entidades y relaciones, entre
 otros.
@@ -491,7 +491,8 @@ otros.
     \label{fig:corenlp-pipeline}
 \end{figure}
 
-Como se puede apreciar el mismo cuenta con múltiples etapas que detallamos a continuación:
+Como se puede apreciar en la \autoref{fig:corenlp-pipeline}, el mismo cuenta con múltiples etapas que detallamos a
+continuación:
 
 \FloatBarrier
 

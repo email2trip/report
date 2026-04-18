@@ -422,7 +422,7 @@ En primer lugar se puede ver cómo se indica que se debe instanciar un contenedo
 utilizando una imagen de Postgres 18, en el servicio \texttt{postgres}.
 En \texttt{environment} se indican las propiedades que deben ser reemplazadas en ejecución.
 Estos valores están definidos en un archivo .env para centralizar las variables de configuración del entorno,
-evitando que estén constantes en el código y permitiendo contar con más de un archivo .env para realizar el despliegue
+evitando dejarlas definidas en el código y permitiendo contar con más de un archivo .env para realizar el despliegue
 de la aplicación en distintos ambientes (por ejemplo un ambiente local y otro en la nube).
 
 Luego el servicio \texttt{ollama} se define a partir de la imagen Ollama 0.20.

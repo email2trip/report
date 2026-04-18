@@ -716,7 +716,7 @@ AIR CANADA	AIRLINE_NAME	O,MISC,ORGANIZATION	2.0
 \end{lstlisting}
 
 Nuevamente, si bien no es necesario extraer el nombre de la aerolínea (ya que la primera porción del código de vuelo
-es un identificador único), el hecho de anotar un nombre como nombre de aerolínea ayuda a que existen menos partes del
+es un identificador único), el hecho de anotar un nombre como nombre de aerolínea ayuda a que existan menos partes del
 contenido sin anotar y que podrían ser candidatas a identificaciones incorrectas.
 
 \subsubsubparagraph{Código de Reserva (PNR)}
@@ -724,8 +724,8 @@ contenido sin anotar y que podrían ser candidatas a identificaciones incorrecta
 Otro campo relevante para la extracción es el código de reserva.
 Aquí también IATA define el \texttt{PNR} o ~\cite{passenger-name-record} y consiste en 6
 caracteres alfanuméricos.
-Para dificultad de la extracción se recuerda que el código de vuelo (como ``AC8633'') ya está cumpliendo con el formato
-de \texttt{PNR}.
+Para sumar dificultad de la extracción se recuerda que el código de vuelo (como ``AC8633'') ya está cumpliendo con el
+formato de \texttt{PNR}.
 Es por eso que aquí la estrategia para la extracción es distinta y consiste en identificar el \texttt{PNR} por contexto.
 Se establecen un conjunto de reglas \texttt{TokensRegex} para extraer el \texttt{PNR} cuando aparece luego de frases como
 ``Confirmation Number'', ``Booking Code'', ``Booking Reference'', entre otras.
@@ -1039,7 +1039,7 @@ continuación (Ver \autoref{lst:output-extractor-enrich-json}, en la salida se o
 }
 \end{lstlisting}
 
-\paragraph{Recomendación de puntos de interés \texttt{extractor-recommender}}
+\paragraph{Recomendación de POIs \texttt{extractor-recommender}}
 
 Esta sección cubre la funcionalidad adicional de ofrecer recomendaciones de puntos de interés que el usuario podría
 visitar en cada una de las ciudades destino de la reserva (ciudades según los aeropuertos destino de cada segmento).

@@ -293,12 +293,12 @@ que se realizó la compra, entre otros.
 El primer paso en la anonimización consiste en eliminar todos los archivos adjuntos que contenga el correo electrónico.
 Es común que las aerolíneas incluyan un PDF con un resumen de todos los datos de la reserva del vuelo y otro PDF con los
 detalles de facturación correspondientes.
-Se implementó un script de Python \texttt{remove\_sensitive.py} que se encarga de eliminar todos los adjuntos de un .eml
-y crear así otro .eml en un directorio distinto sin esos adjuntos.
-El script se encarga de analizar todos los .eml presentes en \texttt{private\_inbox/} y dejar los .eml sin los adjuntos
+Se implementó un script de Python \texttt{remove\_sensitive.py} que se encarga de eliminar todos los adjuntos de un \texttt{.eml}
+y crear así otro \texttt{.eml} en un directorio distinto sin esos adjuntos.
+El script se encarga de analizar todos los \texttt{.eml} presentes en \texttt{private\_inbox/} y dejar los \texttt{.eml} sin los adjuntos
 en el directorio \texttt{raw/}.
 
-Luego se hace una búsqueda y reemplazo manual de todos los datos sensibles que aparecen en el contenido del .eml y estos
+Luego se hace una búsqueda y reemplazo manual de todos los datos sensibles que aparecen en el contenido del \texttt{.eml} y estos
 datos se reemplazan por valores ficticios predefinidos:
 
 \begin{itemize}
@@ -321,10 +321,10 @@ modelos y archivos grandes, complementando a Git sin sobrecargarlo.
 Para esta implementación se creó un repositorio \texttt{dataset} dentro de la organización email2trip en DagsHub.
 Se puede acceder desde https://dagshub.com/email2trip/dataset/.
 
-Así para cada archivo de extensión .eml existe uno de extensión .dvc.
+Así para cada archivo de extensión \texttt{.eml} existe uno de extensión \texttt{.dvc}.
 Este repositorio DVC está sincronizado con el repositorio Git \texttt{dataset} de GitHub, donde ambos se pueden apreciar
 en la \autoref{fig:dataset-dvc-git-remote}, de forma que cada vez que se desee agregar un nuevo correo electrónico se
-debe cargar en el repositorio Git el archivo de extensión .dvc y el archivo del correo electrónico .eml debe cargarse
+debe cargar en el repositorio Git el archivo de extensión \texttt{.dvc} y el archivo del correo electrónico \texttt{.eml} debe cargarse
 únicamente en el repositorio DVC\@.
 
 \begin{figure}[H]
@@ -362,7 +362,7 @@ dvc push
 
 \subsubsection{Creación del \textit{dataset} estructurado}
 
-Por último es necesario crear un archivo donde se relacione cada archivo .eml con los datos reales que se esperan
+Por último es necesario crear un archivo donde se relacione cada archivo \texttt{.eml} con los datos reales que se esperan
 extraer del mismo.
 Para ello se creó en el directorio \texttt{structured/} un archivo CSV (Ver \autoref{lst:dataset-csv}) donde se indica
 el tipo de correo electrónico, todos los valores de los campos relevantes presentes en el correo, el nombre del archivo
@@ -403,8 +403,9 @@ inicio de vuelo.
 Retomando el ejemplo del correo electrónico de reserva (Ver \autoref{fig:eml-yqb-ord-part-a} y
 \autoref{fig:eml-yqb-ord-part-b}), el primer paso consiste en obtener el contenido del correo electrónico y quedarse con
 solo lo relevante.
-Para ello se utiliza la librería ~\cite{simple-java-mail} que convierte el contenido de
-un \texttt{.eml} a formato HTML. Para ello se utiliza el método \texttt{org.simplejavamail.api.email.Email\#getHTMLText}
+Para ello se utiliza la librería~\cite{simple-java-mail} que convierte el contenido de
+un \texttt{.eml} a formato HTML\@.
+Para ello se utiliza el método \texttt{org.simplejavamail.api.email.Email\#getHTMLText}
 y se consigue una instancia de \texttt{String} con todo el contenido HTML\@.
 Retomando el mail de ejemplo, y considerando únicamente la sección donde se menciona el primer tramo del vuelo, desde
 YQB a YYZ, el HTML obtenido es el siguiente (Ver \autoref{lst:flight026-first-segment-html}):
@@ -421,8 +422,8 @@ YQB a YYZ, el HTML obtenido es el siguiente (Ver \autoref{lst:flight026-first-se
 Como se puede apreciar, además de nodos HTML con sus atributos y contenido, existen también fragmentos de texto como
 ``=09'' que corresponde a símbolos de \textit{quoted-printable}, una codificación del estándar MIME\@.
 
-A continuación se utiliza la librería ~\cite{jsoup} que consiste en un \textit{parser} HTML que
-ofrece el método \texttt{org.jsoup.nodes.Element\#text()} para aplanar el HTML del mail y quedarse únicamente con el
+A continuación se utiliza la librería~\cite{jsoup} que consiste en un \textit{parser} HTML que
+ofrece el método \texttt{org.jsoup.nodes.Element.text} para aplanar el HTML del mail y quedarse únicamente con el
 texto visible, tal como si se estuviera visualizando el mail desde una aplicación de correo electrónico.
 
 Continuando con la sección del mail de ejemplo, el texto obtenido es el siguiente (Ver \autoref{lst:flight026-first-segment-txt}):
@@ -435,9 +436,9 @@ Continuando con la sección del mail de ejemplo, el texto obtenido es el siguien
 Depart Sun 24 Jul, 2022 Business Class - Flexible Reward Quebec City YQB 10:50 Jean Lesage Int. Quebec Toronto YYZ 12:25 Toronto-Pearson Int. , Terminal 1 AC1795 1hr 35m Business (I) Operated by: AIR CANADA ROUGE A319-100 | Wi-Fi
 \end{lstlisting}
 
-Esta acción aplica también para todas las secciones posibles según el estándar ~\cite{mime-wikipedia}.
+Esta acción aplica también para todas las secciones posibles según el estándar~\cite{mime-wikipedia}.
 Un correo electrónico cuenta con varias de estas secciones, algunas contienen adjuntos, otras contienen información de
-reenvío del mail, y algunas incluso codifican el texto en ~\cite{base64-wikipedia} de forma
+reenvío del mail, y algunas incluso codifican el texto en~\cite{base64-wikipedia} de forma
 que la biblioteca procede a decodificarlo.
 Es importante destacar que el \textit{pipeline} trabaja únicamente con el texto visible de los mails, ignorando mucho
 más contenido que podría ser relevante para identificar directamente áreas críticas del mail.
@@ -457,7 +458,7 @@ eliminarla.
 
 Otro preprocesamiento adicional que se aplica es la búsqueda mediante expresiones regulares de cadenas que puedan
 corresponder con códigos de vuelo (Ver \autoref{lst:normalize-flight-numbers}).
-Un código de vuelo ~\cite{iata-airline-codes} consiste en dos letras, seguido de un número
+Un código de vuelo~\cite{iata-airline-codes} consiste en dos letras, seguido de un número
 de entre 2 y 4 cifras.
 Por ejemplo \texttt{AC8633} corresponde al vuelo 8633 de la aerolínea Air Canada.
 En caso de que el mail contenga cadenas como \texttt{AC-8633} o \texttt{AC 8633} este preprocesamiento elimina el guion
@@ -479,7 +480,7 @@ private static String normalizeFlightNumbers(String text) {
 \subparagraph{Stanford CoreNLP}
 
 Una vez que se cuenta con una instancia de \textit{String} con únicamente el contenido a simple vista de un correo
-electrónico se envía este texto al \textit{pipeline} de ~\cite{stanford-corenlp}.
+electrónico se envía este texto al \textit{pipeline} de~\cite{stanford-corenlp}.
 Stanford CoreNLP es una biblioteca de procesamiento de lenguaje natural desarrollada por Stanford que permite analizar
 texto automáticamente, por ejemplo detectando tokens, lemas, categorías gramaticales, entidades y relaciones, entre
 otros.
@@ -500,8 +501,8 @@ continuación:
 
 La tokenización consiste en convertir texto en tokens.
 La forma más elemental consiste en dividir cada vez que aparece un espacio.
-Por ejemplo para el texto ``Thanks for flying.'' la tokenización genera cuatro tokens: ``Thanks'', ``for'', ``flying'' y
-``.''.
+Por ejemplo para el texto ``Thanks for flying.'' la tokenización genera cuatro tokens:% chktex 38
+``Thanks'', ``for'', ``flying'' y ``.''.% chktex 38
 CoreNLP realiza la separación del texto en \textit{tokens} usando una colección de reglas ya previstas.
 En el archivo de configuración se indica la propiedad \texttt{tokenize.language=en} para que utilice las reglas del
 idioma inglés.
@@ -511,17 +512,17 @@ inglés.
 \subsubparagraph{Sentence Splitting}
 
 La separación en oraciones consiste en convertir un texto en oraciones.
-Por ejemplo ``Thanks for flying. Fly safe.''.
-será separado en las oraciones ``Thanks for flying.'' y ``Fly safe.''.
+Por ejemplo ``Thanks for flying. Fly safe.''.% chktex 38
+será separado en las oraciones ``Thanks for flying.'' y ``Fly safe.''.% chktex 38
 Aquí también CoreNLP realiza la separación en oraciones usando una colección de reglas ya previstas.
 
 \subsubparagraph{Parts of Speech}
 
 Partes del discurso asignan \textit{tags} o etiquetas a los \textit{tokens} para marcarlos según su categoría
 gramatical.
-Por ejemplo para el texto ``Marie was born in Paris.'' se etiqueta a ``Marie'' como \texttt{NNP}
+Por ejemplo para el texto ``Marie was born in Paris.'' se etiqueta a ``Marie'' como \texttt{NNP}% chktex 38
 (nombre propio singular), ``was'' como \texttt{VBD} (verbo pasado), ``born'' como \texttt{VBN} (verbo participio pasado),
-``in'' como \texttt{IN} (preposición), ``París'' nuevamente como \texttt{NNP} y el punto final ``.'' como signo de
+``in'' como \texttt{IN} (preposición), ``París'' nuevamente como \texttt{NNP} y el punto final ``.'' como signo de% chktex 38
 puntuación.
 
 \subsubparagraph{Lemmatization}
@@ -552,11 +553,11 @@ adicionales para facilitar el reconocimiento de nuevos tipos de entidades.
 
 \subsubsubparagraph{Aeropuertos}
 
-Un aeropuerto de pasajeros se identifica por un código de tres letras denominado ~\cite{iata-airport-code}.
+Un aeropuerto de pasajeros se identifica por un código de tres letras denominado~\cite{iata-airport-code}.
 A excepción de aeropuertos muy pequeños, cualquier aeropuerto cuenta con un identificador único de tres letras emitido
-por IATA.
+por IATA\@.
 
-Para esta implementación se utilizó el \textit{dataset} público de ~\cite{ourairports-data} que ofrece
+Para esta implementación se utilizó el \textit{dataset} público de~\cite{ourairports-data} que ofrece
 la descarga de un archivo CSV con más de 84.000 registros que
 representan a todos los aeropuertos del mundo.
 Se procede a filtrar el mismo para considerar únicamente los aeropuertos que tengan un código IATA (descartando
@@ -629,9 +630,9 @@ identificadores IATA anotados como \texttt{AIRPORT\_CODE} son únicos.
 De todas formas la identificación es útil para que el nombre del aeropuerto no sea identificado como \texttt{PERSON} y
 así se facilita la tarea de identificar el nombre del pasajero de la reserva.
 
-Por último se creó una regla de ~\cite{stanford-tokensregex} donde se
+Por último se creó una regla de~\cite{stanford-tokensregex} donde se
 rescata al aeropuerto cuando el texto visible queda con un formato como ``EZE Buenos Aires Departing at'' o ``EZE Buenos
-Aires Arriving at:''.
+Aires Arriving at:''. % chktex 38
 Para ello, en el archivo \nolinkurl{contextual-airport.tokensregex.rules} se definió lo siguiente
 (Ver \autoref{lst:contextual-airport-tokensregex}):
 
@@ -653,7 +654,7 @@ Como se puede apreciar se define un patrón donde primero aparece el código IAT
 palabras y luego las palabras exactas ``Departing'' o ``Arriving''.
 Esta regla permite identificar al aeropuerto según el contexto en el que se ubica, pudiendo anotar únicamente el texto
 correspondiente al aeropuerto como \texttt{AIRPORT\_CODE} y descartando el resto (en la parte de \texttt{action} se
-indica \texttt{Annotate(\$2,...)} para anotar el segundo grupo capturado, esto es, ``EZE Buenos Aires'').
+indica \texttt{Annotate(\$2,\ldots)} para anotar el segundo grupo capturado, esto es, ``EZE Buenos Aires'').% chktex 36
 
 A pesar de contar con reglas para la totalidad de códigos de aeropuertos existentes esto trae aparejado el problema de
 los falsos positivos.
@@ -664,15 +665,15 @@ será identificado como el ``Ouro Sogui Airport'' ubicado en Senegal.
 Para estos casos extremos identificados, que siempre corresponden a aeropuertos pequeños, se decidió utilizar la
 propiedad \texttt{ner.additional.regexner.commonWords} para indicarle a CoreNLP las palabras que deben ser tomadas como
 palabras comunes del idioma inglés y así excluirlas de cualquier identificación.
-Las palabras definidas en la implementación son las siguientes: ``API'', ``GET'', ``GST'',  ``HST'', ``MAX'', ``MAY'', y
+Las palabras definidas en la implementación son las siguientes: ``API'', ``GET'', ``GST'', ``HST'', ``MAX'', ``MAY'', y
 ``VOL''.
 
 \subsubsubparagraph{Códigos de Vuelos y Aerolíneas}
 
 Anteriormente se comentó el preprocesamiento que se realiza antes de iniciar el pipeline de CoreNLP y que involucra a
-los códigos de vuelo definidos por IATA.
+los códigos de vuelo definidos por IATA\@.
 Ahora es momento de obtener el token ``AC8633'' y reconocerlo como una entidad de tipo \texttt{FLIGHT\_NUMBER}.
-Para ello se utilizó el \textit{dataset} público de aerolíneas de ~\cite{openflights-data}
+Para ello se utilizó el \textit{dataset} público de aerolíneas de~\cite{openflights-data}
 que ofrece un CSV con más de 6.000 registros que representan a todas las aerolíneas del mundo.
 Por ejemplo (Ver \autoref{lst:airlines-csv-line}):
 
@@ -722,7 +723,7 @@ contenido sin anotar y que podrían ser candidatas a identificaciones incorrecta
 \subsubsubparagraph{Código de Reserva (PNR)}
 
 Otro campo relevante para la extracción es el código de reserva.
-Aquí también IATA define el \texttt{PNR} o ~\cite{passenger-name-record} y consiste en 6
+Aquí también IATA define el \texttt{PNR} o~\cite{passenger-name-record} y consiste en 6
 caracteres alfanuméricos.
 Para sumar dificultad de la extracción se recuerda que el código de vuelo (como ``AC8633'') ya está cumpliendo con el
 formato de \texttt{PNR}.
@@ -761,7 +762,7 @@ Es por eso que en esta etapa de anotación sólo resulta útil anotar todos los 
 Solo así podremos asociar por ejemplo la fecha y hora de despegue al primer tramo de una reserva y no al segundo.
 
 Las reglas por defecto fueron suficientes para la mayoría de los correos electrónicos, ya que CoreNLP provee la
-biblioteca ~\cite{stanford-sutime} que permite reconocer por ejemplo fechas con
+biblioteca~\cite{stanford-sutime} que permite reconocer por ejemplo fechas con
 múltiples formatos como ``31-12-2026'', ``31/12/2026'' o ``2026-31-12''.
 
 Sólo fue necesaria una regla \texttt{TokensRegex} extra (Ver \autoref{lst:sutime-boarding-pass-rule}):
@@ -820,7 +821,7 @@ de esta etapa:
     Depart \entitydate{Sun 24 Jul, 2022} Business Class - Flexible Reward \entitystateorprovince{Quebec} City
     \entityairportcode{YQB} \entitytime{10:50} \\
     \entityperson{Jean Lesage Int.} \entityorganization{Quebec Toronto} \entityairportcode{YYZ} \\
-    \entitytime{12:25} Toronto-Pearson Int. , Terminal \entitynumber{1} \entitypnrcode{AC1795}\\
+    \entitytime{12:25} Toronto-Pearson Int., Terminal \entitynumber{1} \entitypnrcode{AC1795}\\
     \entityduration{1hr} \entitynumber{35m} Business (I) Operated by: \entityairlinename{AIR CANADA} ROUGE A319-100 | Wi-Fi\par
     }
 
@@ -830,7 +831,7 @@ de esta etapa:
 \end{tcolorbox}
 
 En la salida se puede ver como sólo analizando una parte del correo electrónico se obtienen identificaciones incorrectas
-como es el caso de ``Jean Lesage Int.'' que es incorrectamente anotado como \texttt{PERSON}.
+como es el caso de ``Jean Lesage Int.'' que es incorrectamente anotado como \texttt{PERSON}.% chktex 38
 Al procesar el mail completo, donde efectivamente sí se encuentra el nombre del pasajero, este será priorizado en la
 siguiente etapa.
 
@@ -890,27 +891,35 @@ entidades, contemplando así la totalidad de los correos de reservas presentes e
 \begin{itemize}
     \item Opción 1: El patrón clásico que utiliza la mayoría de las aerolíneas
     \begin{itemize}
-        \item Regla: \nolinkurl{AIRPORT ... TIME ... AIRPORT_CODE ... TIME ... FLIGHT_NUMBER}
+        \item Regla:
+        \texttt{AIRPORT \ldots\ TIME \ldots\ AIRPORT\_CODE}\\
+        \texttt{\ldots\ TIME \ldots\ FLIGHT\_NUMBER}
         \item Ejemplo: ``LGA 08:35 YUL 09:59 AC8633''
     \end{itemize}
     \item Opción 2: Otra forma bastante utilizada donde primero aparece el código del vuelo
     \begin{itemize}
-        \item Regla: \nolinkurl{FLIGHT_NUMBER ... AIRPORT_CODE ... TIME ... AIRPORT_CODE ... TIME}
+        \item Regla:
+        \texttt{FLIGHT\_NUMBER \ldots\ AIRPORT\_CODE \ldots\ TIME}\\
+        \texttt{\ldots\ AIRPORT\_CODE \ldots\ TIME}
         \item Ejemplo: ``AC132 YVR Vancouver Departing at 13:00 YYZ Toronto Arriving at 20:28''
     \end{itemize}
     \item Opción 3: Un layout partido donde las fechas y horas aparecen al final
     \begin{itemize}
-        \item Regla: \nolinkurl{AIRPORT_CODE ... AIRPORT_CODE ... FLIGHT_NUMBER ... DATE TIME ... DATE TIME}
+        \item Regla:
+        \texttt{AIRPORT\_CODE \ldots\ AIRPORT\_CODE \ldots\ FLIGHT\_NUMBER}\\
+        \texttt{\ldots\ DATE TIME \ldots\ DATE TIME}
         \item Ejemplo: ``EZE ATL DL110 Departs 07/20/2020 8:20 PM Arrives 07/21/2020 5:48 AM''
     \end{itemize}
     \item Opción 4: El más utilizado por los correos de tipo boarding pass donde primero aparece la fecha del embarque
     \begin{itemize}
-        \item Regla: \nolinkurl{DATE ... FLIGHT_NUMBER ... AIRPORT_CODE ... TIME ... AIRPORT_CODE ... TIME}
+        \item Regla:
+        \texttt{DATE \ldots\ FLIGHT\_NUMBER \ldots\ AIRPORT\_CODE \ldots\ TIME}\\
+        \texttt{\ldots\ AIRPORT\_CODE \ldots\ TIME}
         \item Ejemplo: ``22SEP25 OS208 FRA 12:50 VIE 14:15''
     \end{itemize}
 \end{itemize}
 
-En todas ellas los \texttt{...} aceptan cero o más entidades de cualquier tipo distinto a los buscados.
+En todas ellas la notación \texttt{\ldots} acepta cero o más entidades de cualquier tipo distinto a los buscados.
 El último paso es evitar conservar dos segmentos que resultan equivalentes, esto es, que tienen los mismos datos.
 Esto es común en confirmaciones de vuelos donde la información aparece primero con los datos del pasajero y luego
 aparece por segunda vez sólo para indicar la política de equipaje para cada segmento.
@@ -1046,7 +1055,7 @@ visitar en cada una de las ciudades destino de la reserva (ciudades según los a
 
 En lugar de utilizar una base de datos de POIs (\textit{points of interest}) se optó por utilizar un
 \textit{Large Language Model} (LLM) de forma local al que se le solicitan recomendaciones de POIs para un destino y se
-exige que la respuesta del modelo sea estructurada en formato JSON.
+exige que la respuesta del modelo sea estructurada en formato JSON\@.
 
 \subparagraph{Intereses del Usuario}
 
@@ -1068,11 +1077,11 @@ El usuario al momento de solicitar una recomendación puede elegir hasta dos de 
 El proceso de recomendación deberá priorizar los puntos de interés que se ajustan a los intereses del usuario, sin
 impedir que pudieran recomendarse también algunos puntos de interés más relacionados a intereses no seleccionados.
 
-\subparagraph{\textit{Stack} LLM: Gemma 4 + Ollama + Spring AI}%
+\subparagraph{\textit{Stack} LLM: Gemma 4 + Ollama + Spring AI}% chktex 13
 \label{subpar:stack-llm}
 
-Para esta implementación se decidió utilizar Gemma 4 E4B como LLM. Es un modelo recientemente lanzado que pertenece
-a la familia de modelos abiertos desarrollados por Google DeepMind.
+Para esta implementación se decidió utilizar Gemma 4 E4B como LLM\@.
+Es un modelo recientemente lanzado que pertenece a la familia de modelos abiertos desarrollados por Google DeepMind.
 Ofrece compatibilidad con más de 140 idiomas y la versión E4B cuenta con 4.500 millones de parámetros totales efectivos.
 De acuerdo a lo enunciado en la tarjeta del modelo, Gemma 4 se recomienda para tareas como la generación de texto, la
 programación y el razonamiento.
@@ -1170,7 +1179,7 @@ categorías establecidas.
 A continuación todas las demás oraciones son instrucciones para que el modelo no cometa errores.
 Si bien varias de ellas parecen redundantes, se fueron agregando luego de varias pruebas, siempre con la intención de
 reforzar la instrucción y obtener el resultado esperado en el primer intento.
-Allí se puede ver la instrucción ``Favor places aligned with the user interests when possible.'' para que priorice los
+Allí se puede ver la instrucción ``Favor places aligned with the user interests when possible.'' para que priorice los% chktex 38
 puntos de interés que el usuario espera.
 
 \subsubparagraph{prompt de Spring AI}
@@ -1317,7 +1326,7 @@ desplazadas varios kilómetros y no sirven para lo que se espera en esta impleme
 
 Es por eso que se decidió utilizar un servicio de geocodificación para que, a partir del nombre del punto de interés, la
 ciudad y el país se obtengan las coordenadas geográficas precisas de ese punto.
-La API de ~\cite{nominatim-api-overview} ofrece un uso gratuito con
+La API de~\cite{nominatim-api-overview} ofrece un uso gratuito con
 la limitación de geolocalizar una cadena de texto por segundo.
 En la implementación se tienen en cuenta estas restricciones por lo que el proceso de localizar todos los puntos de
 interés de un itinerario puede demorar varios segundos.

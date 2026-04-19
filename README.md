@@ -13,6 +13,7 @@ Se resuelve automáticamente las pasadas de `pdflatex` y `biber` necesarias.
 Requisitos
 - [TeX Live 2026](https://tug.org/texlive/)
   - [latexmk](https://mgeier.github.io/latexmk.html)
+  - [chktex](https://www.nongnu.org/chktex/) Opcional para comprobar la sintaxis de LaTeX
 
 #### Creación del PDF
 

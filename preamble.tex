@@ -120,7 +120,7 @@
 \DeferNextCitekeyHook%
 \usebibmacro{cite:init}}
 {\ifthenelse{\iffirstcitekey\AND\value{multicitetotal}>0}
-{\protected@xappto\cbx@savedcites{()(\thefield{multipostnote})}%
+{\protected@xappto\cbx@savedcites{()(\thefield{multipostnote})}% chktex 36
 \global\clearfield{multipostnote}}
 {}%
 \xappto\cbx@savedkeys{\thefield{entrykey},}%
@@ -189,7 +189,7 @@
 }
 
 \lstdefinelanguage{jsonlike}{
-    morestring=[b]",
+    morestring=[b]", % chktex 18
     alsoletter={\$},
     morekeywords={ner,type,value,ruleType,pattern,action,result,tokens,Annotate},
     sensitive=true

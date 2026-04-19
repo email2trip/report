@@ -1,7 +1,7 @@
 \section{Experimentación y Resultados}%
 \label{sec:experimentation-and-results}
 
-\subsection{Aplicación Web: \texttt{email2trip}}
+\subsection{Aplicación Web: \texttt{email2trip}}%
 \label{subsec:webapp}
 
 Para el despliegue del \textit{pipeline} de extracción y recomendaciones se decidió implementar una aplicación web
@@ -23,10 +23,11 @@ Ambas pantallas se pueden ver en la \autoref{fig:web-register-login}.
     \label{fig:web-register-login}
 \end{figure}
 
-Luego al presionar ``New Trip'' podrá arrastrar al navegador un archivo .eml con el correo electrónico sobre el
+Luego al presionar ``New Trip'' podrá arrastrar al navegador un archivo \texttt{.eml} con el correo electrónico sobre el
 cual se desea hacer la extracción de información.
-El usuario deberá exportar el correo en formato .eml usando la opción exportar de un cliente de escritorio de correo
-electrónico (como Microsoft Outlook, Mozilla Thunderbird o Apple Mail) o desde un webmail (como GMail u Outlook.com).
+El usuario deberá exportar el correo en formato \texttt{.eml} usando la opción exportar de un cliente de escritorio de
+correo electrónico (como Microsoft Outlook, Mozilla Thunderbird o Apple Mail) o desde un webmail (como GMail u
+Outlook.com).
 Elegido el archivo basta con presionar ``Create Trip'' para que se dispare el \textit{pipeline} de extracción.
 
 Todos los correos electrónicos procesados con éxito son asociados al usuario logueado y persistidos en la base de datos
@@ -366,21 +367,21 @@ const fetchImageUrlForTitle = async (title) => {
 };
 \end{lstlisting}
 
-\subsection{Deployment: email2trip.xyz}%
+\subsection{Despliegue}%
 \label{subsec:deployment}
 
 En esta sección se detalla el uso de Docker para orquestar los servicios necesarios, Terraform para definir la
 infraestructura en la nube necesaria y las particularidades del proveedor de servicios en la nube elegido, Azure.
 Para el despliegue de la aplicación web se utilizará el dominio http://email2trip.xyz.
 
-\subsubsection{Docker}
+\subsubsection{Despliegue Local: Docker}
 
 Para facilitar el despliegue de la aplicación se utiliza Docker.
 Para ello se define un archivo Dockerfile (Ver \autoref{lst:docker-dockerfile}) en la raíz del proyecto
 \texttt{extractor-parent} que se encarga de crear
 la imagen con todos los módulos del proyecto en dos etapas, lo que se conoce como \textit{multi-stage build}.
 En la primera etapa se compila la aplicación por completo, a partir de la imagen base \texttt{eclipse-temurin:25-jdk}.
-En lugar de ejecutar la aplicación sobre la misma imagen utilizada para la compilación, se provee solo el .jar
+En lugar de ejecutar la aplicación sobre la misma imagen utilizada para la compilación, se provee solo el \texttt{.jar}
 resultante a una imagen más liviana, a partir de la imagen base \texttt{eclipse-temurin:25-jre}, reduciendo así el
 tamaño final del contenedor.
 Por último se inicia la aplicación mediante el comando \texttt{java -jar app.jar}.
@@ -421,9 +422,9 @@ Docker Compose es una herramienta que permite definir cómo se deben iniciar con
 En primer lugar se puede ver cómo se indica que se debe instanciar un contenedor con la base de datos, esto es,
 utilizando una imagen de Postgres 18, en el servicio \texttt{postgres}.
 En \texttt{environment} se indican las propiedades que deben ser reemplazadas en ejecución.
-Estos valores están definidos en un archivo .env para centralizar las variables de configuración del entorno,
-evitando dejarlas definidas en el código y permitiendo contar con más de un archivo .env para realizar el despliegue
-de la aplicación en distintos ambientes (por ejemplo un ambiente local y otro en la nube).
+Estos valores están definidos en un archivo \texttt{.env} para centralizar las variables de configuración del entorno,
+evitando dejarlas definidas en el código y permitiendo contar con más de un archivo \texttt{.env} para realizar el
+despliegue de la aplicación en distintos ambientes (por ejemplo un ambiente local y otro en la nube).
 
 Luego el servicio \texttt{ollama} se define a partir de la imagen Ollama 0.20.
 Para la descarga a demanda del modelo LLM requerido se define otro servicio \texttt{ollama-init} que descarga el modelo
@@ -493,12 +494,189 @@ volumes:
   postgres:
 \end{lstlisting}
 
-\subsubsection{Terraform}
+\subsubsection{Despliegue \textit{cloud}: Azure}
 
-\begin{pendiente}
-\end{pendiente}
+Como proveedor \textit{cloud} se decidió utilizar Microsoft Azure por experiencia y por contar con créditos de
+estudiante para afrontar los costos del despliegue.
+Azure ofrece además el producto Azure Container Apps de forma que se simplifica el \textit{deploy} de la aplicación
+gracias a la existencia de una imagen de Docker con el código fuente correspondiente.
 
-\subsubsection{Azure Container Apps}
+Para definir la infraestructura necesaria para hacer el \texttt{deploy} en la nube se utiliza Terraform.
+Terraform es una herramienta de Infrastructure as Code (IaC) que permite definir y crear infraestructura (bases de
+datos, aplicaciones, máquinas virtuales, redes, etc.) mediante archivos declarativos.
+De esta forma se puede realizar el \texttt{deploy} completo con un único comando de terminal \texttt{terraform apply}
+sin haber interactuado con la interfaz web o consola de la solución en la nube elegida.
+Del mismo modo, con el comando \texttt{terraform destroy} se procede a la eliminación de todos los recursos creados.
+
+La configuración Terraform del proyecto se encuentra en el directorio \nolinkurl{infra/terraform/azure-container-apps}
+del módulo \texttt{extractor}.
+Se cuenta con varios archivos de extensión \texttt{.tf} destacando el archivo \texttt{main.tf} donde se listan todos
+los recursos que se deben construir en la nube para lograr el \textit{deploy}.
+Tal como se puede apreciar en el \autoref{lst:terraform-main} se necesita crear un \textit{resource} para cada recurso.
+Así se necesita un recurso para la instancia de PostgreSQL, otro para la aplicación web y varios recursos más que
+se encargan de configurar esos recursos.
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={main.tf (se omiten varias líneas (...))},
+    label={lst:terraform-main}
+]
+resource "azurerm_resource_group" "this" {
+  name     = local.resource_group_name
+  location = var.location
+  tags     = local.merged_tags
+}
+
+resource "azurerm_postgresql_flexible_server" "this" {
+  name                          = local.postgres_server_name
+  resource_group_name           = azurerm_resource_group.this.name
+  location                      = azurerm_resource_group.this.location
+  version                       = var.postgres_version
+  delegated_subnet_id           = azurerm_subnet.postgres.id
+  private_dns_zone_id           = azurerm_private_dns_zone.postgres.id
+  administrator_login           = var.postgres_admin_username
+  administrator_password        = random_password.postgres_admin_password.result
+  public_network_access_enabled = false
+  backup_retention_days         = 7
+  geo_redundant_backup_enabled  = false
+  sku_name                      = var.postgres_sku_name
+  storage_mb                    = var.postgres_storage_mb
+  zone                          = "1"
+  tags                          = local.merged_tags
+  (...)
+}
+
+resource "azurerm_container_app" "webapp" {
+  name                         = local.container_app_name
+  container_app_environment_id = azurerm_container_app_environment.this.id
+  resource_group_name          = azurerm_resource_group.this.name
+  revision_mode                = "Single"
+  workload_profile_name        = "Consumption"
+  tags                         = local.merged_tags
+
+  secret {
+    name                = "postgres-password"
+    key_vault_secret_id = azurerm_key_vault_secret.postgres_password.versionless_id
+    identity            = azurerm_user_assigned_identity.container_app.id
+  }
+
+(...)
+}
+\end{lstlisting}
+
+Todos los recursos forman parte de un único \textit{resource group}.
+En la \autoref{fig:azure-resources} se muestra una captura del portal de Azure donde se listan los 13 recursos
+necesarios para el funcionamiento de la solución en la nube, pertenecientes al \textit{resource group}
+\texttt{email2trip-demo-rg}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.00\textwidth]{images/azure-resources}
+    \figcaption{Lista de recursos del \textit{resource group} \texttt{email2trip-demo-rg}}%
+    \label{fig:azure-resources}
+\end{figure}
+
+\FloatBarrier
+
+Se define una \textit{virtual network} con dos \textit{subnets} dedicadas: una para el entorno de Azure
+Container Apps y otra para Azure Database for PostgreSQL Flexible Server.
+La separación en dos subredes corresponde a que cada servicio requiere una delegación distinta logrando
+aislamiento entre la capa de aplicación y la capa de datos.
+
+Se cuenta con un \textit{Container Apps Environment} integrado a la red virtual y, dentro de él, una
+\textit{Container App} pública para servir la aplicación web Spring Boot.
+La imagen del contenedor se descarga desde un repositorio privado de Docker Hub creado para tal fin.
+En el \autoref{lst:docker-buildx} se lista el comando necesario para crear una imagen de Docker con todo el código
+fuente del módulo \texttt{server} de extractor y cargarla en el repositorio privado de Docker Hub.
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Comando para crear y publicar la imagen de Docker del \texttt{server} en un repositorio privado.},
+    label={lst:docker-buildx}
+]
+docker buildx build \
+  --platform linux/amd64 \
+  -t "docker.io/${DOCKERHUB_USERNAME}/extractor-webapp:latest" \
+  . \
+  --push
+\end{lstlisting}
+
+En cuanto a la DB se utilizó Azure Database for PostgreSQL Flexible Server.
+Se despliega la DB dentro de una \textit{subnet} delegada, deshabilitando así el acceso público y definiendo una
+\textit{Private DNS Zone} para que la aplicación web resuelva el nombre del servidor dentro de la red virtual.
+
+También se utiliza Azure Key Vault para el almacenamiento de secretos de ejecución.
+Allí se almacena la contraseña aleatoria autogenerada para PostgreSQL, el token de acceso a la imagen de
+Docker Hub y la API key de Ollama Cloud.
+Para acceder a esos secretos se define una \textit{User Assigned Managed Identity} asociada a la Container App.
+
+Para el sistema de recomendaciones cabe mencionar que a diferencia del despliegue local con Docker se utiliza
+directamente el servicio \textit{cloud} de Ollama.
+Ollama ofrece \texttt{gemma4:31b-cloud} el cual es un modelo con más parámetros que el utilizado de forma local y
+permite un uso gratuito a través de la API de Ollama Cloud con topes que exceden el uso esperado para una demostración
+del proyecto.
+
+El resto de los recursos corresponden a componentes de monitoreo y control de costos.
+Se crea un \textit{Log Analytics Workspace} para centralizar logs y métricas del entorno.
+En la \autoref{fig:azure-log} se puede apreciar la salida de la terminal de la aplicación de Spring Boot en
+funcionamiento, tal como si se estuviera ejecutando localmente.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.00\textwidth]{images/azure-log}
+    \figcaption{\textit{Log stream} de la aplicación Spring Boot desplegada en \textit{Azure Container Apps}}%
+    \label{fig:azure-log}
+\end{figure}
+
+\FloatBarrier
+
+Para el seguimiento presupuestario se define un \textit{budget} mensual sobre el \textit{resource group}, con
+notificaciones al sobrepasar umbrales de gasto real o proyectado.
+También se define un \textit{Action Group} de Azure Monitor y alertas de uso de CPU y memoria tanto para la Container
+App y CPU y disco para la DB\@.
+Estas alertas permiten detectar tempranamente si la aplicación queda subdimensionada o si la base de datos presenta
+saturación durante la prueba.
+
+Además del código fuente de la infraestructura propiamente dicho, se define un \textit{backend} remoto de Terraform
+utilizando Azure Blob Storage.
+Para ello se crea un \textit{resource group} específico para el estado, un \textit{storage account} y un
+\textit{container} donde se almacena el archivo \texttt{tfstate}.
+Esto permite persistir el estado fuera de la máquina local, facilitando la continuidad del trabajo entre
+sesiones y reduciendo el riesgo de inconsistencias entre el estado real de Azure y el estado manejado por Terraform.
+
+Respecto al manejo de secretos, se evitó contar con credenciales sensibles escritas en archivos de Terraform.
+En su lugar se utilizó 1Password CLI (\texttt{op}) como herramienta de obtención de secretos en ejecución.
+En una bóveda llamada \texttt{email2trip} se almacenan el nombre de usuario y el \textit{personal access token} de
+Docker Hub y la API key de Ollama Cloud.
+Antes de ejecutar los comandos necesarios de Terraform, estos valores se exportan a variables de entorno del tipo
+\texttt{TF\_VAR\_*} (Ver \autoref{lst:op-tf}) de forma que Terraform los consuma sin necesidad de persistirlos en el
+código del proyecto.
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Comandos para exportar a variables de entorno los secretos almacenados en 1Password.},
+    label={lst:op-tf}
+]
+export TF_VAR_registry_password="$(op read 'op://email2trip/dockerhub/pat')"
+export TF_VAR_container_image="docker.io/${DOCKERHUB_USERNAME}/extractor-webapp:latest"
+export TF_VAR_ollama_cloud_api_key="$(op read 'op://email2trip/ollama-cloud/api_key')"
+\end{lstlisting}
+
+Finalmente, las instrucciones para realizar un \textit{deploy} desde cero se encuentran en un archivo \texttt{README}.
+De esta forma el despliegue queda automatizado y reproducible.
+
+En la \autoref{fig:azure-diagram} se detalla el diagrama de arquitectura correspondiente.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.00\textwidth]{images/azure-diagram}
+    \figcaption{Diagrama de Arquitectura}%
+    \label{fig:azure-diagram}
+\end{figure}
+
+\FloatBarrier
+
+\subsubsection{Dominio \texttt{email2trip.xyz}}
 
 \begin{pendiente}
 \end{pendiente}

@@ -6,32 +6,30 @@
 
 Para estructurar las fases de desarrollo del proyecto y la gestión de los objetivos específicos se aplicó una
 combinación de \textit{Scrum} con \textit{Crisp-DM}.
-Se detallan a continuación ambas metodologías, junto con las técnicas y herramientas utilizadas:
+Se detallan a continuación ambas metodologías, junto con las técnicas y herramientas utilizadas.
 
 \textit{Scrum} es un marco de trabajo que posibilita un proceso ágil y liviano para administrar y controlar el
 desarrollo de \textit{software}.
 Es iterativo e incremental y cada iteración o \textit{sprint} concluye con una pieza de \textit{software} ejecutable que
 incorpora nueva funcionalidad.
 
-Se deben aplicar ciertas modificaciones, ya que el equipo de trabajo se conformó por un único integrante (también
-conocido como \textit{Single Scrum}), destacando que el autor del proyecto combinó los roles de Desarrollador,
-\textit{Product Owner} y \textit{Scrum Master}.
+En este caso, se debió aplicar ciertas modificaciones, ya que el equipo de trabajo estaba conformado por un único
+integrante (también conocido como \textit{Single Scrum}), destacando que el autor del proyecto combinó los roles de
+Desarrollador, \textit{Product Owner} y \textit{Scrum Master}.
 
-En principio se planean seis \textit{sprints} con una duración de dos semanas cada una, de forma que la totalidad del
+En principio se planearon seis \textit{sprints} con una duración de dos semanas cada una, de forma que la totalidad del
 proyecto contempla una duración aproximada de tres meses.
 Una vez definidas las historias de usuario se procedió a dividirlas en tareas más pequeñas que terminaron
 formando parte del \textit{backlog} del proyecto.
-
 Al finalizar cada \textit{sprint} se compartió el avance hasta el momento con la tutora del proyecto para obtener
 la retroalimentación correspondiente.
-
 Si bien su aplicación abarca la totalidad de las tareas del proyecto, se destaca para las tareas del
 desarrollo de \textit{software} que fueron necesarias en este proyecto como la implementación del \textit{endpoint} que,
 a partir del contenido de un correo electrónico, extraiga la información relevante y también la implementación de una
 interfaz web simple que muestre el itinerario agregado de un usuario.
 
-\textit{Crisp-DM} es una metodología para el desarrollo de proyectos de \textit{data mining} (DM) independiente de las
-herramientas de \textit{software}.
+Por su parte, \textit{Crisp-DM} es una metodología para el desarrollo de proyectos de \textit{data mining} (DM)
+independiente de las herramientas de \textit{software}.
 Esta metodología estructura el trabajo en seis fases: Comprensión del negocio, Análisis de los datos, Preparación de los
 Datos, Modelado, Evaluación y Despliegue.
 Su aplicación permitió en este proyecto guiar la creación de modelos de clasificación de los correos
@@ -42,7 +40,7 @@ electrónicos, la implementación de técnicas de extracción de información y 
 \subsection{Técnicas y Herramientas}%
 \label{subsec:tools}
 
-\begin{corregir}
+\begin{revisado}
 
 En cuanto a las técnicas, en primer lugar se utilizaron tokenización y normalización, provenientes del área del
 procesamiento de lenguaje natural (NLP). Para la clasificación de los correos electrónicos según el tipo de reserva que
@@ -63,7 +61,7 @@ Por otro lado, para la organización del proyecto en general se utilizaron varia
 destacando el versionado del código fuente con \textit{Git} y el manejo del \textit{backlog} con GitHub Projects.
 Se detallan a continuación ambas herramientas:
 
-\end{corregir}
+\end{revisado}
 
 \subsubsection{Git}
 
@@ -72,17 +70,17 @@ Se detallan a continuación ambas herramientas:
 Git es una herramienta de control de versión ampliamente utilizada en la industria del \textit{software} que permite
 llevar un registro de todos los cambios realizados en el tiempo.
 
-Se creó una organización en~\cite{github} denominada \texttt{email2trip} que contiene todos los repositorios necesarios
-para el proyecto.
+Para este trabajo, se creó una organización en~\cite{github} denominada \texttt{email2trip} que contiene todos los
+repositorios necesarios para el proyecto.
 En la \autoref{fig:extractor-git-remote} se puede ver el repositorio privado (\texttt{extractor}) que forma parte de
-la organización y actuó como servidor remoto del repositorio Git local.
+la organización y que actuó como servidor remoto del repositorio Git local.
 
 En este proyecto su aplicación permitió revertir cambios cuando fue necesario, trabajar en distintas funcionalidades de
 manera paralela mediante el uso de ramas o \textit{branches} y organizar la creación de los entregables de cada
 \textit{sprint} mediante la funcionalidad de \textit{releases} y \textit{tags}.
 
-En la organización se crearon también un repositorio para el dataset (\texttt{dataset}) y uno para la redacción de este
-mismo reporte (\texttt{report}).
+También un repositorio para el dataset (\texttt{dataset}) y uno para la redacción de este mismo reporte
+(\texttt{report}).
 
 \end{corregir}
 
@@ -95,41 +93,36 @@ mismo reporte (\texttt{report}).
 
 \FloatBarrier
 
-\subsubsection{GitHub Projects}
+%Las incidencias o \textit{issues} fueron la herramienta para crear cada una de las tareas que formaron parte del
+%\textit{backlog}.
+%Como puede apreciarse en la \autoref{fig:github-issues} cada \textit{issue} cuenta con una descripción y referencias a
+%los cambios realizados en el código fuente para resolver esa tarea, además de poder categorizarlas con etiquetas o
+%\textit{labels}.
 
-\begin{corregir}
-
-Las incidencias o \textit{issues} fueron la herramienta para crear cada una de las tareas que formaron parte del
-\textit{backlog}.
-Como puede apreciarse en la \autoref{fig:github-issues} cada \textit{issue} cuenta con una descripción y referencias a
-los cambios realizados en el código fuente para resolver esa tarea, además de poder categorizarlas con etiquetas o
-\textit{labels}.
-
-\end{corregir}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=1.00\textwidth]{images/github-issues}
-    \figcaption{Captura de ejemplo de una \textit{issue} del proyecto}{\sourcelink{GitHub Docs}{https://docs.github.com/es/issues/tracking-your-work-with-issues/learning-about-issues/planning-and-tracking-work-for-your-team-or-project}}%
-    \label{fig:github-issues}
-\end{figure}
+%\begin{figure}[htbp]
+%    \centering
+%    \includegraphics[width=1.00\textwidth]{images/github-issues}
+%    \figcaption{Captura de ejemplo de una \textit{issue} del proyecto}{\sourcelink{GitHub Docs}{https://docs.github.com/es/issues/tracking-your-work-with-issues/learning-about-issues/planning-and-tracking-work-for-your-team-or-project}}%
+%    \label{fig:github-issues}
+%\end{figure}
 
 \begin{corregir}
 
 GitHub Projects permite organizar el desarrollo mediante tableros Kanban que están poblados por cada una de las
-\textit{issues} del proyecto, como se muestra en la \autoref{fig:github-projects-board}.
-En una vista general del tablero o \textit{board layout} se pueden distinguir
-las \textit{issues} por estado: si están todavía pendientes de análisis, en desarrollo, en etapa de pruebas o ya
-finalizada, dado que ya fueron integradas a la implementación final.
+\textit{issues} del proyecto.
+%como se muestra en la \autoref{fig:github-projects-board}.
+Así, en una vista general del tablero o \textit{board layout} se pueden distinguir las \textit{issues} por estado: si
+están todavía pendientes de análisis, en desarrollo, en etapa de pruebas o ya finalizada, dado que ya fueron integradas
+a la implementación final.
 
 \end{corregir}
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=1.00\textwidth]{images/github-projects-board}
-    \figcaption{Captura de ejemplo de una vista \textit{board} del proyecto}{\sourcelink{GitHub Docs}{https://docs.github.com/es/issues/planning-and-tracking-with-projects/learning-about-projects/best-practices-for-projects}}%
-    \label{fig:github-projects-board}
-\end{figure}
+%\begin{figure}[htbp]
+%    \centering
+%    \includegraphics[width=1.00\textwidth]{images/github-projects-board}
+%    \figcaption{Captura de ejemplo de una vista \textit{board} del proyecto}{\sourcelink{GitHub Docs}{https://docs.github.com/es/issues/planning-and-tracking-with-projects/learning-about-projects/best-practices-for-projects}}%
+%    \label{fig:github-projects-board}
+%\end{figure}
 
 \begin{revisado}
 
@@ -150,18 +143,16 @@ momento.
 \label{subsec:data-source}
 
 El \textit{dataset} cuenta con 31 mails distintos de aerolíneas que totalizan 41 tramos aéreos.
-En esta sección se mencionan los tipos distintos de mails que existen, el proceso de anonimización realizado para
-que en el \textit{dataset} no aparezcan datos sensibles de los pasajeros que voluntariamente se prestaron a compartir
-sus correos electrónicos, la traducción al idioma inglés de correos que originalmente estaban en español y el uso de
-una herramienta para llevar un control de versiones del \textit{dataset}.
+
+\begin{pendiente}
+Aquí habrá que agregar los otros tipos que se incorporen
+al dataset (hoteles, trenes, excursiones, etc.).
+\end{pendiente}
 
 \subsubsection{Correos de aerolíneas}
 
 Los correos electrónicos de aerolíneas pueden ser agrupados en tres tipos: confirmación de reserva, recordatorio de
 \textit{check-in} y ticket de embarque o \textit{boarding pass}.
-A continuación se detallan las particularidades de los tres y los campos relevantes que se esperan extraer.
-
-\paragraph{Confirmación de Reserva}
 
 Una confirmación de reserva es aquella que se obtiene luego de haber realizado la compra del pasaje aéreo.
 De estos correos se espera extraer el código de la reserva, el nombre del pasajero y todo lo relevante para el tramo
@@ -169,7 +160,7 @@ o los tramos que la reserva implique.
 Para cada tramo se espera extraer el código de aeropuerto de origen y destino, la fecha y hora de origen del tramo, el
 código del vuelo y la aerolínea.
 
-En la \autoref{fig:eml-yqb-ord-part-a} y \autoref{fig:eml-yqb-ord-part-b} se presenta un \texttt{.eml} de ejemplo que
+En la \autoref{fig:eml-yqb-ord-part-a} y \autoref{fig:eml-yqb-ord-part-b} se presenta un ejemplo que
 corresponde a una reserva de la aerolínea Air Canada que incluye dos segmentos, uno desde Quebec City con destino a
 Toronto y otro desde Toronto hacia la ciudad de Chicago, Estados Unidos.
 
@@ -203,20 +194,15 @@ Toronto y otro desde Toronto hacia la ciudad de Chicago, Estados Unidos.
     \label{fig:eml-yqb-ord-part-b}
 \end{figure}
 
-En el \textit{dataset} se incluyen correos electrónicos de reservas de las aerolíneas Air Canada (en dos versiones
-distintas) y Delta.
-
 \FloatBarrier
-
-\paragraph{Recordatorio de \textit{check-in}}
 
 Los recordatorios de \textit{check-in} son aquellos correos electrónicos que el pasajero recibe cuando ya puede realizar
 el \textit{check-in} para el primer tramo del vuelo reservado.
 Los campos a extraer son los mismos que con el tipo anterior.
 
-En la  \autoref{fig:eml-reminder-yqb-ord} se presenta un \texttt{.eml} de ejemplo que corresponde a un recordatorio de
+En la  \autoref{fig:eml-reminder-yqb-ord} se presenta un ejemplo que corresponde a un recordatorio de
 la aerolínea American Airlines que incluye un segmento desde Quebec City con destino a la ciudad de Chicago,
-Estados Unidos:
+Estados Unidos.
 
 \begin{figure}[H]
     \centering
@@ -234,21 +220,16 @@ Estados Unidos:
     \label{fig:eml-reminder-yqb-ord}
 \end{figure}
 
-En el \textit{dataset} se incluyen correos electrónicos de recordatorios de \textit{check-in} de las aerolíneas Air
-Canada (en dos versiones distintas) y American Airlines.
-
 \FloatBarrier
 
-\paragraph{Ticket de Embarque (\textit{boarding pass})}
-
-Los \textit{boarding pass} corresponden a los correos electrónicos que el pasajero recibe una vez realizado el
-\textit{check-in}.
+Los \textit{boarding pass} (ticket de embarque) corresponden a los correos electrónicos que el pasajero recibe una vez
+realizado el \textit{check-in}.
 Los campos a extraer también coinciden con los dos tipos anteriores, con la particularidad de que aquí siempre se
-estará mencionando a un único tramo.
+estará mencionando un único tramo.
 
-En la \autoref{fig:eml-boardingpass-fra-vie} se presenta un \texttt{.eml} de ejemplo que corresponde a un
-\textit{boarding pass} de la aerolínea Austrian del grupo Lufthansa () que incluye un segmento desde Fráncfort
-(Alemania) con destino a la ciudad de Viena (Austria):
+En la \autoref{fig:eml-boardingpass-fra-vie} se presenta un ejemplo que corresponde a un\textit{boarding pass} de la
+aerolínea Austrian del grupo Lufthansa que incluye un segmento desde Fráncfort (Alemania) con destino a la ciudad de
+Viena (Austria).
 
 \begin{figure}[H]
     \centering
@@ -275,31 +256,33 @@ En la \autoref{fig:eml-boardingpass-fra-vie} se presenta un \texttt{.eml} de eje
     \label{fig:eml-boardingpass-fra-vie}
 \end{figure}
 
-En el \textit{dataset} se incluyen correos electrónicos de ticket de embarque (\textit{boarding pass}) de las aerolíneas
-del grupo Lufthansa: Austrian y Lufthansa (donde ambas reutilizan la misma estructura).
-
 \FloatBarrier
 
 \subsection{Preparación de los Datos}%
 \label{subsec:data-preparation}
 
+En esta sección se mencionan los tipos distintos de mails que existen, el proceso de anonimización realizado para
+que en el \textit{dataset} no aparezcan datos sensibles de los pasajeros que voluntariamente se prestaron a compartir
+sus correos electrónicos y el uso de una herramienta para llevar un control de versiones del \textit{dataset}.
+
 \subsubsection{Anonimización}
 
-Durante la implementación se cuenta con un directorio local \texttt{private\_inbox/} que se ignora en Git y DVC donde
-se encuentran los mails originales que contienen datos sensibles de los pasajeros como su nombre y apellido, el número
-de ticket del vuelo, el número de afiliado a un programa de millas, los últimos dígitos de la tarjeta de crédito con la
-que se realizó la compra, entre otros.
+Los mails originales, con los cuales se conforma el dataset, contienen datos sensibles de los pasajeros como su nombre y
+apellido, el número de ticket del vuelo, el número de afiliado a un programa de millas, los últimos dígitos de la
+tarjeta de crédito con la que se realizó la compra, entre otros.
 
 El primer paso en la anonimización consiste en eliminar todos los archivos adjuntos que contenga el correo electrónico.
 Es común que las aerolíneas incluyan un PDF con un resumen de todos los datos de la reserva del vuelo y otro PDF con los
 detalles de facturación correspondientes.
-Se implementó un script de Python \texttt{remove\_sensitive.py} que se encarga de eliminar todos los adjuntos de un \texttt{.eml}
-y crear así otro \texttt{.eml} en un directorio distinto sin esos adjuntos.
-El script se encarga de analizar todos los \texttt{.eml} presentes en \texttt{private\_inbox/} y dejar los \texttt{.eml} sin los adjuntos
-en el directorio \texttt{raw/}.
 
-Luego se hace una búsqueda y reemplazo manual de todos los datos sensibles que aparecen en el contenido del \texttt{.eml} y estos
-datos se reemplazan por valores ficticios predefinidos:
+Para ello, se implementó un \textit{script} de Python (\texttt{remove\_sensitive.py}) que se encarga de analizar todos
+los \texttt{.eml}\footnote{Un archivo \texttt{.eml} es un formato estándar de correo electrónico que almacena el mensaje
+completo, incluyendo encabezados, cuerpo y archivos adjuntos, en un único archivo.} presentes en el directorio
+\texttt{private\_inbox/} y dejar los nuevos \texttt{.eml} sin los adjuntos en el directorio \texttt{raw/}.
+
+Luego de aplicar este \textit{script}, se realiza una búsqueda y reemplazo manual de todos los datos sensibles que
+aparecen en el contenido del nuevo \texttt{.eml}.
+Los datos se reemplazan por valores ficticios predefinidos:
 
 \begin{itemize}
     \item Nombre: Martin Miles Young
@@ -307,11 +290,6 @@ datos se reemplazan por valores ficticios predefinidos:
     \item Código de Reserva (PNR): Cualquier alfanumérico (por ejemplo ABC1DE)
     \item Ticket Number: 1234567890123
 \end{itemize}
-
-\subsubsection{Traducción al idioma inglés}
-
-\begin{pendiente}
-\end{pendiente}
 
 \subsubsection{DVC}
 
@@ -324,8 +302,8 @@ Se puede acceder desde https://dagshub.com/email2trip/dataset/.
 Así para cada archivo de extensión \texttt{.eml} existe uno de extensión \texttt{.dvc}.
 Este repositorio DVC está sincronizado con el repositorio Git \texttt{dataset} de GitHub, donde ambos se pueden apreciar
 en la \autoref{fig:dataset-dvc-git-remote}, de forma que cada vez que se desee agregar un nuevo correo electrónico se
-debe cargar en el repositorio Git el archivo de extensión \texttt{.dvc} y el archivo del correo electrónico \texttt{.eml} debe cargarse
-únicamente en el repositorio DVC\@.
+debe cargar en el repositorio Git el archivo de extensión \texttt{.dvc} y el archivo del correo electrónico
+\texttt{.eml} debe cargarse únicamente en el repositorio DVC\@.
 
 \begin{figure}[H]
     \centering
@@ -362,8 +340,8 @@ dvc push
 
 \subsubsection{Creación del \textit{dataset} estructurado}
 
-Por último es necesario crear un archivo donde se relacione cada archivo \texttt{.eml} con los datos reales que se esperan
-extraer del mismo.
+Por último es necesario crear un archivo donde se relacione cada archivo \texttt{.eml} con los datos reales que se
+esperan extraer del mismo.
 Para ello se creó en el directorio \texttt{structured/} un archivo CSV (Ver \autoref{lst:dataset-csv}) donde se indica
 el tipo de correo electrónico, todos los valores de los campos relevantes presentes en el correo, el nombre del archivo
 .eml y el idioma del mismo.
@@ -380,15 +358,15 @@ id,type,booking,origin_airport,destination_airport,date,passenger_name,flight_co
 4,flight_confirmation,AB123C,CDG,VIE,2026-01-22,Martin Miles Young,OS368,20:10,22:05,flight_003.eml,en
 \end{lstlisting}
 
-\subsubsection{Implementación del/los Modelo/s}%
-\label{subsubsec:model-implementation}
+\subsection{Implementación del Modelo}%
+\label{subsec:model-implementation}
 
 En esta sección se detalla el proceso de implementación de la solución completa, incluyendo desde la lógica de
 extracción de campos relevantes en un texto usando procesamiento de lenguaje natural (NLP) hasta el despliegue
-de la aplicación web en una nube pública para que un usuario pueda registrarse en la aplicación, reenviar sus
+de la aplicación web para que un usuario pueda registrarse, reenviar sus
 correos electrónicos y obtener un itinerario de viaje integral.
 
-\paragraph{\textit{Pipeline} de extracción (\texttt{extractor-core})}
+\subsubsection{\textit{Pipeline} de extracción (\texttt{extractor-core})}
 
 A continuación se detalla el \textit{pipeline} completo que inicia con un archivo de correo electrónico (de extensión
 \texttt{.eml}) y que finaliza con la extracción de los datos relevantes del mismo.
@@ -398,7 +376,7 @@ pasajero y el detalle de uno o más segmentos de vuelo.
 Cada segmento se compone de un código de vuelo, el aeropuerto de origen, el aeropuerto de destino y la fecha y hora de
 inicio de vuelo.
 
-\subparagraph{Archivo \texttt{.eml}, HTML y obtención de texto a simple vista}
+\paragraph{Archivo \texttt{.eml}, HTML y obtención de texto a simple vista}
 
 Retomando el ejemplo del correo electrónico de reserva (Ver \autoref{fig:eml-yqb-ord-part-a} y
 \autoref{fig:eml-yqb-ord-part-b}), el primer paso consiste en obtener el contenido del correo electrónico y quedarse con
@@ -454,7 +432,7 @@ confundir con el nombre del pasajero).
 Dado que está comprobado que no existe información útil para el usuario ubicada en esta sección, entonces es seguro
 eliminarla.
 
-\subsubparagraph{Preprocesamiento para códigos de vuelo}
+\subparagraph{Preprocesamiento para códigos de vuelo}
 
 Otro preprocesamiento adicional que se aplica es la búsqueda mediante expresiones regulares de cadenas que puedan
 corresponder con códigos de vuelo (Ver \autoref{lst:normalize-flight-numbers}).
@@ -477,7 +455,7 @@ private static String normalizeFlightNumbers(String text) {
     Pattern.compile("\\b([A-Z][A-Z0-9]|[0-9][A-Z]|[A-Z][0-9])\\s+(\\d{2,4})\\b");
 \end{lstlisting}
 
-\subparagraph{Stanford CoreNLP}
+\paragraph{Stanford CoreNLP}
 
 Una vez que se cuenta con una instancia de \textit{String} con únicamente el contenido a simple vista de un correo
 electrónico se envía este texto al \textit{pipeline} de~\cite{stanford-corenlp}.
@@ -497,7 +475,7 @@ continuación:
 
 \FloatBarrier
 
-\subsubparagraph{Tokenization}
+\subparagraph{Tokenization}
 
 La tokenización consiste en convertir texto en tokens.
 La forma más elemental consiste en dividir cada vez que aparece un espacio.
@@ -509,14 +487,14 @@ idioma inglés.
 Desde este momento la implementación estará limitada exclusivamente a correos electrónicos de reservas redactados en
 inglés.
 
-\subsubparagraph{Sentence Splitting}
+\subparagraph{Sentence Splitting}
 
 La separación en oraciones consiste en convertir un texto en oraciones.
 Por ejemplo ``Thanks for flying. Fly safe.''.% chktex 38
 será separado en las oraciones ``Thanks for flying.'' y ``Fly safe.''.% chktex 38
 Aquí también CoreNLP realiza la separación en oraciones usando una colección de reglas ya previstas.
 
-\subsubparagraph{Parts of Speech}
+\subparagraph{Parts of Speech}
 
 Partes del discurso asignan \textit{tags} o etiquetas a los \textit{tokens} para marcarlos según su categoría
 gramatical.
@@ -525,13 +503,13 @@ Por ejemplo para el texto ``Marie was born in Paris.'' se etiqueta a ``Marie'' c
 ``in'' como \texttt{IN} (preposición), ``París'' nuevamente como \texttt{NNP} y el punto final ``.'' como signo de% chktex 38
 puntuación.
 
-\subsubparagraph{Lemmatization}
+\subparagraph{Lemmatization}
 
 Aquí se asocia una palabra con su lema o forma de diccionario.
 Por ejemplo para la palabra ``was'' se mapea por la palabra ``be''.
 Este paso lleva todo el contenido a un solo tiempo verbal para simplificar la tarea de las próximas etapas.
 
-\subsubparagraph{Named Entity Recognition}
+\subparagraph{Named Entity Recognition}
 
 En esta etapa, la más compleja de todo el pipeline de NLP, se reconocen entidades en el texto como personas o nombres
 de empresas.
@@ -551,7 +529,7 @@ Para el idioma inglés la biblioteca reconoce por defecto 24 tipos distintos de 
 A simple vista se puede apreciar que no existe una entidad aeropuerto o aerolínea por lo que es necesario crear reglas
 adicionales para facilitar el reconocimiento de nuevos tipos de entidades.
 
-\subsubsubparagraph{Aeropuertos}
+\subsubparagraph{Aeropuertos}
 
 Un aeropuerto de pasajeros se identifica por un código de tres letras denominado~\cite{iata-airport-code}.
 A excepción de aeropuertos muy pequeños, cualquier aeropuerto cuenta con un identificador único de tres letras emitido
@@ -668,7 +646,7 @@ palabras comunes del idioma inglés y así excluirlas de cualquier identificaci�
 Las palabras definidas en la implementación son las siguientes: ``API'', ``GET'', ``GST'', ``HST'', ``MAX'', ``MAY'', y
 ``VOL''.
 
-\subsubsubparagraph{Códigos de Vuelos y Aerolíneas}
+\subsubparagraph{Códigos de Vuelos y Aerolíneas}
 
 Anteriormente se comentó el preprocesamiento que se realiza antes de iniciar el pipeline de CoreNLP y que involucra a
 los códigos de vuelo definidos por IATA\@.
@@ -720,7 +698,7 @@ Nuevamente, si bien no es necesario extraer el nombre de la aerolínea (ya que l
 es un identificador único), el hecho de anotar un nombre como nombre de aerolínea ayuda a que existan menos partes del
 contenido sin anotar y que podrían ser candidatas a identificaciones incorrectas.
 
-\subsubsubparagraph{Código de Reserva (PNR)}
+\subsubparagraph{Código de Reserva (PNR)}
 
 Otro campo relevante para la extracción es el código de reserva.
 Aquí también IATA define el \texttt{PNR} o~\cite{passenger-name-record} y consiste en 6
@@ -751,7 +729,7 @@ $SEPARATOR = "/[:-]/"
 
 Con estas reglas se define un nuevo tipo de entidad \texttt{PNR\_CODE} listo para su extracción.
 
-\subsubsubparagraph{SUTime: Fechas y horas}
+\subsubparagraph{SUTime: Fechas y horas}
 
 En un mismo mail de confirmación de reserva pueden aparecer múltiples fechas y horas correspondientes por ejemplo al
 despegue o aterrizaje de cualquiera de los tramos de la reserva.
@@ -784,7 +762,7 @@ ner = { type: "CLASS", value: "edu.stanford.nlp.ling.CoreAnnotations$NamedEntity
 para que en mails correspondientes a \textit{boarding passes}, una cadena como ``22SEP25'' sea interpretada como
 ``22/09/2025''.
 
-\subsubsubparagraph{Marcadores de tramos}
+\subsubparagraph{Marcadores de tramos}
 
 Por último se define un archivo \texttt{segment-context.rules} con las siguientes dos reglas
 (Ver \autoref{lst:segment-context-rules})
@@ -802,10 +780,12 @@ Si bien en la siguiente etapa se podría buscar la palabra exacta ``Departing'' 
 de tipo \texttt{FLIGHT\_SEGMENT\_MARKER} para buscar múltiples entidades de un tipo en particular y así identificar uno
 o más tramos de vuelos dentro de una misma reserva.
 
-\subsubparagraph{Resultado Final}
+\subparagraph{Resultado Final}
 
 Retomando el \autoref{lst:flight026-first-segment-txt} se muestran a continuación las entidades identificadas al final
 de esta etapa:
+
+\pagebreak
 
 \begin{tcolorbox}[
     colback=black!2,
@@ -839,7 +819,7 @@ En negro se identifican todas los tipos de entidades que vienen por defecto en C
 Allí también se aprecian etiquetados incorrectos como tratar a ``Quebec Toronto'' como una organización donde no sólo
 deberían ser dos entidades distintas sino que además ninguna de ellas es una organización.
 
-\subparagraph{Extracción de información}
+\paragraph{Extracción de información}
 
 La salida del \textit{pipeline} de CoreNLP implementado en \nolinkurl{xyz.email2trip.pipeline.FlightPipeline} consiste en
 una instancia de \nolinkurl{edu.stanford.nlp.pipeline.CoreDocument} que cuenta con un conjunto de entidades anotadas.
@@ -867,7 +847,7 @@ Contando la cantidad de palabras de una entidad se prioriza aquella que tenga al
 con el patrón de nombre y apellido.
 Así una cadena como ``Max'' no luce como un nombre y apellido pero ``Martin Miles Young'' sí.
 
-\subsubparagraph{Extracción de campos múltiples: Segmentos de vuelo}
+\subparagraph{Extracción de campos múltiples: Segmentos de vuelo}
 
 La extracción de los datos del vuelo requiere cierta lógica adicional dado que se espera extraer más de un campo del
 mismo tipo de entidad.
@@ -927,7 +907,7 @@ Una vez que se extrajeron los campos relevantes de una reserva se envía esa inf
 \textit{enrichment} para conseguir más información a partir de los identificadores únicos que resultan algunas de las
 entidades identificadas.
 
-\subsubparagraph{Resultado Final}
+\subparagraph{Resultado Final}
 
 Retomando el correo electrónico de ejemplo de dos segmentos, luego de la extracción se obtiene la siguiente salida en
 formato JSON (Ver \autoref{lst:output-extractor-core-json}):
@@ -959,7 +939,7 @@ formato JSON (Ver \autoref{lst:output-extractor-core-json}):
 }
 \end{lstlisting}
 
-\paragraph{Enriquecimiento de información \texttt{extractor-enricher}}
+\subsubsection{Enriquecimiento de información \texttt{extractor-enricher}}
 
 Con los mismos datasets de vuelos y aerolíneas utilizados para la creación de reglas de CoreNLP se puede enriquecer el
 JSON obtenido.
@@ -1048,7 +1028,7 @@ continuación (Ver \autoref{lst:output-extractor-enrich-json}, en la salida se o
 }
 \end{lstlisting}
 
-\paragraph{Recomendación de POIs \texttt{extractor-recommender}}
+\subsubsection{Recomendación de POIs \texttt{extractor-recommender}}
 
 Esta sección cubre la funcionalidad adicional de ofrecer recomendaciones de puntos de interés que el usuario podría
 visitar en cada una de las ciudades destino de la reserva (ciudades según los aeropuertos destino de cada segmento).
@@ -1057,7 +1037,7 @@ En lugar de utilizar una base de datos de POIs (\textit{points of interest}) se 
 \textit{Large Language Model} (LLM) de forma local al que se le solicitan recomendaciones de POIs para un destino y se
 exige que la respuesta del modelo sea estructurada en formato JSON\@.
 
-\subparagraph{Intereses del Usuario}
+\paragraph{Intereses del Usuario}
 
 Las recomendaciones sobre lugares a visitar dependen de las preferencias o intereses de cada persona.
 Algunas pueden preferir lugares más relacionados a la naturaleza mientras que a otros les interesen más las compras y
@@ -1077,8 +1057,8 @@ El usuario al momento de solicitar una recomendación puede elegir hasta dos de 
 El proceso de recomendación deberá priorizar los puntos de interés que se ajustan a los intereses del usuario, sin
 impedir que pudieran recomendarse también algunos puntos de interés más relacionados a intereses no seleccionados.
 
-\subparagraph{\textit{Stack} LLM: Gemma 4 + Ollama + Spring AI}% chktex 13
-\label{subpar:stack-llm}
+\paragraph{\textit{Stack} LLM: Gemma 4 + Ollama + Spring AI}% chktex 13
+\label{par:stack-llm}
 
 Para esta implementación se decidió utilizar Gemma 4 E4B como LLM\@.
 Es un modelo recientemente lanzado que pertenece a la familia de modelos abiertos desarrollados por Google DeepMind.
@@ -1104,7 +1084,7 @@ cambios en la implementación.
 El \textit{prompt} cuenta con tres secciones, el \textit{prompt} de sistema (\textit{system prompt}), el \textit{prompt}
 del usuario y el \textit{prompt} para que la respuesta tenga la estructura deseada.
 
-\subsubparagraph{\textit{system prompt}}
+\subparagraph{\textit{system prompt}}
 
 El \textit{prompt} de sistema es fijo para todas las recomendaciones de todos los usuarios.
 En la implementación se utilizó lo siguiente (Ver \autoref{lst:system-prompt-txt}):
@@ -1123,7 +1103,7 @@ Use canonical place names that can be geocoded later.
 Como se puede apreciar se establecen instrucciones generales para guiar al modelo en el estilo de respuesta, todavía
 sin mencionar la estructura.
 
-\subsubparagraph{\textit{user prompt}}
+\subparagraph{\textit{user prompt}}
 
 El \textit{prompt} del usuario contendrá la instrucción concreta y será parametrizado con los intereses del usuario,
 la ciudad deseada y la cantidad de días elegidos.
@@ -1182,7 +1162,7 @@ reforzar la instrucción y obtener el resultado esperado en el primer intento.
 Allí se puede ver la instrucción ``Favor places aligned with the user interests when possible.'' para que priorice los% chktex 38
 puntos de interés que el usuario espera.
 
-\subsubparagraph{prompt de Spring AI}
+\subparagraph{prompt de Spring AI}
 
 Por último, Spring AI completa el \textit{prompt} agregando una tercera sección luego del \textit{system prompt} y el
 \textit{user prompt}.
@@ -1255,7 +1235,7 @@ Se puede ver cómo se indican los tipos de datos esperados (por ejemplo que el d
 ser un \texttt{String}), se explicita que los campos son obligatorios y se mencionan los nombres que deben tener las
 propiedades del JSON\@.
 
-\subparagraph{Resultado Final}
+\paragraph{Resultado Final}
 
 Si por ejemplo se desea obtener recomendaciones de 3 días para la ciudad de Toronto priorizando los intereses
 \texttt{CULTURE\_HISTORIC} y \texttt{NATURE} se obtiene un JSON como el siguiente
@@ -1312,7 +1292,7 @@ Si por ejemplo se desea obtener recomendaciones de 3 días para la ciudad de Tor
 }
 \end{lstlisting}
 
-\paragraph{Geocodificación de los puntos de interés}
+\subsubsection{Geocodificación de los puntos de interés}
 
 Para poder mostrar las recomendaciones obtenidas en un mapa es necesario contar con las coordenadas geográficas
 (latitud y longitud) de cada punto de interés.
@@ -1362,7 +1342,7 @@ geocodificación espera, no se podrán conseguir las coordenadas geográficas.
 En la implementación se decidió utilizar las coordenadas del aeropuerto para marcar al menos la zona de la ciudad donde
 el punto de interés se encuentra.
 
-\paragraph{Resultado Final}
+\subsubsection{Resultado Final}
 
 Si se desea obtener recomendaciones de 3 días para la ciudad de Toronto priorizando los intereses
 \texttt{CULTURE\_HISTORIC} y \texttt{NATURE} se obtiene un JSON como el siguiente

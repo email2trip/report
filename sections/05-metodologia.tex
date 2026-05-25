@@ -143,7 +143,9 @@ momento.
 \label{subsec:data-source}
 
 El \textit{dataset} cuenta con 31 mails distintos de aerolíneas que totalizan 41 tramos aéreos.
-
+\begin{trenes}
+También existen 22 mails distintos de compañías de trenes que suman 25 tramos.
+\end{trenes}
 \begin{pendiente}
 Aquí habrá que agregar los otros tipos que se incorporen
 al dataset (hoteles, trenes, excursiones, etc.).
@@ -257,6 +259,76 @@ Viena (Austria).
 \end{figure}
 
 \FloatBarrier
+
+\begin{trenes}
+\subsubsection{Correos de trenes}
+
+Los correos de viajes en tren se agrupan también en tres tipos: confirmación de reserva, actualización de estado o
+\textit{status update} y ticket de embarque o \textit{boarding pass}.
+
+Se pueden apreciar en la \autoref{fig:train-booking} dos ejemplos de compañías distintas: la canadiense VIA Rail y
+Deutsche Bahn (DB) de Alemania.
+En la primera se puede apreciar un segmento que une las ciudades canadienses de Montreal y Ottawa.
+En cuanto a la reserva de DB existen dos segmentos, uno de ida y otro de vuelta.
+Ambos conectan la estación Wien Hauptbahnhof (Viena, Austria) con la estación München Hauptbahnhof (Múnich, Alemania).
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/train-eml-yul-yow}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/train-eml-vie-muc}
+    \end{minipage}
+    \figcaption{Ejemplo de correos electrónicos de reserva de tren de VIA Rail y Deutsche Bahn.}%
+    \label{fig:train-booking}
+\end{figure}
+
+Los \textit{status update} corresponden a correos donde se indica que algún dato de la reserva ya realizada cambió,
+por ejemplo si el tren se retrasó o si ya se le asignó una plataforma en la estación.
+Si bien en esta implementación no se apunta a reconocer estos eventos particulares de cancelaciones o retrasos, los
+mails siguen siendo útiles para la extracción, ya que en ellos se vuelve a indicar toda la información completa y
+actualizada del viaje en tren en cuestión.
+Continuando con la compañía DB se presenta a continuación un ejemplo de \textit{status update} en la
+\autoref{fig:train-status-update} donde el viaje entre Viena y Munich ha sufrido un retraso y llegará minutos
+más tarde de lo originalmente anunciado.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.00\textwidth]{images/train-eml-reminder-vie-muc}
+    \figcaption{Ejemplo de un correo electrónico de actualización de estado de un viaje en tren de Deutsche Bahn.}%
+    \label{fig:train-status-update}
+\end{figure}
+
+Por último se muestran dos ejemplos de \textit{boarding passes} en la \autoref{fig:train-boarding-pass}.
+El primero corresponde a la compañía VIA Rail y conecta la ciudad de Montreal con la estación de tren Québec Gare du
+Palais.
+Cabe mencionar que, a diferencia de los \textit{boarding passes} de los vuelos, aquí es común encontrar en un mismo
+correo los pases para dos o más tramos, por ejemplo, el de ida y el de vuelta.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/train-eml-boarding-pass-yul-yqb}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/train-eml-boarding-pass-vie-prg}
+    \end{minipage}
+    \figcaption{Ejemplo de \textit{boarding pass} de tren de VIA Rail y RegioJet.}%
+    \label{fig:train-boarding-pass}
+\end{figure}
+
+El segundo \textit{boarding pass} proviene de RegioJet, una empresa que conecta varios países europeos.
+Aquí se presenta un pase para viajar desde Wien Hbf hasta la estación Praha hlavní nádraží de República Checa (en el
+correo se usa la abreviatura en inglés MS que corresponde a \textit{Main Station} o estación principal).
+
+\end{trenes}
 
 \subsection{Preparación de los Datos}%
 \label{subsec:data-preparation}
@@ -375,6 +447,10 @@ Para el caso de correos electrónicos correspondientes a vuelos se busca obtener
 pasajero y el detalle de uno o más segmentos de vuelo.
 Cada segmento se compone de un código de vuelo, el aeropuerto de origen, el aeropuerto de destino y la fecha y hora de
 inicio de vuelo.
+\begin{trenes}
+En cuanto a los correos correspondientes a viajes en tren se espera extraer la misma información, donde cada segmento
+tendrá un número de tren, la estación de origen, la estación de destino y la fecha y hora de inicio del viaje.
+\end{trenes}
 
 \paragraph{Archivo \texttt{.eml}, HTML y obtención de texto a simple vista}
 
@@ -780,6 +856,100 @@ Si bien en la siguiente etapa se podría buscar la palabra exacta ``Departing'' 
 de tipo \texttt{FLIGHT\_SEGMENT\_MARKER} para buscar múltiples entidades de un tipo en particular y así identificar uno
 o más tramos de vuelos dentro de una misma reserva.
 
+\begin{trenes}
+\subsubparagraph{Extracción de información para trenes}
+
+El reconocimiento de información en el ambiente de trenes plantea ciertos desafíos cuando se lo compara con el de
+vuelos.
+El hecho de que no exista una organización como IATA que estandarice la información hace no sólo que existan diferencias
+respecto a los vuelos sino que plantea variantes entre redes de trenes distintas.
+
+Para esta implementación se contemplan dos redes de trenes: la canadiense y la europea.
+A simple vista ya existen diferencias de formato y longitud en los campos relevantes a extraer.
+
+Tal como se aprecia en la \autoref{fig:train-booking} el tren canadiense es el tren 33 (indicado como Train 33) mientras
+que en Europa, donde es habitual que varias compañías de trenes distintas operen sus servicios en una misma estación,
+el servicio de DB se identifica como RJX 260, acercándose al concepto de código de vuelo ya mencionado anteriormente.
+Se plantean entonces un conjunto de reglas para poder extraer el identificador de tren, contemplando que puede ser sólo
+un número, como así también una cadena alfanumérica que puede incluir un espacio.
+Al mismo tiempo se descarta la extracción de la empresa de tren operadora del viaje debido a las diferencias planteadas.
+
+Además del identificador del tren, otro campo que plantea matices dependiendo la empresa o la red de trenes es el código
+de reserva.
+En la misma figura se ve que para la empresa canadiense el código de reserva es un alfanumérico de seis caracteres
+(coincidente con el concepto de PNR establecido por la IATA) mientras que para el sistema europeo el concepto de un
+identificador de la reserva no es relevante y en el correo se indica un \textit{order number} que consiste en un número
+de doce cifras.
+Por lo tanto se plantean reglas para poder extraer ambos tipos de código de reserva.
+
+La detección de segmentos de tren sí plantea similitudes con la de vuelos ya que conceptualmente coinciden.
+En lugar de un aeropuerto de origen y destino se deben buscar las estaciones de tren de origen y destino.
+La fecha y hora de salida y el nombre del pasajero son campos que no agregaron diferencias a la lógica de extracción.
+Sí corresponde detenerse es en la identificación de estaciones de tren ya que se necesita recurrir a
+\textit{datasets} distintos.
+
+\subsubparagraph{Estaciones de Tren}
+\label{subsubpar:train-stations}
+
+Otro efecto de que no exista una organización que regule todos los viajes en tren del mundo hace que sea más difícil
+conseguir un \textit{dataset} que contenga, por ejemplo, todas las estaciones de tren del mundo.
+En busca de estandarizar la fuente de información, independientemente del país o sistema de trenes, se optó por el
+formato GTFS\footnote{\textit{General Transit Feed Specification}} que consiste en un formato de datos estandarizado
+para que los operadores de transporte puedan definir los detalles de sus servicios (estaciones, rutas, horarios, etc.).
+Además del GTFS estático existe un GTFS en tiempo real que ofrece, por ejemplo, la ubicación de los trenes en el mapa.
+
+Del portal MobilityDatabase~\cite{mobilitydatabase} se descargan los archivos GTFS del sistema
+canadiense, donde el único operador es VIA Rail y cuenta con 168 estaciones de tren de Canadá y Estados Unidos.
+
+Para el sistema europeo también se recurre al mismo portal para descargar los archivos GTFS de 14 operadores
+(entre ellos DB de Alemania, ÖBB de Austria y SBB de Suiza).
+El \textit{dataset} cubre 420 estaciones de tren de 17 países europeos.
+
+De los archivos obligatorios que el estándar GTFS requiere sólo se utiliza el archivo \texttt{stops.txt} donde cada
+registro corresponde a una estación.
+La información es limitada, ya que si bien se incluye el nombre de la estación y sus coordenadas, no se incluye la
+ciudad ni el país donde se ubica la estación.
+
+Un desafío que se circunscribe al sistema de trenes europeo es la detección del nombre de una estación de tren en
+distintos idiomas y con distintos sufijos.
+Si bien la implementación actual está limitada a correos electrónicos en inglés, las empresas de tren suelen incluir
+no solo el nombre original de la estación sino también una variante en inglés o en el idioma de la compañía de tren.
+
+Es por eso que es necesario recurrir a un \textit{dataset} adicional proveniente de la empresa
+\sourcelink{Trainline EU}{https://github.com/trainline-eu/stations} que provee mucha más información para cada estación
+de tren.
+En primer lugar indica el identificador que coincide con la especificación GTFS\@.
+Esto permite agregar información adicional directamente a cada estación del \textit{dataset} original.
+Los campos que se destacan son los de internacionalización, como las columnas \texttt{info:de}, \texttt{info:en} y
+\texttt{info:cs} donde para cada estación se indica el nombre en alemán, inglés y checo respectivamente.
+Por ejemplo para la estación austríaca Wien Hbf, en \texttt{info:en} se obtiene Vienna y en \texttt{info:cs} Vídeň.
+Para el caso de la estación Praha hl.n., en \texttt{info:de} se obtiene Prag y en \texttt{info:en} se obtiene Prague.
+
+Por último es necesario contemplar un tratamiento particular para los sufijos que existen en los nombres de las
+estaciones, donde aquí también varía según el idioma.
+En el idioma checo el sufijo de la estación principal es la abreviatura ``hl.n.''.
+Entonces para la estación ``Praha hl.n.'' es necesario reconocer también las cadenas ``Praha, hl.n.'', ``Prague'',
+``Prague Main Station'', ``Prague, MS'', ``Prague Central Station'', entre otras.
+
+A continuación se plantea en el \autoref{lst:train-rules-prg} parte del contenido del archivo de reglas para
+identificar a la estación principal de Praga:
+
+\begin{lstlisting}[
+    style=basecodestyle,
+    caption={Reglas de \texttt{eu-train-station.rules} para la estación principal de Praga.},
+    label={lst:train-rules-prg}
+]
+Prague, MS	TRAIN_STATION	O,PERSON,MISC,ORGANIZATION,LOCATION,CITY,STATE_OR_PROVINCE,COUNTRY	3.0
+Prague, hl\.n\.	TRAIN_STATION	O,PERSON,MISC,ORGANIZATION,LOCATION,CITY,STATE_OR_PROVINCE,COUNTRY	3.0
+Prague Main Station	TRAIN_STATION	O,PERSON,MISC,ORGANIZATION,LOCATION,CITY,STATE_OR_PROVINCE,COUNTRY	3.0
+Prague hl\.n\.	TRAIN_STATION	O,PERSON,MISC,ORGANIZATION,LOCATION,CITY,STATE_OR_PROVINCE,COUNTRY	3.0
+Prague Central Station	TRAIN_STATION	O,PERSON,MISC,ORGANIZATION,LOCATION,CITY,STATE_OR_PROVINCE,COUNTRY	3.0
+Praha hl.n.	TRAIN_STATION	O,PERSON,MISC,ORGANIZATION,LOCATION,CITY,STATE_OR_PROVINCE,COUNTRY	2.0
+Praha, hl\.n\.	TRAIN_STATION	O,PERSON,MISC,ORGANIZATION,LOCATION,CITY,STATE_OR_PROVINCE,COUNTRY	3.0
+\end{lstlisting}
+
+\end{trenes}
+
 \subparagraph{Resultado Final}
 
 Retomando el \autoref{lst:flight026-first-segment-txt} se muestran a continuación las entidades identificadas al final
@@ -818,6 +988,39 @@ siguiente etapa.
 En negro se identifican todas los tipos de entidades que vienen por defecto en CoreNLP\@.
 Allí también se aprecian etiquetados incorrectos como tratar a ``Quebec Toronto'' como una organización donde no sólo
 deberían ser dos entidades distintas sino que además ninguna de ellas es una organización.
+
+\begin{trenes}
+
+Respecto a las entidades reconocidas en un correo de trenes se retoma el ejemplo del \autoref{fig:train-booking} para la
+reserva con tramos entre Wien Hbf y München Hbf.
+Se indican a continuación las entidades reconocidas:
+
+\begin{tcolorbox}[
+    colback=black!2,
+    colframe=black!35,
+    title={Entidades reconocidas en un fragmento de texto de una reserva de tren},
+    breakable
+]
+
+    \medskip
+    \noindent
+
+    {\raggedright
+    Here is your booking confirmation.
+    Hello Mr \entityperson{Martin Young}, thank you for your booking with Deutsche Bahn.
+    The order with the order number \entitytrainticketcode{123456789012} was booked on \entitytime{13.12.2025 at 18:19}
+    as follows:
+    Sitzplatzreservierung, 2. \entityperson{Klasse}, \entitytrainnumber{RJX 260}
+    from \entitytrainstation{Wien Hbf}, \entitytime{21.12.2025 06:28}
+    to \entitytrainstation{München Hbf Gl.5-10}, \entitytime{21.12.2025 10:33}
+    }
+
+    \medskip
+    \noindent
+
+\end{tcolorbox}
+
+\end{trenes}
 
 \paragraph{Extracción de información}
 
@@ -939,6 +1142,38 @@ formato JSON (Ver \autoref{lst:output-extractor-core-json}):
 }
 \end{lstlisting}
 
+\begin{trenes}
+Respecto a los segmentos de tren y retomando el correo electrónico de dos segmentos, se muestra a continuación en el
+\autoref{lst:output-extractor-core-json-train} la salida correspondiente en formato JSON\@.
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Salida del \textit{pipeline} de extracción en formato JSON.},
+    label={lst:output-extractor-core-json-train}
+]
+{
+  "bookingCode": "123456789012",
+  "passenger": "Martin Young",
+  "segments": [
+    {
+      "trainNumber": "RJX 260",
+      "originStation": "Wien Hbf",
+      "destinationStation": "München Hbf Gl.5-10",
+      "departureDate": "2025-12-21",
+      "departureTime": "06:28"
+    },
+    {
+      "trainNumber": "IC 406",
+      "originStation": "München Hbf Gl.5-10",
+      "destinationStation": "Wien Hbf",
+      "departureDate": "2025-12-21",
+      "departureTime": "18:35"
+    }
+  ]
+}
+\end{lstlisting}
+\end{trenes}
+
 \subsubsection{Enriquecimiento de información \texttt{extractor-enricher}}
 
 Con los mismos datasets de vuelos y aerolíneas utilizados para la creación de reglas de CoreNLP se puede enriquecer el
@@ -1027,6 +1262,120 @@ continuación (Ver \autoref{lst:output-extractor-enrich-json}, en la salida se o
   }
 }
 \end{lstlisting}
+
+\begin{trenes}
+
+Respecto a los correos de trenes, además de cargar en memoria los archivos de GTFS ya mencionados se necesita una tarea
+de enriquecimiento adicional.
+Dado que sólo se cuenta con el nombre de la estación y sus coordenadas geográficas, se utiliza un servicio web externo
+para la geolocalización inversa.
+Este proceso consiste en invocar al servicio web con los valores de latitud y longitud y así obtener el nombre de la
+ciudad y el nombre del país correspondientes a esas coordenadas.
+
+La API de~\cite{nominatim-api-overview} ofrece un uso gratuito con
+la limitación de procesar hasta una coordenada por segundo.
+Para eliminar esta restricción se puede utilizar un proveedor pago o el despliegue de una instancia propia.
+
+Para cada geocodificación se realiza un \textit{request} HTTP a la API REST de Nominatim usando el path
+\texttt{/reverse} donde se utilizan los parámetros \textit{lat}, \textit{lon} entre otros.
+En el \textit{request} se indica además que el formato de respuesta debe ser \texttt{jsonv2} y que la cantidad de
+resultados es una.
+Así la respuesta consiste en un JSON con el nodo \texttt{address} que cuenta con tres campos relevantes: \texttt{city},
+\texttt{country} y \texttt{country\_code}.
+
+Un ejemplo de respuesta para la geocodificación de la coordenada ``(48.184923, 16.375865)'' es el
+siguiente (Ver \autoref{lst:api-nominatim-response-json-reverse}):
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Ejemplo de respuesta de la API de Nominatim.},
+    label={lst:api-nominatim-response-json-reverse}
+]
+{
+  "place_id": 186114760,
+  "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "relation",
+  "osm_id": 109166,
+  "lat": "48.2083537",
+  "lon": "16.3725042",
+  "category": "boundary",
+  "type": "administrative",
+  "place_rank": 7,
+  "importance": 0.8308606398092985,
+  "addresstype": "city",
+  "name": "Vienna",
+  "display_name": "Vienna, Austria",
+  "address": {
+    "city": "Vienna",
+    "ISO3166-2-lvl4": "AT-9",
+    "country": "Austria",
+    "country_code": "at"
+  },
+  "boundingbox": [
+    "48.1179069",
+    "48.3226679",
+    "16.1818310",
+    "16.5775132"
+  ]
+}
+\end{lstlisting}
+
+A continuación se muestra un ejemplo del resultado final de la etapa de enriquecimiento (Ver
+\autoref{lst:output-extractor-enrich-json-train}) retomando el ejemplo de trenes ya mencionado (en la salida se ocultan
+algunos campos):
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Salida del módulo de enriquecimiento en formato JSON.},
+    label={lst:output-extractor-enrich-json-train}
+]
+{
+  "extraction": {
+    "trainExtraction": { ...
+    },
+    "trainEnrichment": {
+      "segments": [
+        {
+          "trainNumber": "RJX 260",
+          "originStation": "Wien Hbf",
+          "originLatitude": 48.184923,
+          "originLongitude": 16.375865,
+          "originCity": "Vienna",
+          "originCountryCode": "AT",
+          "originCountryName": "Austria",
+          "destinationStation": "München Hbf Gl.5-10",
+          "destinationLatitude": 48.140094,
+          "destinationLongitude": 11.555373,
+          "destinationCity": "Munich",
+          "destinationCountryCode": "DE",
+          "destinationCountryName": "Germany",
+          "departureDate": "2025-12-21",
+          "departureTime": "06:28"
+        },
+        {
+          "trainNumber": "IC 406",
+          "originStation": "München Hbf Gl.5-10",
+          "originLatitude": 48.140094,
+          "originLongitude": 11.555373,
+          "originCity": "Munich",
+          "originCountryCode": "DE",
+          "originCountryName": "Germany",
+          "destinationStation": "Wien Hbf",
+          "destinationLatitude": 48.184923,
+          "destinationLongitude": 16.375865,
+          "destinationCity": "Vienna",
+          "destinationCountryCode": "AT",
+          "destinationCountryName": "Austria",
+          "departureDate": "2025-12-21",
+          "departureTime": "18:35"
+        }
+      ]
+    }
+  }
+}
+\end{lstlisting}
+
+\end{trenes}
 
 \subsubsection{Recomendación de POIs \texttt{extractor-recommender}}
 

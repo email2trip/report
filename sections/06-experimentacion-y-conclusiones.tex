@@ -23,8 +23,20 @@ Ambas pantallas se pueden ver en la \autoref{fig:web-register-login}.
     \label{fig:web-register-login}
 \end{figure}
 
+\begin{trenes}
+
 Luego al presionar ``New Trip'' podrá arrastrar al navegador un archivo \texttt{.eml} con el correo electrónico sobre el
-cual se desea hacer la extracción de información.
+cual se desea hacer la extracción de información (Ver \autoref{fig:web-upload}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.00\textwidth]{images/web-upload}
+    \figcaption{Página para arrastrar un archivo \texttt{.eml} de vuelos o trenes.}%
+    \label{fig:web-upload}
+\end{figure}
+
+\end{trenes}
+
 El usuario deberá exportar el correo en formato \texttt{.eml} usando la opción exportar de un cliente de escritorio de
 correo electrónico (como Microsoft Outlook, Mozilla Thunderbird o Apple Mail) o desde un webmail (como GMail u
 Outlook.com).
@@ -76,6 +88,24 @@ Al final se ofrece también el nombre del pasajero y el código de reserva.
     \figcaption{Detalles de los segmentos aéreos del viaje}%
     \label{fig:web-trip-flights}
 \end{figure}
+
+\begin{trenes}
+
+En caso de mostrar una reserva de trenes de la red canadiense se dibujan en el mapa las líneas correspondientes a las
+vías.
+Esto es posible dado que el archivo GTFS mencionado en \autoref{subsubpar:train-stations} incluye un archivo
+\texttt{shapes.txt} con las figuras geométricas necesarias para dibujarlas en el mapa.
+Parte del trazado de la red de trenes de la costa este de Canadá se puede ver en la \autoref{fig:web-trip-trains} donde
+se incluye un tramo que conecta la ciudad de Montreal con la capital del país (Ottawa).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.00\textwidth]{images/web-trip-trains}
+    \figcaption{Detalles de los segmentos de tren}%
+    \label{fig:web-trip-trains}
+\end{figure}
+
+\end{trenes}
 
 En la \autoref{fig:web-trip-activities} se puede apreciar la sección ``Activities'', que es la que dispara el sistema de
 recomendaciones de POIs usando un LLM\@.
@@ -151,7 +181,7 @@ usuario, se almacena la dirección de correo electrónico (que actúa al mismo t
 \textit{hash} de la contraseña del usuario.
 
 Cada usuario cuenta con uno o más viajes, modelados por la tabla \texttt{trip}.
-Esta tabla cuenta con el nombre del viaje, el nombre del pasajero, el código de reserva, las fechas de inicio y fin
+Esta tabla cuenta con el nombre y el tipo del viaje, el nombre del pasajero, el código de reserva, las fechas de inicio y fin
 del viaje y los nombres de la ciudad y país destino del viaje.
 
 Cabe mencionar que, para facilitar la implementación, existen campos en las tablas de la base que podrían ser obtenidos
@@ -160,12 +190,18 @@ Sin embargo se opta por la persistencia de esta información para reducir las in
 Además se facilita la implementación dado que la estructura de la tabla coincide con el archivo ``JSON'' que se obtiene
 a la salida del \textit{pipeline} de extracción.
 
-Cada viaje cuenta con uno o más segmentos de vuelo, modelados por la tabla \texttt{trip\_segment}.
-Cada segmento cuenta con el número de vuelo y toda la información relevante tanto para el origen como para el destino
-del segmento.
+\begin{trenes}
+Cada viaje cuenta con uno o más segmentos, modelados por la tabla \texttt{trip\_segment}.
+Para los vuelos, cada segmento cuenta con el número de vuelo y toda la información relevante tanto para el origen como
+para el destino.
+\end{trenes}
 Esto incluye fecha y hora, código y nombre del aeropuerto, ciudad y país del aeropuerto, latitud y longitud del
 aeropuerto y links útiles del aeropuerto (como el sitio web del mismo o el enlace a una entrada de Wikipedia sobre el
 aeropuerto).
+\begin{trenes}
+Para los trenes, la misma tabla almacena el número de tren y los datos de la estación de origen y destino: nombre,
+ciudad, país y coordenadas geográficas.
+\end{trenes}
 
 Por último es necesario almacenar las recomendaciones de POIs.
 Para cada recomendación se persiste una tupla en la tabla \texttt{trip\_saved\_recommendation} donde se indica la
@@ -178,12 +214,16 @@ intereses posibles ya mencionados) y las coordenadas geográficas (latitud y lon
 
 En la \autoref{fig:db-model-diagram} se detalla el modelo relacional correspondiente.
 
-\begin{figure}[htbp]
+\begin{trenes}
+
+\begin{figure}[H]
     \centering
     \resizebox{0.96\textwidth}{!}{\input{images/db-model-diagram.tikz}}
     \figcaption{Modelo relacional de la base de datos.}%
     \label{fig:db-model-diagram}
 \end{figure}
+
+\end{trenes}
 
 \FloatBarrier
 

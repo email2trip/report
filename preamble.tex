@@ -23,6 +23,7 @@
 \newtcolorbox{revisado}{revisionbox, colback=celeste!50}
 \newtcolorbox{corregir}{revisionbox, colback=yellow!50}
 \newtcolorbox{pendiente}{revisionbox, colback=red!50}
+\newtcolorbox{trenes}{revisionbox, colback=green!25}
 \newtcbox{\inlineentitybox}[1][]{%
     on line,
     boxrule=0.8pt,
@@ -39,8 +40,11 @@
     \textsuperscript{\textcolor{#1!75!black}{\textsf{#2}}}%
 }
 \newcommand{\entityairportcode}[1]{\entitytag{blue}{AIRPORT\_CODE}{#1}}
+\newcommand{\entitytrainstation}[1]{\entitytag{blue}{TRAIN\_STATION}{#1}}
 \newcommand{\entityflightnumber}[1]{\entitytag{cyan}{FLIGHT\_NUMBER}{#1}}
+\newcommand{\entitytrainnumber}[1]{\entitytag{cyan}{TRAIN\_NUMBER}{#1}}
 \newcommand{\entitypnrcode}[1]{\entitytag{violet}{PNR\_CODE}{#1}}
+\newcommand{\entitytrainticketcode}[1]{\entitytag{violet}{TRAIN\_TICKET\_CODE}{#1}}
 \newcommand{\entityperson}[1]{\entitytag{red}{PERSON}{#1}}
 \newcommand{\entitydate}[1]{\entitytag{orange}{DATE}{#1}}
 \newcommand{\entitytime}[1]{\entitytag{green}{TIME}{#1}}
@@ -177,6 +181,7 @@
         {ü}{{\"u}}1 {Ü}{{\"U}}1
         {ö}{{\"o}}1 {Ö}{{\"O}}1
         {–}{{--}}1
+        {©}{{\textcopyright}}1
         {“}{{``}}1 {”}{{''}}1 {’}{{'}}1
 }
 

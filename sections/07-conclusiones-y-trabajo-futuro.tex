@@ -1,5 +1,23 @@
 \section{Conclusiones y Trabajo a Futuro}%
 \label{sec:conclusions}
 
-\begin{pendiente}
-\end{pendiente}
+\begin{corregir}
+
+En cuanto al trabajo futuro, una primera mejora posible consiste en la implementación de un clasificador de correos
+electrónicos, similar a como se implementa un filtro de spam.
+El clasificador produciría un valor de confianza para decidir en tiempo real si el correo corresponde a una reserva
+de vuelos, de trenes o de otro tipo, y así optar por el \textit{pipeline} apropiado cuando el usuario realiza
+\textit{drag \& drop} de cualquier correo en una sola área.
+
+El siguiente paso puede ser la incorporación de otros \textit{pipelines} que cubran otros dominios no alcanzados por
+la implementación, como estadías en hoteles, alquileres de autos, atracciones y reservas en restaurantes.
+También se puede examinar la implementación de un \textit{pipeline} en español para los dominios de vuelos y trenes.
+Para cada uno de estos nuevos \textit{pipelines} se deben abordar una serie de desafíos propios de cada dominio
+concreto.
+
+Respecto a la usabilidad, una mejora técnica posible es sustituir la tarea de exportar un correo a \texttt{.eml} para
+que, en cambio, el usuario reenvíe los correos a una casilla como \texttt{trips@email2trip.xyz}, de forma que la
+aplicación analice los correos recibidos y los asigne según el remitente, que debe estar registrado en la aplicación con
+esa misma dirección de correo.
+
+\end{corregir}

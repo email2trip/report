@@ -3,6 +3,16 @@
 
 \begin{corregir}
 
+Como conclusión, la presente implementación permite validar que es posible extraer campos relevantes de correos de vuelos
+y trenes independientemente de la estructura HTML, es decir, solo analizando texto plano sin utilizar marcas
+estructurales que actúen como indicios (como atributos de nodos HTML, asunto del correo electrónico, etc.).
+
+Con el uso de CoreNLP se puede ver que el proceso de \textit{Named Entity Recognition} es solo el primer paso para una
+correcta identificación.
+En el caso de la identificación de segmentos de vuelos o trenes, es necesario ubicar en el texto a la entidad reconocida
+y, en función de la proximidad con otras entidades reconocidas, decidir con cierto nivel de confianza la información a
+extraer.
+
 En cuanto al trabajo futuro, una primera mejora posible consiste en la implementación de un clasificador de correos
 electrónicos, similar a como se implementa un filtro de spam.
 El clasificador produciría un valor de confianza para decidir en tiempo real si el correo corresponde a una reserva

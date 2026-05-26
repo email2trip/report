@@ -8,7 +8,7 @@ sub run_chktex_once {
     return 0 if $chktex_ran;
     $chktex_ran = 1;
 
-    my $cmd = q{sh -c 'if ! command -v chktex >/dev/null 2>&1; then exit 0; fi; find . -type f -name "*.tex" -print0 | xargs -0 chktex -q -I0 -n1 -n8 -n46'};
+    my $cmd = q{sh -c 'if ! command -v chktex >/dev/null 2>&1; then exit 0; fi; find . -type f -name "*.tex" -print0 | xargs -0 chktex -q -I0'};
     my $status = system($cmd);
 
     if ($status != 0) {

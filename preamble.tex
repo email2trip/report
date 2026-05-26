@@ -36,7 +36,7 @@
     #1
 }
 \newcommand{\entitytag}[3]{%
-    \inlineentitybox[colframe=#1!75!black,colback=#1!10]{\strut #3}%
+    \inlineentitybox[colframe=#1!75!black,colback=#1!10]{\strut{} #3}%
     \textsuperscript{\textcolor{#1!75!black}{\textsf{#2}}}%
 }
 \newcommand{\entityairportcode}[1]{\entitytag{blue}{AIRPORT\_CODE}{#1}}
@@ -93,13 +93,13 @@
 ]{biblatex}
 \DeclareLanguageMapping{spanish}{spanish-apa}
 \DefineBibliographyStrings{spanish}{
-    andothers = {et\addabbrvspace al},
+    andothers = {et\addabbrvspace{}al},
     urlseen = {Accedido}
 }
 % Para sitios web cargados como @misc, preferimos citar el título sin comillas.
 \DeclareFieldFormat[misc]{citetitle}{#1}
 \newcommand{\legacyurlmonthabbr}[1]{%
-    \ifcase#1\or Jan\or Feb\or Mar\or Apr\or May\or Jun\or Jul\or Aug\or Sep\or Oct\or Nov\or Dec\fi}
+    \ifcase#1\or{}Jan\or{}Feb\or{}Mar\or{}Apr\or{}May\or{}Jun\or{}Jul\or{}Aug\or{}Sep\or{}Oct\or{}Nov\or{}Dec\fi}
 \newcommand{\legacyurldate}{%
     \mkbibparens{Accedido:\space
     \iffieldundef{urlday}{}{\thefield{urlday}}%
@@ -117,6 +117,7 @@
 \DeclareDelimFormat[textcite]{nameyeardelim}{\addspace}
 \DeclareDelimFormat[cite]{nameyeardelim}{\addspace}
 \makeatletter
+\newcommand{\emptyciteprenote}{()}
 \DeclareCiteCommand{\cite}[\cbx@textcite@init\cbx@textcite]
 {\gdef\cbx@savedkeys{}%
 \citetrackerfalse%
@@ -124,7 +125,7 @@
 \DeferNextCitekeyHook%
 \usebibmacro{cite:init}}
 {\ifthenelse{\iffirstcitekey\AND\value{multicitetotal}>0}
-{\protected@xappto\cbx@savedcites{()(\thefield{multipostnote})}% chktex 36
+{\protected@xappto\cbx@savedcites{\emptyciteprenote(\thefield{multipostnote})}
 \global\clearfield{multipostnote}}
 {}%
 \xappto\cbx@savedkeys{\thefield{entrykey},}%
@@ -194,7 +195,6 @@
 }
 
 \lstdefinelanguage{jsonlike}{
-    morestring=[b]", % chktex 18
     alsoletter={\$},
     morekeywords={ner,type,value,ruleType,pattern,action,result,tokens,Annotate},
     sensitive=true
@@ -290,10 +290,12 @@
 \titleclass{\subsubparagraph}{straight}[\subparagraph]
 \newcounter{subsubparagraph}[subparagraph]
 \renewcommand{\thesubsubparagraph}{\thesubparagraph.\arabic{subsubparagraph}}
+\providecommand*{\subsubparagraphautorefname}{Subsubpárrafo}
 \makeatletter
 \providecommand*{\toclevel@subsubparagraph}{6}
 \providecommand*{\theHsubsubparagraph}{\thesubparagraph.\arabic{subsubparagraph}}
 \providecommand*{\l@subsubparagraph}[2]{}
+\expandafter\def\csname subsubparagraph*autorefname\endcsname{Subsubpárrafo}
 \makeatother
 \titleformat{\subsubparagraph}[block]
 {\normalfont\normalsize\bfseries}
@@ -317,7 +319,7 @@
 \titlespacing*{\subsubsubparagraph}{0pt}{\baselineskip}{0.25\baselineskip}
 
 \newcommand{\titulolargo}{Generación de itinerarios de viaje a partir del procesamiento de correos electrónicos de reservas}
-\newcommand{\titulocorto}{TFI - ECD 2024B - Ing. Franco Román Meola}
+\newcommand{\titulocorto}{TFI \textendash{} ECD 2024B \textendash{} Ing. Franco Román Meola}
 \newcommand{\autor}{Ing. Franco Román Meola (52163)}
 \newcommand{\tutor}{Dra. Leticia Irene Gómez}
 \newcommand{\pdfasunto}{Trabajo Final Integrador de la Especialización en Ciencia de Datos}

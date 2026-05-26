@@ -1,4 +1,4 @@
-\FloatBarrier
+\FloatBarrier{}
 \section{Metodología Aplicada}%
 \label{sec:methodology}
 
@@ -91,7 +91,7 @@ También un repositorio para el dataset (\texttt{dataset}) y uno para la redacci
     \label{fig:extractor-git-remote}
 \end{figure}
 
-\FloatBarrier
+\FloatBarrier{}
 
 %Las incidencias o \textit{issues} fueron la herramienta para crear cada una de las tareas que formaron parte del
 %\textit{backlog}.
@@ -196,7 +196,7 @@ Toronto y otro desde Toronto hacia la ciudad de Chicago, Estados Unidos.
     \label{fig:eml-yqb-ord-part-b}
 \end{figure}
 
-\FloatBarrier
+\FloatBarrier{}
 
 Los recordatorios de \textit{check-in} son aquellos correos electrónicos que el pasajero recibe cuando ya puede realizar
 el \textit{check-in} para el primer tramo del vuelo reservado.
@@ -222,7 +222,7 @@ Estados Unidos.
     \label{fig:eml-reminder-yqb-ord}
 \end{figure}
 
-\FloatBarrier
+\FloatBarrier{}
 
 Los \textit{boarding pass} (ticket de embarque) corresponden a los correos electrónicos que el pasajero recibe una vez
 realizado el \textit{check-in}.
@@ -258,7 +258,7 @@ Viena (Austria).
     \label{fig:eml-boardingpass-fra-vie}
 \end{figure}
 
-\FloatBarrier
+\FloatBarrier{}
 
 \begin{trenes}
 \subsubsection{Correos de trenes}
@@ -408,7 +408,7 @@ git push dagshub main
 dvc push
 \end{lstlisting}
 
-\FloatBarrier
+\FloatBarrier{}
 
 \subsubsection{Creación del \textit{dataset} estructurado}
 
@@ -549,14 +549,14 @@ otros.
 Como se puede apreciar en la \autoref{fig:corenlp-pipeline}, el mismo cuenta con múltiples etapas que detallamos a
 continuación:
 
-\FloatBarrier
+\FloatBarrier{}
 
 \subparagraph{Tokenization}
 
 La tokenización consiste en convertir texto en tokens.
 La forma más elemental consiste en dividir cada vez que aparece un espacio.
-Por ejemplo para el texto ``Thanks for flying.'' la tokenización genera cuatro tokens:% chktex 38
-``Thanks'', ``for'', ``flying'' y ``.''.% chktex 38
+Por ejemplo para el texto \enquote{Thanks for flying.} la tokenización genera cuatro tokens:
+\enquote{Thanks}, \enquote{for}, \enquote{flying} y \enquote{.}.
 CoreNLP realiza la separación del texto en \textit{tokens} usando una colección de reglas ya previstas.
 En el archivo de configuración se indica la propiedad \texttt{tokenize.language=en} para que utilice las reglas del
 idioma inglés.
@@ -566,18 +566,18 @@ inglés.
 \subparagraph{Sentence Splitting}
 
 La separación en oraciones consiste en convertir un texto en oraciones.
-Por ejemplo ``Thanks for flying. Fly safe.''.% chktex 38
-será separado en las oraciones ``Thanks for flying.'' y ``Fly safe.''.% chktex 38
+Por ejemplo \enquote{Thanks for flying. Fly safe.}
+será separado en las oraciones \enquote{Thanks for flying.} y \enquote{Fly safe.}
 Aquí también CoreNLP realiza la separación en oraciones usando una colección de reglas ya previstas.
 
 \subparagraph{Parts of Speech}
 
 Partes del discurso asignan \textit{tags} o etiquetas a los \textit{tokens} para marcarlos según su categoría
 gramatical.
-Por ejemplo para el texto ``Marie was born in Paris.'' se etiqueta a ``Marie'' como \texttt{NNP}% chktex 38
-(nombre propio singular), ``was'' como \texttt{VBD} (verbo pasado), ``born'' como \texttt{VBN} (verbo participio pasado),
-``in'' como \texttt{IN} (preposición), ``París'' nuevamente como \texttt{NNP} y el punto final ``.'' como signo de% chktex 38
-puntuación.
+Por ejemplo para el texto \enquote{Marie was born in Paris.} se etiqueta a \enquote{Marie} como \texttt{NNP}
+(nombre propio singular), \enquote{was} como \texttt{VBD} (verbo pasado), \enquote{born} como \texttt{VBN}
+(verbo participio pasado), \enquote{in} como \texttt{IN} (preposición), \enquote{París} nuevamente como \texttt{NNP} y
+el punto final \enquote{.} como signo de puntuación.
 
 \subparagraph{Lemmatization}
 
@@ -685,8 +685,8 @@ De todas formas la identificación es útil para que el nombre del aeropuerto no
 así se facilita la tarea de identificar el nombre del pasajero de la reserva.
 
 Por último se creó una regla de~\cite{stanford-tokensregex} donde se
-rescata al aeropuerto cuando el texto visible queda con un formato como ``EZE Buenos Aires Departing at'' o ``EZE Buenos
-Aires Arriving at:''. % chktex 38
+rescata al aeropuerto cuando el texto visible queda con un formato como \enquote{EZE Buenos Aires Departing at} o
+\enquote{EZE Buenos Aires Arriving at:}.
 Para ello, en el archivo \nolinkurl{contextual-airport.tokensregex.rules} se definió lo siguiente
 (Ver \autoref{lst:contextual-airport-tokensregex}):
 
@@ -708,7 +708,8 @@ Como se puede apreciar se define un patrón donde primero aparece el código IAT
 palabras y luego las palabras exactas ``Departing'' o ``Arriving''.
 Esta regla permite identificar al aeropuerto según el contexto en el que se ubica, pudiendo anotar únicamente el texto
 correspondiente al aeropuerto como \texttt{AIRPORT\_CODE} y descartando el resto (en la parte de \texttt{action} se
-indica \texttt{Annotate(\$2,\ldots)} para anotar el segundo grupo capturado, esto es, ``EZE Buenos Aires'').% chktex 36
+indica \texttt{Annotate\string(\$2,\ldots\string)} para anotar el segundo grupo capturado, esto es,
+\enquote{EZE Buenos Aires}).
 
 A pesar de contar con reglas para la totalidad de códigos de aeropuertos existentes esto trae aparejado el problema de
 los falsos positivos.
@@ -817,7 +818,8 @@ Solo así podremos asociar por ejemplo la fecha y hora de despegue al primer tra
 
 Las reglas por defecto fueron suficientes para la mayoría de los correos electrónicos, ya que CoreNLP provee la
 biblioteca~\cite{stanford-sutime} que permite reconocer por ejemplo fechas con
-múltiples formatos como ``31-12-2026'', ``31/12/2026'' o ``2026-31-12''.
+múltiples formatos como \texttt{31{-}12{-}2026}, \texttt{31/12/2026} o
+\texttt{2026{-}31{-}12}.
 
 Sólo fue necesaria una regla \texttt{TokensRegex} extra (Ver \autoref{lst:sutime-boarding-pass-rule}):
 
@@ -888,8 +890,7 @@ La fecha y hora de salida y el nombre del pasajero son campos que no agregaron d
 Sí corresponde detenerse es en la identificación de estaciones de tren ya que se necesita recurrir a
 \textit{datasets} distintos.
 
-\subsubparagraph{Estaciones de Tren}
-\label{subsubpar:train-stations}
+\subsubparagraph{Estaciones de Tren}\label{subsubpar:train-stations}
 
 Otro efecto de que no exista una organización que regule todos los viajes en tren del mundo hace que sea más difícil
 conseguir un \textit{dataset} que contenga, por ejemplo, todas las estaciones de tren del mundo.
@@ -927,9 +928,9 @@ Para el caso de la estación Praha hl.n., en \texttt{info:de} se obtiene Prag y 
 
 Por último es necesario contemplar un tratamiento particular para los sufijos que existen en los nombres de las
 estaciones, donde aquí también varía según el idioma.
-En el idioma checo el sufijo de la estación principal es la abreviatura ``hl.n.''.
-Entonces para la estación ``Praha hl.n.'' es necesario reconocer también las cadenas ``Praha, hl.n.'', ``Prague'',
-``Prague Main Station'', ``Prague, MS'', ``Prague Central Station'', entre otras.
+En el idioma checo el sufijo de la estación principal es la abreviatura \texttt{hl.n.}
+Entonces para la estación \texttt{Praha hl.n.} es necesario reconocer también las cadenas \texttt{Praha, hl.n.},
+\texttt{Prague}, \texttt{Prague Main Station}, \texttt{Prague, MS}, \texttt{Prague Central Station}, entre otras.
 
 A continuación se plantea en el \autoref{lst:train-rules-prg} parte del contenido del archivo de reglas para
 identificar a la estación principal de Praga:
@@ -967,12 +968,12 @@ de esta etapa:
     \medskip
     \noindent
 
-    {\raggedright
-    Depart \entitydate{Sun 24 Jul, 2022} Business Class - Flexible Reward \entitystateorprovince{Quebec} City
+    {\raggedright%
+    Depart \entitydate{Sun 24 Jul, 2022} Business Class {-} Flexible Reward \entitystateorprovince{Quebec} City
     \entityairportcode{YQB} \entitytime{10:50} \\
     \entityperson{Jean Lesage Int.} \entityorganization{Quebec Toronto} \entityairportcode{YYZ} \\
     \entitytime{12:25} Toronto-Pearson Int., Terminal \entitynumber{1} \entitypnrcode{AC1795}\\
-    \entityduration{1hr} \entitynumber{35m} Business (I) Operated by: \entityairlinename{AIR CANADA} ROUGE A319-100 | Wi-Fi\par
+    \entityduration{1hr} \entitynumber{35m} Business (I) Operated by: \entityairlinename{AIR CANADA} ROUGE A319{-}100 | Wi-Fi\par
     }
 
     \medskip
@@ -981,7 +982,7 @@ de esta etapa:
 \end{tcolorbox}
 
 En la salida se puede ver como sólo analizando una parte del correo electrónico se obtienen identificaciones incorrectas
-como es el caso de ``Jean Lesage Int.'' que es incorrectamente anotado como \texttt{PERSON}.% chktex 38
+como es el caso de \enquote{Jean Lesage Int.} que es incorrectamente anotado como \texttt{PERSON}.
 Al procesar el mail completo, donde efectivamente sí se encuentra el nombre del pasajero, este será priorizado en la
 siguiente etapa.
 
@@ -1005,14 +1006,14 @@ Se indican a continuación las entidades reconocidas:
     \medskip
     \noindent
 
-    {\raggedright
+    {\raggedright%
     Here is your booking confirmation.
     Hello Mr \entityperson{Martin Young}, thank you for your booking with Deutsche Bahn.
     The order with the order number \entitytrainticketcode{123456789012} was booked on \entitytime{13.12.2025 at 18:19}
     as follows:
-    Sitzplatzreservierung, 2. \entityperson{Klasse}, \entitytrainnumber{RJX 260}
+    Sitzplatzreservierung, 2.\ \entityperson{Klasse}, \entitytrainnumber{RJX 260}
     from \entitytrainstation{Wien Hbf}, \entitytime{21.12.2025 06:28}
-    to \entitytrainstation{München Hbf Gl.5-10}, \entitytime{21.12.2025 10:33}
+    to \entitytrainstation{München Hbf Gl.5{-}10}, \entitytime{21.12.2025 10:33}\par
     }
 
     \medskip
@@ -1406,8 +1407,7 @@ El usuario al momento de solicitar una recomendación puede elegir hasta dos de 
 El proceso de recomendación deberá priorizar los puntos de interés que se ajustan a los intereses del usuario, sin
 impedir que pudieran recomendarse también algunos puntos de interés más relacionados a intereses no seleccionados.
 
-\paragraph{\textit{Stack} LLM: Gemma 4 + Ollama + Spring AI}% chktex 13
-\label{par:stack-llm}
+\paragraph{\texorpdfstring{\textit{Stack} LLM\string: Gemma 4 + Ollama + Spring AI}{Stack LLM\string: Gemma 4 + Ollama + Spring AI}}\label{par:stack-llm}
 
 Para esta implementación se decidió utilizar Gemma 4 E4B como LLM\@.
 Es un modelo recientemente lanzado que pertenece a la familia de modelos abiertos desarrollados por Google DeepMind.
@@ -1508,7 +1508,7 @@ categorías establecidas.
 A continuación todas las demás oraciones son instrucciones para que el modelo no cometa errores.
 Si bien varias de ellas parecen redundantes, se fueron agregando luego de varias pruebas, siempre con la intención de
 reforzar la instrucción y obtener el resultado esperado en el primer intento.
-Allí se puede ver la instrucción ``Favor places aligned with the user interests when possible.'' para que priorice los% chktex 38
+Allí se puede ver la instrucción \enquote{Favor places aligned with the user interests when possible.} para que priorice los
 puntos de interés que el usuario espera.
 
 \subparagraph{prompt de Spring AI}

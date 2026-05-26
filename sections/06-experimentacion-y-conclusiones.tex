@@ -191,16 +191,14 @@ Además se facilita la implementación dado que la estructura de la tabla coinci
 a la salida del \textit{pipeline} de extracción.
 
 \begin{trenes}
+
 Cada viaje cuenta con uno o más segmentos, modelados por la tabla \texttt{trip\_segment}.
-Para los vuelos, cada segmento cuenta con el número de vuelo y toda la información relevante tanto para el origen como
-para el destino.
-\end{trenes}
-Esto incluye fecha y hora, código y nombre del aeropuerto, ciudad y país del aeropuerto, latitud y longitud del
-aeropuerto y links útiles del aeropuerto (como el sitio web del mismo o el enlace a una entrada de Wikipedia sobre el
-aeropuerto).
-\begin{trenes}
-Para los trenes, la misma tabla almacena el número de tren y los datos de la estación de origen y destino: nombre,
-ciudad, país y coordenadas geográficas.
+Esta tabla contiene los datos comunes a vuelos y trenes, como el número identificador, la fecha y hora de salida.
+Para los vuelos, la información relacionada a aeropuertos y a la aerolínea se almacena en la tabla
+\texttt{trip\_flight\_segment\_details}.
+Por su parte, para los trenes, la información relacionada a estaciones se almacenan en la tabla
+\texttt{trip\_train\_segment\_details}.
+
 \end{trenes}
 
 Por último es necesario almacenar las recomendaciones de POIs.

@@ -28,7 +28,9 @@
             {\scriptsize\sffamily\bfseries\color{black!95}user\_account}\\
             \texttt{\color{black!78}id [PK]}\\
             \texttt{\color{black!78}email}\\
-            \texttt{\color{black!78}password\_hash}
+            \texttt{\color{black!78}password\_hash}\\
+            \texttt{\color{black!78}created\_at}\\
+            \texttt{\color{black!78}updated\_at}
         \end{tabular}
     };
 
@@ -52,11 +54,13 @@
             \texttt{\color{black!78}name}\\
             \texttt{\color{black!78}trip\_type}\\
             \texttt{\color{black!78}passenger}\\
-            \texttt{\color{black!78}pnr}\\
+            \texttt{\color{black!78}booking\_reference}\\
             \texttt{\color{black!78}start\_date}\\
             \texttt{\color{black!78}end\_date}\\
             \texttt{\color{black!78}final\_destination\_city}\\
-            \texttt{\color{black!78}final\_destination\_country}
+            \texttt{\color{black!78}final\_destination\_country}\\
+            \texttt{\color{black!78}created\_at}\\
+            \texttt{\color{black!78}updated\_at}
         \end{tabular}
     };
 
@@ -68,9 +72,20 @@
             \texttt{\color{black!78}id [PK]}\\
             \texttt{\color{black!78}trip\_id [FK]}\\
             \texttt{\color{black!78}position}\\
-            \texttt{\color{black!78}flight\_number}\\
+            \texttt{\color{black!78}service\_number}\\
             \texttt{\color{black!78}departure\_date}\\
             \texttt{\color{black!78}departure\_time}\\
+            \texttt{\color{black!78}created\_at}\\
+            \texttt{\color{black!78}updated\_at}
+        \end{tabular}
+    };
+
+    \node[dbtable, below=0.8cm of tripsegment, xshift=-3.0cm] (flightdetails) {
+        \renewcommand{\arraystretch}{0.9}
+        \begin{tabular}{@{}l@{}}
+            \rowcolor{black!14}
+            {\scriptsize\sffamily\bfseries\color{black!95}\shortstack[l]{trip\_flight\_segment\_\\details}}\\
+            \texttt{\color{black!78}segment\_id [PK, FK]}\\
             \texttt{\color{black!78}departure\_airport\_code}\\
             \texttt{\color{black!78}departure\_airport\_name}\\
             \texttt{\color{black!78}departure\_city}\\
@@ -94,6 +109,17 @@
             \texttt{\color{black!78}airline\_alias}\\
             \texttt{\color{black!78}airline\_country}\\
             \texttt{\color{black!78}airline\_country\_code}\\
+            \texttt{\color{black!78}created\_at}\\
+            \texttt{\color{black!78}updated\_at}
+        \end{tabular}
+    };
+
+    \node[dbtable, below=0.8cm of tripsegment, xshift=1.35cm] (traindetails) {
+        \renewcommand{\arraystretch}{0.9}
+        \begin{tabular}{@{}l@{}}
+            \rowcolor{black!14}
+            {\scriptsize\sffamily\bfseries\color{black!95}\shortstack[l]{trip\_train\_segment\_\\details}}\\
+            \texttt{\color{black!78}segment\_id [PK, FK]}\\
             \texttt{\color{black!78}origin\_station}\\
             \texttt{\color{black!78}origin\_latitude}\\
             \texttt{\color{black!78}origin\_longitude}\\
@@ -105,7 +131,9 @@
             \texttt{\color{black!78}destination\_longitude}\\
             \texttt{\color{black!78}destination\_city}\\
             \texttt{\color{black!78}destination\_country\_code}\\
-            \texttt{\color{black!78}destination\_country\_name}
+            \texttt{\color{black!78}destination\_country\_name}\\
+            \texttt{\color{black!78}created\_at}\\
+            \texttt{\color{black!78}updated\_at}
         \end{tabular}
     };
 
@@ -118,7 +146,9 @@
             \texttt{\color{black!78}trip\_id [FK]}\\
             \texttt{\color{black!78}city}\\
             \texttt{\color{black!78}country}\\
-            \texttt{\color{black!78}days}
+            \texttt{\color{black!78}days}\\
+            \texttt{\color{black!78}created\_at}\\
+            \texttt{\color{black!78}updated\_at}
         \end{tabular}
     };
 
@@ -132,11 +162,13 @@
             \texttt{\color{black!78}position}\\
             \texttt{\color{black!78}day\_number}\\
             \texttt{\color{black!78}title}\\
-            \texttt{\color{black!78}summary}
+            \texttt{\color{black!78}summary}\\
+            \texttt{\color{black!78}created\_at}\\
+            \texttt{\color{black!78}updated\_at}
         \end{tabular}
     };
 
-    \node[dbtable, below=0.8cm of savedday] (savedplace) {
+    \node[dbtable, below=0.8cm of savedday, xshift=1.3cm] (savedplace) {
         \renewcommand{\arraystretch}{0.92}
         \begin{tabular}{@{}l@{}}
             \rowcolor{black!14}
@@ -148,14 +180,21 @@
             \texttt{\color{black!78}description}\\
             \texttt{\color{black!78}category}\\
             \texttt{\color{black!78}latitude}\\
-            \texttt{\color{black!78}longitude}
+            \texttt{\color{black!78}longitude}\\
+            \texttt{\color{black!78}created\_at}\\
+            \texttt{\color{black!78}updated\_at}
         \end{tabular}
     };
 
     \draw[rel] (useraccount.south) -- node[cardinality, left] {1:N} (userinterest.north);
     \draw[rel] (useraccount.east) -- node[cardinality, above] {1:N} (trip.west);
     \draw[rel] (trip.south) -- node[cardinality, left] {1:N} (tripsegment.north);
+    \draw[rel] (tripsegment.south west) .. controls +(-0.6,-0.8) and +(0.4,0.8) ..
+        node[cardinality, left] {1:0..1} (flightdetails.north east);
+    \draw[rel] (tripsegment.south east) .. controls +(0.6,-0.8) and +(-0.4,0.8) ..
+        node[cardinality, right] {1:0..1} (traindetails.north west);
     \draw[rel] (trip.east) -- node[cardinality, above] {1:N} (savedrec.west);
     \draw[rel] (savedrec.south) -- node[cardinality, left] {1:N} (savedday.north);
-    \draw[rel] (savedday.south) -- node[cardinality, left] {1:N} (savedplace.north);
+    \draw[rel] (savedday.south east) .. controls +(0.4,-0.6) and +(-0.4,0.6) ..
+        node[cardinality, right] {1:N} (savedplace.north west);
 \end{tikzpicture}

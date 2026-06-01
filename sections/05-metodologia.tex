@@ -142,14 +142,8 @@ momento.
 \subsection{Fuente de Datos}%
 \label{subsec:data-source}
 
-El \textit{dataset} cuenta con 31 mails distintos de aerolíneas que totalizan 41 tramos aéreos.
-\begin{trenes}
-También existen 22 mails distintos de compañías de trenes que suman 25 tramos.
-\end{trenes}
-\begin{pendiente}
-Aquí habrá que agregar los otros tipos que se incorporen
-al dataset (hoteles, trenes, excursiones, etc.).
-\end{pendiente}
+El \textit{dataset} cuenta con 31 mails distintos de aerolíneas que totalizan 41 tramos aéreos y 22 mails distintos de
+compañías de trenes que suman 25 tramos.
 
 \subsubsection{Correos de aerolíneas}
 
@@ -437,11 +431,21 @@ En esta sección se detalla el proceso de implementación de la solución comple
 extracción de campos relevantes en un texto usando procesamiento de lenguaje natural (NLP) hasta el despliegue
 de la aplicación web para que un usuario pueda registrarse, reenviar sus
 correos electrónicos y obtener un itinerario de viaje integral.
+Como prueba de concepto, se realizó un trabajo de aplicación integral de todo el proceso, sólo sobre los vuelos del
+itinerario.
 
-\subsubsection{\textit{Pipeline} de extracción (\texttt{extractor-core})}
+\subsubsection{\textit{Pipeline end-to-end} de Procesamiento de Emails}
 
-A continuación se detalla el \textit{pipeline} completo que inicia con un archivo de correo electrónico (de extensión
-\texttt{.eml}) y que finaliza con la extracción de los datos relevantes del mismo.
+El \textit{pipeline} completo que inicia con un archivo de correo electrónico (de extensión \texttt{.eml}) y que
+finaliza con la extracción de los datos relevantes se compone de los siguientes pasos:
+
+\begin{itemize}
+    \item Extracción de texto desde email
+    \item Preprocesamiento con expresiones regulares
+    \item Preprocesamiento con CoreNLP
+    \item Extracción de información relevante
+    \item Enriquecimiento de la información relevante
+\end{itemize}
 
 Para el caso de correos electrónicos correspondientes a vuelos se busca obtener el código de la reserva, el nombre del
 pasajero y el detalle de uno o más segmentos de vuelo.
@@ -452,7 +456,7 @@ En cuanto a los correos correspondientes a viajes en tren se espera extraer la m
 tendrá un número de tren, la estación de origen, la estación de destino y la fecha y hora de inicio del viaje.
 \end{trenes}
 
-\paragraph{Archivo \texttt{.eml}, HTML y obtención de texto a simple vista}
+\paragraph{Extracción de texto desde email}
 
 Retomando el ejemplo del correo electrónico de reserva (Ver \autoref{fig:eml-yqb-ord-part-a} y
 \autoref{fig:eml-yqb-ord-part-b}), el primer paso consiste en obtener el contenido del correo electrónico y quedarse con
@@ -508,10 +512,10 @@ confundir con el nombre del pasajero).
 Dado que está comprobado que no existe información útil para el usuario ubicada en esta sección, entonces es seguro
 eliminarla.
 
-\subparagraph{Preprocesamiento para códigos de vuelo}
+\paragraph{Preprocesamiento con expresiones regulares}
 
-Otro preprocesamiento adicional que se aplica es la búsqueda mediante expresiones regulares de cadenas que puedan
-corresponder con códigos de vuelo (Ver \autoref{lst:normalize-flight-numbers}).
+Otro preprocesamiento adicional que se aplica es la búsqueda de cadenas que puedan corresponder a códigos de vuelo,
+mediante expresiones regulares (Ver \autoref{lst:normalize-flight-numbers}).
 Un código de vuelo~\cite{iata-airline-codes} consiste en dos letras, seguido de un número
 de entre 2 y 4 cifras.
 Por ejemplo \texttt{AC8633} corresponde al vuelo 8633 de la aerolínea Air Canada.
@@ -531,7 +535,7 @@ private static String normalizeFlightNumbers(String text) {
     Pattern.compile("\\b([A-Z][A-Z0-9]|[0-9][A-Z]|[A-Z][0-9])\\s+(\\d{2,4})\\b");
 \end{lstlisting}
 
-\paragraph{Stanford CoreNLP}
+\paragraph{Preprocesamiento con CoreNLP}\label{par:corenlp}
 
 Una vez que se cuenta con una instancia de \textit{String} con únicamente el contenido a simple vista de un correo
 electrónico se envía este texto al \textit{pipeline} de~\cite{stanford-corenlp}.
@@ -551,8 +555,6 @@ continuación:
 
 \FloatBarrier{}
 
-\subparagraph{Tokenization}
-
 La tokenización consiste en convertir texto en tokens.
 La forma más elemental consiste en dividir cada vez que aparece un espacio.
 Por ejemplo para el texto \enquote{Thanks for flying.} la tokenización genera cuatro tokens:
@@ -563,32 +565,24 @@ idioma inglés.
 Desde este momento la implementación estará limitada exclusivamente a correos electrónicos de reservas redactados en
 inglés.
 
-\subparagraph{Sentence Splitting}
-
-La separación en oraciones consiste en convertir un texto en oraciones.
+La separación en oraciones (\textit{ssplit}, \textit{sentence splitting}) consiste en convertir un texto en oraciones.
 Por ejemplo \enquote{Thanks for flying. Fly safe.}
 será separado en las oraciones \enquote{Thanks for flying.} y \enquote{Fly safe.}
 Aquí también CoreNLP realiza la separación en oraciones usando una colección de reglas ya previstas.
 
-\subparagraph{Parts of Speech}
-
-Partes del discurso asignan \textit{tags} o etiquetas a los \textit{tokens} para marcarlos según su categoría
-gramatical.
+Luego, en la etapa de partes del discurso (\textit{pos}, \textit{parts of speech}) se asignan \textit{tags} o etiquetas
+a los \textit{tokens} para marcarlos según su categoría gramatical.
 Por ejemplo para el texto \enquote{Marie was born in Paris.} se etiqueta a \enquote{Marie} como \texttt{NNP}
 (nombre propio singular), \enquote{was} como \texttt{VBD} (verbo pasado), \enquote{born} como \texttt{VBN}
 (verbo participio pasado), \enquote{in} como \texttt{IN} (preposición), \enquote{París} nuevamente como \texttt{NNP} y
 el punto final \enquote{.} como signo de puntuación.
 
-\subparagraph{Lemmatization}
-
-Aquí se asocia una palabra con su lema o forma de diccionario.
+En la \textit{lemmatization} se asocia una palabra con su lema o forma de diccionario.
 Por ejemplo para la palabra ``was'' se mapea por la palabra ``be''.
 Este paso lleva todo el contenido a un solo tiempo verbal para simplificar la tarea de las próximas etapas.
 
-\subparagraph{Named Entity Recognition}
-
-En esta etapa, la más compleja de todo el pipeline de NLP, se reconocen entidades en el texto como personas o nombres
-de empresas.
+Finalmente, en la etapa \textit{Named Entity Recognition} (\textit{ner}), la más compleja de todo el pipeline de NLP,
+se reconocen entidades en el texto como personas o nombres de empresas.
 La librería utiliza uno o más modelos de secuencia de \textit{machine learning} para etiquetar las entidades.
 Además permite la ejecución de reglas específicas para etiquetar, por ejemplo, fechas, tiempos y valores numéricos.
 
@@ -605,7 +599,7 @@ Para el idioma inglés la biblioteca reconoce por defecto 24 tipos distintos de 
 A simple vista se puede apreciar que no existe una entidad aeropuerto o aerolínea por lo que es necesario crear reglas
 adicionales para facilitar el reconocimiento de nuevos tipos de entidades.
 
-\subsubparagraph{Aeropuertos}
+Mostraremos a continuación las reglas introducidas para reconocer la entidad Aeropuerto.
 
 Un aeropuerto de pasajeros se identifica por un código de tres letras denominado~\cite{iata-airport-code}.
 A excepción de aeropuertos muy pequeños, cualquier aeropuerto cuenta con un identificador único de tres letras emitido
@@ -723,10 +717,9 @@ palabras comunes del idioma inglés y así excluirlas de cualquier identificaci�
 Las palabras definidas en la implementación son las siguientes: ``API'', ``GET'', ``GST'', ``HST'', ``MAX'', ``MAY'', y
 ``VOL''.
 
-\subsubparagraph{Códigos de Vuelos y Aerolíneas}
-
-Anteriormente se comentó el preprocesamiento que se realiza antes de iniciar el pipeline de CoreNLP y que involucra a
-los códigos de vuelo definidos por IATA\@.
+Respecto a las entidades Códigos de Vuelo y Aerolínea, ya se explicó en la Sección \autoref{par:corenlp} el
+preprocesamiento que se realiza antes de iniciar el pipeline de CoreNLP y que involucra a los códigos de vuelo definidos
+por IATA\@.
 Ahora es momento de obtener el token ``AC8633'' y reconocerlo como una entidad de tipo \texttt{FLIGHT\_NUMBER}.
 Para ello se utilizó el \textit{dataset} público de aerolíneas de~\cite{openflights-data}
 que ofrece un CSV con más de 6.000 registros que representan a todas las aerolíneas del mundo.
@@ -775,10 +768,9 @@ Nuevamente, si bien no es necesario extraer el nombre de la aerolínea (ya que l
 es un identificador único), el hecho de anotar un nombre como nombre de aerolínea ayuda a que existan menos partes del
 contenido sin anotar y que podrían ser candidatas a identificaciones incorrectas.
 
-\subsubparagraph{Código de Reserva (PNR)}
+Detallaremos a continuación las reglas para definir la entidad Código de Reserva (PNR).
 
-Otro campo relevante para la extracción es el código de reserva.
-Aquí también IATA define el \texttt{PNR} o~\cite{passenger-name-record} y consiste en 6
+Aquí también IATA define el \texttt{PNR} o~\cite{passenger-name-record} a través de 6
 caracteres alfanuméricos.
 Para sumar dificultad de la extracción se recuerda que el código de vuelo (como ``AC8633'') ya está cumpliendo con el
 formato de \texttt{PNR}.
@@ -804,12 +796,8 @@ $SEPARATOR = "/[:-]/"
 }
 \end{lstlisting}
 
-Con estas reglas se define un nuevo tipo de entidad \texttt{PNR\_CODE} listo para su extracción.
-
-\subsubparagraph{SUTime: Fechas y horas}
-
-En un mismo mail de confirmación de reserva pueden aparecer múltiples fechas y horas correspondientes por ejemplo al
-despegue o aterrizaje de cualquiera de los tramos de la reserva.
+Por su parte, en un mismo mail de confirmación de reserva pueden aparecer múltiples fechas y horas correspondientes por
+ejemplo al despegue o aterrizaje de cualquiera de los tramos de la reserva.
 Además es común que se indique la fecha en que se realizó la confirmación o incluso la fecha límite hasta donde se
 pueden realizar modificaciones a la reserva sin costo adicional.
 Es por eso que en esta etapa de anotación sólo resulta útil anotar todos los campos correspondientes a fecha y hora como
@@ -839,8 +827,6 @@ ner = { type: "CLASS", value: "edu.stanford.nlp.ling.CoreAnnotations$NamedEntity
 
 para que en mails correspondientes a \textit{boarding passes}, una cadena como ``22SEP25'' sea interpretada como
 ``22/09/2025''.
-
-\subsubparagraph{Marcadores de tramos}
 
 Por último se define un archivo \texttt{segment-context.rules} con las siguientes dos reglas
 (Ver \autoref{lst:segment-context-rules})
@@ -951,12 +937,8 @@ Praha, hl\.n\.	TRAIN_STATION	O,PERSON,MISC,ORGANIZATION,LOCATION,CITY,STATE_OR_P
 
 \end{trenes}
 
-\subparagraph{Resultado Final}
-
-Retomando el \autoref{lst:flight026-first-segment-txt} se muestran a continuación las entidades identificadas al final
-de esta etapa:
-
-\pagebreak
+Retomando el \autoref{lst:flight026-first-segment-txt} de la etapa inicial de extracción desde el mail, en la
+\autoref{fig:tcol-flights} se muestran las entidades identificadas al final de esta etapa de preprocesamiento con CoreNLP\@.
 
 \begin{tcolorbox}[
     colback=black!2,
@@ -980,21 +962,27 @@ de esta etapa:
     \noindent
 
 \end{tcolorbox}
+\captionof{figure}{Entidades reconocidas.}
+\label{fig:tcol-flights}
 
-En la salida se puede ver como sólo analizando una parte del correo electrónico se obtienen identificaciones incorrectas
-como es el caso de \enquote{Jean Lesage Int.} que es incorrectamente anotado como \texttt{PERSON}.
-Al procesar el mail completo, donde efectivamente sí se encuentra el nombre del pasajero, este será priorizado en la
-siguiente etapa.
+Si bien la salida es la esperada para las entidades de tipo \texttt{DATE}, \texttt{TIME}, \texttt{AIRPORT\_CODE} y
+\texttt{PNR\_CODE}, también se obtienen identificaciones incorrectas.
+Por ejemplo el caso de \enquote{Jean Lesage Int.} que es incorrectamente anotado como \texttt{PERSON} cuando en realidad
+es el nombre completo del aeropuerto en cuestión.
+Esto demuestra la necesidad de una siguiente etapa donde, para un conjunto de entidades de tipo \texttt{PERSON} (entre
+ellas la esperada, la incorrecta del ejemplo y cualquier otra que pueda aparecer con el procesamiento del resto del mail)
+se deberá aplicar cierto criterio para quedarse sólo con una.
 
-En negro se identifican todas los tipos de entidades que vienen por defecto en CoreNLP\@.
-Allí también se aprecian etiquetados incorrectos como tratar a ``Quebec Toronto'' como una organización donde no sólo
-deberían ser dos entidades distintas sino que además ninguna de ellas es una organización.
+Las entidades resaltadas en color negro corresponden a la implementación por defecto de CoreNLP\@.
+Allí también se aprecian etiquetados incorrectos que en principio no afectan la tarea de extracción planteada.
+Por ejemplo, asociar ``Quebec Toronto'' a \texttt{ORGANIZATION} es un error porque corresponden a dos ciudades distintas
+ubicadas en diferentes provincias.
 
 \begin{trenes}
 
 Respecto a las entidades reconocidas en un correo de trenes se retoma el ejemplo del \autoref{fig:train-booking} para la
 reserva con tramos entre Wien Hbf y München Hbf.
-Se indican a continuación las entidades reconocidas:
+Se indican a continuación en la \autoref{fig:tcol-trains} las entidades reconocidas:
 
 \begin{tcolorbox}[
     colback=black!2,
@@ -1020,17 +1008,17 @@ Se indican a continuación las entidades reconocidas:
     \noindent
 
 \end{tcolorbox}
+\captionof{figure}{Entidades reconocidas.}
+\label{fig:tcol-trains}
 
 \end{trenes}
 
-\paragraph{Extracción de información}
+\paragraph{Extracción de Información Relevante}
 
 La salida del \textit{pipeline} de CoreNLP implementado en \nolinkurl{xyz.email2trip.pipeline.FlightPipeline} consiste en
 una instancia de \nolinkurl{edu.stanford.nlp.pipeline.CoreDocument} que cuenta con un conjunto de entidades anotadas.
 A continuación se indica cómo se realiza la extracción de los campos relevantes a partir de la búsqueda de entidades de
 un tipo en particular.
-
-\subsubparagraph{Extracción de campos únicos: PNR y Pasajero}
 
 Para el código de reserva (PNR) se busca una entidad de tipo \texttt{PNR\_CODE}.
 En caso de que exista más de una se obtiene la que apareció primero.
@@ -1050,8 +1038,6 @@ más se parecieran a nombres completos.
 Contando la cantidad de palabras de una entidad se prioriza aquella que tenga al menos dos palabras, para corresponder
 con el patrón de nombre y apellido.
 Así una cadena como ``Max'' no luce como un nombre y apellido pero ``Martin Miles Young'' sí.
-
-\subparagraph{Extracción de campos múltiples: Segmentos de vuelo}
 
 La extracción de los datos del vuelo requiere cierta lógica adicional dado que se espera extraer más de un campo del
 mismo tipo de entidad.
@@ -1111,10 +1097,8 @@ Una vez que se extrajeron los campos relevantes de una reserva se envía esa inf
 \textit{enrichment} para conseguir más información a partir de los identificadores únicos que resultan algunas de las
 entidades identificadas.
 
-\subparagraph{Resultado Final}
-
 Retomando el correo electrónico de ejemplo de dos segmentos, luego de la extracción se obtiene la siguiente salida en
-formato JSON (Ver \autoref{lst:output-extractor-core-json}):
+formato JSON que se muestra en el \autoref{lst:output-extractor-core-json}:
 
 \begin{lstlisting}[
     style=jsonlikecodestyle,
@@ -1175,7 +1159,7 @@ Respecto a los segmentos de tren y retomando el correo electrónico de dos segme
 \end{lstlisting}
 \end{trenes}
 
-\subsubsection{Enriquecimiento de información \texttt{extractor-enricher}}
+\subsubsection{Enriquecimiento de la Información Relevante}
 
 Con los mismos datasets de vuelos y aerolíneas utilizados para la creación de reglas de CoreNLP se puede enriquecer el
 JSON obtenido.
@@ -1378,7 +1362,8 @@ algunos campos):
 
 \end{trenes}
 
-\subsubsection{Recomendación de POIs \texttt{extractor-recommender}}
+\subsubsection{Recomendación de Puntos de Interés}%
+\label{subsubsec:poi}
 
 Esta sección cubre la funcionalidad adicional de ofrecer recomendaciones de puntos de interés que el usuario podría
 visitar en cada una de las ciudades destino de la reserva (ciudades según los aeropuertos destino de cada segmento).
@@ -1386,8 +1371,6 @@ visitar en cada una de las ciudades destino de la reserva (ciudades según los a
 En lugar de utilizar una base de datos de POIs (\textit{points of interest}) se optó por utilizar un
 \textit{Large Language Model} (LLM) de forma local al que se le solicitan recomendaciones de POIs para un destino y se
 exige que la respuesta del modelo sea estructurada en formato JSON\@.
-
-\paragraph{Intereses del Usuario}
 
 Las recomendaciones sobre lugares a visitar dependen de las preferencias o intereses de cada persona.
 Algunas pueden preferir lugares más relacionados a la naturaleza mientras que a otros les interesen más las compras y
@@ -1406,8 +1389,6 @@ Se definen cinco categorías de intereses:
 El usuario al momento de solicitar una recomendación puede elegir hasta dos de estos intereses.
 El proceso de recomendación deberá priorizar los puntos de interés que se ajustan a los intereses del usuario, sin
 impedir que pudieran recomendarse también algunos puntos de interés más relacionados a intereses no seleccionados.
-
-\paragraph{\texorpdfstring{\textit{Stack} LLM\string: Gemma 4 + Ollama + Spring AI}{Stack LLM\string: Gemma 4 + Ollama + Spring AI}}\label{par:stack-llm}
 
 Para esta implementación se decidió utilizar Gemma 4 E4B como LLM\@.
 Es un modelo recientemente lanzado que pertenece a la familia de modelos abiertos desarrollados por Google DeepMind.
@@ -1433,8 +1414,6 @@ cambios en la implementación.
 El \textit{prompt} cuenta con tres secciones, el \textit{prompt} de sistema (\textit{system prompt}), el \textit{prompt}
 del usuario y el \textit{prompt} para que la respuesta tenga la estructura deseada.
 
-\subparagraph{\textit{system prompt}}
-
 El \textit{prompt} de sistema es fijo para todas las recomendaciones de todos los usuarios.
 En la implementación se utilizó lo siguiente (Ver \autoref{lst:system-prompt-txt}):
 
@@ -1451,8 +1430,6 @@ Use canonical place names that can be geocoded later.
 
 Como se puede apreciar se establecen instrucciones generales para guiar al modelo en el estilo de respuesta, todavía
 sin mencionar la estructura.
-
-\subparagraph{\textit{user prompt}}
 
 El \textit{prompt} del usuario contendrá la instrucción concreta y será parametrizado con los intereses del usuario,
 la ciudad deseada y la cantidad de días elegidos.
@@ -1510,8 +1487,6 @@ Si bien varias de ellas parecen redundantes, se fueron agregando luego de varias
 reforzar la instrucción y obtener el resultado esperado en el primer intento.
 Allí se puede ver la instrucción \enquote{Favor places aligned with the user interests when possible.} para que priorice los
 puntos de interés que el usuario espera.
-
-\subparagraph{prompt de Spring AI}
 
 Por último, Spring AI completa el \textit{prompt} agregando una tercera sección luego del \textit{system prompt} y el
 \textit{user prompt}.
@@ -1584,11 +1559,9 @@ Se puede ver cómo se indican los tipos de datos esperados (por ejemplo que el d
 ser un \texttt{String}), se explicita que los campos son obligatorios y se mencionan los nombres que deben tener las
 propiedades del JSON\@.
 
-\paragraph{Resultado Final}
-
-Si por ejemplo se desea obtener recomendaciones de 3 días para la ciudad de Toronto priorizando los intereses
-\texttt{CULTURE\_HISTORIC} y \texttt{NATURE} se obtiene un JSON como el siguiente
-(Ver \autoref{lst:output-core-recommender-json}, en la salida se ocultan algunos campos):
+A modo de ejemplo, si se desea obtener recomendaciones de 3 días para la ciudad de Toronto priorizando los intereses
+\texttt{CULTURE\_HISTORIC} y \texttt{NATURE} se obtiene un JSON como el que se puede ver en el
+\autoref{lst:output-core-recommender-json}, (en la salida se ocultan algunos campos)
 
 \begin{lstlisting}[
     style=jsonlikecodestyle,
@@ -1641,7 +1614,7 @@ Si por ejemplo se desea obtener recomendaciones de 3 días para la ciudad de Tor
 }
 \end{lstlisting}
 
-\subsubsection{Geocodificación de los puntos de interés}
+\subsubsection{Geocodificación de los Puntos de Interés}
 
 Para poder mostrar las recomendaciones obtenidas en un mapa es necesario contar con las coordenadas geográficas
 (latitud y longitud) de cada punto de interés.
@@ -1691,11 +1664,9 @@ geocodificación espera, no se podrán conseguir las coordenadas geográficas.
 En la implementación se decidió utilizar las coordenadas del aeropuerto para marcar al menos la zona de la ciudad donde
 el punto de interés se encuentra.
 
-\subsubsection{Resultado Final}
-
-Si se desea obtener recomendaciones de 3 días para la ciudad de Toronto priorizando los intereses
-\texttt{CULTURE\_HISTORIC} y \texttt{NATURE} se obtiene un JSON como el siguiente
-(Ver \autoref{lst:output-extractor-server-json}, en la salida se ocultan algunos campos):
+A modo de ejemplo, si se desea obtener recomendaciones de 3 días para la ciudad de Toronto priorizando los intereses
+\texttt{CULTURE\_HISTORIC} y \texttt{NATURE} se obtiene un JSON como el que se muestra en el
+\autoref{lst:output-extractor-server-json}, (en la salida se ocultan algunos campos)
 
 \begin{lstlisting}[
     style=jsonlikecodestyle,
@@ -1743,3 +1714,580 @@ Si se desea obtener recomendaciones de 3 días para la ciudad de Toronto prioriz
 
 En este punto ya se cuenta con toda la información necesaria para mostrarle al cliente las recomendaciones de los puntos
 de interés a visitar y las ubicaciones de cada uno de ellos en un mapa.
+
+\subsection{Arquitectura}%
+\label{subsec:architecture}
+
+Para la implementación de la aplicación web se decidió utilizar la siguiente arquitectura:
+
+\begin{itemize}
+    \item Aplicación Web (WebApp)
+    \begin{itemize}
+        \item Vanilla JS para el \textit{front-end} de la aplicación web
+        \item Spring Boot para la lógica del servidor \textit{back-end}, ofreciendo los endpoints de extracción y
+        recomendaciones
+    \end{itemize}
+    \item Base de Datos (DB): Una base relacional para conseguir la persistencia requerida por el \textit{back-end}
+    \item Ollama: Herramienta que sirve el LLM de las recomendaciones que invoca el \textit{back-end}
+    \item APIs externas
+    \begin{itemize}
+        \item Nominatim: Para la geolocalización de puntos de interés, invocada por el \textit{back-end}
+        \item MediaWiki: Para la obtención de una imagen representativa del viaje (visible en ``My Trips''), invocada
+        por el \textit{front-end}
+    \end{itemize}
+\end{itemize}
+
+En la \autoref{fig:architecture-diagram} se detalla el diagrama de arquitectura correspondiente.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio,trim=190 190 190 190,clip]{docs/diagram}
+    \figcaption{Diagrama de arquitectura.}%
+    \label{fig:architecture-diagram}
+\end{figure}
+
+\FloatBarrier{}
+
+\subsubsection{Persistencia: Base de Datos}
+
+Se requiere una base de datos relacional para poder almacenar los datos del usuario y cada uno de sus viajes, incluyendo
+los resultados de todas las extracciones y los puntos de interés de todas las recomendaciones generadas.
+Se decidió utilizar PostgreSQL porque es la base de datos relacional más popular.
+
+Respecto al manejo de usuarios registrados en la aplicación se modela la tabla \texttt{user\_account} donde, para cada
+usuario, se almacena la dirección de correo electrónico (que actúa al mismo tiempo como nombre de usuario) y un
+\textit{hash} de la contraseña del usuario.
+
+Cada usuario cuenta con uno o más viajes, modelados por la tabla \texttt{trip}.
+Esta tabla cuenta con el nombre y el tipo del viaje, el nombre del pasajero, el código de reserva, las fechas de inicio y fin
+del viaje y los nombres de la ciudad y país destino del viaje.
+
+Cabe mencionar que, para facilitar la implementación, existen campos en las tablas de la base que podrían ser obtenidos
+con una invocación al servicio de \textit{enrichment}.
+Sin embargo se opta por la persistencia de esta información para reducir las invocaciones al servicio indicado.
+Además se facilita la implementación dado que la estructura de la tabla coincide con el archivo ``JSON'' que se obtiene
+a la salida del \textit{pipeline} de extracción.
+
+\begin{trenes}
+
+    Cada viaje cuenta con uno o más segmentos, modelados por la tabla \texttt{trip\_segment}.
+    Esta tabla contiene los datos comunes a vuelos y trenes, como el número identificador, la fecha y hora de salida.
+    Para los vuelos, la información relacionada a aeropuertos y a la aerolínea se almacena en la tabla
+    \texttt{trip\_flight\_segment\_details}.
+    Por su parte, para los trenes, la información relacionada a estaciones se almacenan en la tabla
+    \texttt{trip\_train\_segment\_details}.
+
+\end{trenes}
+
+Por último es necesario almacenar las recomendaciones de POIs.
+Para cada recomendación se persiste una tupla en la tabla \texttt{trip\_saved\_recommendation} donde se indica la
+ciudad, el país y la cantidad de días elegida.
+Para cada día de una recomendación existe un registro en la tabla \texttt{trip\_saved\_recommendation\_day}, incluyendo
+dos campos de texto con título y el resumen de ese día.
+Finalmente, para cada punto de interés de un día de una recomendación, la tabla
+\texttt{trip\_saved\_recommendation\_place} lista el nombre, la descripción del POI, la categoría (según los cinco
+intereses posibles ya mencionados) y las coordenadas geográficas (latitud y longitud) del mismo.
+
+En la \autoref{fig:db-model-diagram} se detalla el modelo relacional correspondiente.
+
+\begin{trenes}
+
+    \begin{figure}[H]
+        \centering
+        \resizebox{0.96\textwidth}{!}{\input{images/db-model-diagram.tikz}}
+        \figcaption{Modelo relacional de la base de datos.}%
+        \label{fig:db-model-diagram}
+    \end{figure}
+
+\end{trenes}
+
+\FloatBarrier{}
+
+\paragraph{Flyway}
+
+Para el modelado de la base de datos se utilizó Flyway, una herramienta que permite definir scripts SQL incrementales,
+de forma que, al iniciar la aplicación, se ejecutan automáticamente los scripts que falten.
+Esto facilita el agregado de nuevas tablas y campos y permite el versionado del \textit{schema} de la base de datos.
+
+Por ejemplo, el primer \textit{script}, llamado \nolinkurl{V1\_\_create\_user\_account.sql} contiene únicamente la
+definición de la tabla que modela a los usuarios (Ver \autoref{lst:flyway-1}) ya que es lo único que se necesitaba
+para realizar una primera implementación de la funcionalidad de registro y login.
+
+\begin{lstlisting}[
+    style=sqlcodestyle,
+    caption={Script de Flyway con la creación de la tabla de usuarios.},
+    label={lst:flyway-1}
+]
+CREATE TABLE user_account (
+    id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    CONSTRAINT uk_user_account_email UNIQUE (email)
+);
+\end{lstlisting}
+
+En la etapa final de la implementación se necesitó agregar los campos latitud y longitud para los POIs de las
+recomendaciones.
+Para ello se creó el script \nolinkurl{V5\_\_add\_recommendation\_place\_coordinates.sql} (Ver \autoref{lst:flyway-5})
+con la sentencia \texttt{ALTER TABLE} correspondiente.
+
+\begin{lstlisting}[
+    style=sqlcodestyle,
+    caption={Script de Flyway con el agregado de coordenadas de POIs},
+    label={lst:flyway-5}
+]
+ALTER TABLE trip_saved_recommendation_place
+    ADD COLUMN latitude DOUBLE PRECISION,
+    ADD COLUMN longitude DOUBLE PRECISION;
+\end{lstlisting}
+
+\subsubsection{Back-End: Spring Boot}
+
+Para la implementación del \textit{back-end} se decidió utilizar Spring Boot porque facilita la implementación de
+aplicaciones web escritas en el lenguaje Java.
+Spring Boot se destaca por reducir la configuración necesaria para conseguir una aplicación web desplegada gracias a
+dependencias por defecto, convenciones establecidas y la autoconfiguración.
+Permite integrar de forma sencilla varios componentes necesarios como APIs REST, acceso a base de datos, seguridad,
+entre otras.
+
+El \textit{back-end} se separó en seis módulos distintos, utilizando la herramienta Maven para organizar proyectos Java.
+A continuación el detalle de los módulos de \textit{back-end}, donde los tres primeros ya fueron explicados en detalle
+en secciones anteriores:
+
+\begin{itemize}
+    \item \texttt{extractor-core}: Contiene todo lo relacionado al \textit{pipeline} de extracción de Stanford NLP
+    \item \texttt{extractor-enricher}: Enriquecimiento de la información
+    \item \texttt{extractor-recommender}: Recomendación de puntos de interés
+    \item \texttt{extractor-server}: Implementación del \textit{back-end} que invoca los tres módulos anteriores,
+    administra el acceso de los usuarios y logra la persistencia en la base de datos.
+    \item \texttt{extractor-api}: Conjunto de clases comunes al proyecto (definiciones compartidas por más de un módulo)
+    \item \texttt{extractor-common}: Métodos utilitarios utilizados por más de un módulo (como la lectura de un CSV)
+\end{itemize}
+
+\paragraph{Spring Data}
+
+Se utilizó Spring Data para simplificar la comunicación entre el \textit{back-end} y la base de datos.
+Permite abstraer gran parte del código fuente necesario para la interacción con la base mediante la definición de
+repositorios con interfaces, de forma que el \textit{framework} genera automáticamente el comportamiento necesario.
+
+Por ejemplo, se definió un \texttt{TripRepository} (Ver \autoref{lst:spring-data-trip-repository}) con sólo dos
+operaciones, de forma que Spring Data genera automáticamente las \textit{queries} a la base, sólo analizando el nombre
+que se le dio a los métodos (que siguen una convención ya definida por la herramienta).
+
+\begin{lstlisting}[
+    style=javacodestyle,
+    caption={Repositorio de Viajes usando Spring Data},
+    label={lst:spring-data-trip-repository}
+]
+public interface TripRepository extends JpaRepository<Trip, Long> {
+
+    List<Trip> findAllByUserEmailOrderByIdDesc(String email);
+
+    Optional<Trip> findByIdAndUserEmail(Long id, String email);
+
+}
+\end{lstlisting}
+
+Así no se necesitan implementar manualmente \textit{queries} de \texttt{SELECT} para conseguir todos los viajes de
+un usuario, basta con invocar a \texttt{findAllByUserEmailOrderByIdDesc} dado que se indica que el tipo de dato de
+retorno es una lista de viajes (\texttt{List<Trip>}) y sólo se necesita el identificador del usuario (el email).
+
+\paragraph{Spring Security}
+
+Otra herramienta de la familia Spring es Spring Security, que apunta a gestionar de una forma sencilla la seguridad
+de las aplicaciones en cuanto a la autenticación y autorización.
+Su función principal es controlar quién puede acceder al sistema y qué acciones puede realizar el usuario una vez
+logueado.
+
+Para la implementación basta con definir un método donde se indiquen los \textit{endpoints} que requieren autenticación
+y cuáles no (Ver \autoref{lst:spring-security-filter-chain}). Por ejemplo se indica que todos pueden acceder a
+\texttt{/login} y \texttt{/register} de forma que todo lo que no está mencionado se restringe automáticamente (como
+por ejemplo el endpoint de \texttt{core-enricher}).
+
+\begin{lstlisting}[
+    style=javacodestyle,
+    caption={Lógica de autenticación usando Spring Security},
+    label={lst:spring-security-filter-chain}
+]
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+            .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers("/", "/login", "/register", "/error").permitAll()
+                    .requestMatchers("/api/auth/register").permitAll()
+                    .requestMatchers("/assets/**").permitAll()
+                    .anyRequest().authenticated()
+            )
+            .csrf(CsrfConfigurer::spa)
+            .formLogin(form -> form
+                    .loginPage("/login")
+                    ...
+                    .permitAll()
+            )
+            ...
+}
+\end{lstlisting}
+
+Como se ve en el fragmento de código, se utilizó una protección contra solicitudes maliciosas basada en tokens
+Cross-Site Request Forgery (CSRF) que consisten en valores únicos generados por el servidor y verificados en cada
+solicitud que modifique el estado de la aplicación.
+De esta forma, en caso de que un atacante envíe una petición maliciosa, al no tener el token esperado la operación será
+rechazada.
+
+\subsubsection{Front-End: Vanilla JS}
+
+La interfaz de usuario requerida para la implementación cuenta con solo cuatro vistas: registro, login, listado de
+viajes y detalle de un viaje.
+Dada la simpleza del requerimiento se decidió utilizar JavaScript nativo (Vanilla JS) para conseguir una aplicación
+web, en principio pensada para \textit{desktop} pero con funcionalidad \textit{responsive} para poder ser utilizada
+también desde dispositivos móviles con pantallas más pequeñas.
+
+En el directorio \texttt{assets/} del módulo \texttt{extractor-client} se ubican los archivos JavaScript y CSS
+necesarios.
+Además se utilizó Bootstrap, un framework front-end de componentes y reglas CSS que permite construir aplicaciones web
+\texttt{responsive} consistentes a partir de estilos y componentes ya definidos.
+
+Los archivos de extensión HTML se encuentran ubicados en el directorio \texttt{templates/} del módulo
+\texttt{extractor-server}.
+Esto es así porque se decidió utilizar Thymeleaf, un motor de plantillas para Java que permite generar HTML de forma
+dinámica, insertando así datos provenientes del servidor dentro de plantillas HTML de forma sencilla que luego se
+renderizan en la página.
+
+Por último, y como ya se mencionó en \autoref{subsec:architecture} desde el \textit{front-end} se invoca a la API
+de MediaWiki para conseguir una imagen de la ciudad que corresponde al destino final del viaje.
+Esta imagen se puede ver en la sección ``My Trips''.
+La API es gratuita y para esta implementación se realiza un \texttt{request} GET (Ver \autoref{lst:js-mediawiki})
+probando primero con la cadena \texttt{Ciudad, País}.
+En caso de obtener un resultado se intenta luego con las cadenas \texttt{Ciudad (País)} y \texttt{Ciudad}.
+La respuesta de la API es un JSON que contiene la URL directa del recurso buscado, esto es, la imagen representativa
+de una ciudad.
+Para reducir las invocaciones a la API se implementa una caché a nivel de la sesión del lado del navegador.
+
+\begin{lstlisting}[
+    style=javacodestyle,
+    caption={Uso de la API de MediaWiki para imagen de una ciudad},
+    label={lst:js-mediawiki}
+]
+const fetchImageUrlForTitle = async (title) => {
+    const url = new URL("https://en.wikipedia.org/w/api.php");
+    url.searchParams.set("action", "query");
+    url.searchParams.set("format", "json");
+    url.searchParams.set("origin", "*");
+    url.searchParams.set("redirects", "1");
+    url.searchParams.set("prop", "pageimages");
+    url.searchParams.set("piprop", "thumbnail");
+    url.searchParams.set("pithumbsize", "640");
+    url.searchParams.set("titles", title);
+
+    const response = await fetch(url);
+};
+\end{lstlisting}
+
+\subsection{Despliegue}%
+\label{subsec:deployment}
+
+En esta sección se detalla el uso de Docker para orquestar los servicios necesarios, Terraform para definir la
+infraestructura en la nube necesaria y las particularidades del proveedor de servicios en la nube elegido, Azure.
+Para el despliegue de la aplicación web se utilizará el dominio http://email2trip.xyz.
+
+\subsubsection{Despliegue Local: Docker}
+
+Para facilitar el despliegue de la aplicación se utiliza Docker.
+Para ello se define un archivo Dockerfile (Ver \autoref{lst:docker-dockerfile}) en la raíz del proyecto
+\texttt{extractor-parent} que se encarga de crear
+la imagen con todos los módulos del proyecto en dos etapas, lo que se conoce como \textit{multi-stage build}.
+En la primera etapa se compila la aplicación por completo, a partir de la imagen base \texttt{eclipse-temurin:25-jdk}.
+En lugar de ejecutar la aplicación sobre la misma imagen utilizada para la compilación, se provee solo el \texttt{.jar}
+resultante a una imagen más liviana, a partir de la imagen base \texttt{eclipse-temurin:25-jre}, reduciendo así el
+tamaño final del contenedor.
+Por último se inicia la aplicación mediante el comando \texttt{java -jar app.jar}.
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Archivo Dockerfile (se omiten varias líneas (...) correspondientes a la etapa \texttt{build})},
+    label={lst:docker-dockerfile}
+]
+FROM eclipse-temurin:25-jdk AS build
+
+WORKDIR /workspace
+
+(...)
+
+RUN --mount=type=cache,target=/root/.m2 \
+    ./mvnw -pl server -am package -Dmaven.test.skip=true
+
+(...)
+
+FROM eclipse-temurin:25-jre
+
+WORKDIR /app
+
+COPY --from=build /workspace/server/target/extractor-server-1.0-SNAPSHOT.jar app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+
+\end{lstlisting}
+
+En el archivo de Docker Compose \texttt{compose.yaml} (Ver \autoref{lst:docker-compose}), también ubicado en la raíz del
+proyecto, se define la orquestación completa del entorno de ejecución de la aplicación.
+Docker Compose es una herramienta que permite definir cómo se deben iniciar contenedores de Docker utilizando un
+único archivo YAML\@.
+
+En primer lugar se puede ver cómo se indica que se debe instanciar un contenedor con la base de datos, esto es,
+utilizando una imagen de Postgres 18, en el servicio \texttt{postgres}.
+En \texttt{environment} se indican las propiedades que deben ser reemplazadas en ejecución.
+Estos valores están definidos en un archivo \texttt{.env} para centralizar las variables de configuración del entorno,
+evitando dejarlas definidas en el código y permitiendo contar con más de un archivo \texttt{.env} para realizar el
+despliegue de la aplicación en distintos ambientes (por ejemplo un ambiente local y otro en la nube).
+
+Luego el servicio \texttt{ollama} se define a partir de la imagen Ollama 0.20.
+Para la descarga a demanda del modelo LLM requerido se define otro servicio \texttt{ollama-init} que descarga el modelo
+y luego finaliza su ejecución.
+
+Por último el servicio \texttt{webapp} es el que sirve la aplicación web, tanto el \texttt{back-end} como el
+\texttt{front-end}.
+Como se puede apreciar, para que este servicio funcione, necesita que se le indiquen las credenciales de la base de
+datos, la URL del servicio de Ollama, y la configuración de la API de Nominatim.
+
+En todos los servicios se definen los puertos correspondientes en la sección \texttt{ports} y el volumen compartido
+en la sección \texttt{volumes}.
+Se agregaron verificaciones de \texttt{healthcheck} y \texttt{depends\_on} para que los servicios se inicien en el orden
+correspondiente.
+Esto evita por ejemplo que la aplicación web inicie antes de que la base de datos esté lista o para obtener un mensaje
+cuando alguno de los contenedores finaliza su ejecución de forma inesperada.
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Archivo compose.yaml (se omiten varias líneas (...))},
+    label={lst:docker-compose}
+]
+services:
+  postgres:
+    image: postgres:18-alpine
+    (...)
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres:/var/lib/postgresql
+  ollama:
+    image: ollama/ollama:0.20.3
+    (...)
+    ports:
+      - "${OLLAMA_PORT}:${OLLAMA_PORT}"
+    volumes:
+      - ollama:/root/.ollama
+  ollama-init:
+    image: ollama/ollama:0.20.3
+    (...)
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        ollama serve &
+        server_pid=$$!
+        until ollama list >/dev/null 2>&1; do
+          sleep 1
+        done
+        ollama pull ${OLLAMA_MODEL}
+        kill $$server_pid
+        wait $$server_pid || true
+        sleep "${OLLAMA_BOOTSTRAP_COOLDOWN_SECONDS}"
+    volumes:
+      - ollama:/root/.ollama
+  webapp:
+    image: extractor-webapp:latest
+    build:
+      context: .
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    volumes:
+      - ./logs:/app/logs
+
+volumes:
+  ollama:
+  postgres:
+\end{lstlisting}
+
+\subsubsection{Despliegue \textit{cloud}: Azure}
+
+Como proveedor \textit{cloud} se decidió utilizar Microsoft Azure por experiencia y por contar con créditos de
+estudiante para afrontar los costos del despliegue.
+Azure ofrece además el producto Azure Container Apps de forma que se simplifica el \textit{deploy} de la aplicación
+gracias a la existencia de una imagen de Docker con el código fuente correspondiente.
+
+Para definir la infraestructura necesaria para hacer el \texttt{deploy} en la nube se utiliza Terraform.
+Terraform es una herramienta de Infrastructure as Code (IaC) que permite definir y crear infraestructura (bases de
+datos, aplicaciones, máquinas virtuales, redes, etc.) mediante archivos declarativos.
+De esta forma se puede realizar el \texttt{deploy} completo con un único comando de terminal \texttt{terraform apply}
+sin haber interactuado con la interfaz web o consola de la solución en la nube elegida.
+Del mismo modo, con el comando \texttt{terraform destroy} se procede a la eliminación de todos los recursos creados.
+
+La configuración Terraform del proyecto se encuentra en el directorio \nolinkurl{infra/terraform/azure-container-apps}
+del módulo \texttt{extractor}.
+Se cuenta con varios archivos de extensión \texttt{.tf} destacando el archivo \texttt{main.tf} donde se listan todos
+los recursos que se deben construir en la nube para lograr el \textit{deploy}.
+Tal como se puede apreciar en el \autoref{lst:terraform-main} se necesita crear un \textit{resource} para cada recurso.
+Así se necesita un recurso para la instancia de PostgreSQL, otro para la aplicación web y varios recursos más que
+se encargan de configurar esos recursos.
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={main.tf (se omiten varias líneas (...))},
+    label={lst:terraform-main}
+]
+resource "azurerm_resource_group" "this" {
+  name     = local.resource_group_name
+  location = var.location
+  tags     = local.merged_tags
+}
+
+resource "azurerm_postgresql_flexible_server" "this" {
+  name                          = local.postgres_server_name
+  resource_group_name           = azurerm_resource_group.this.name
+  location                      = azurerm_resource_group.this.location
+  version                       = var.postgres_version
+  delegated_subnet_id           = azurerm_subnet.postgres.id
+  private_dns_zone_id           = azurerm_private_dns_zone.postgres.id
+  administrator_login           = var.postgres_admin_username
+  administrator_password        = random_password.postgres_admin_password.result
+  public_network_access_enabled = false
+  backup_retention_days         = 7
+  geo_redundant_backup_enabled  = false
+  sku_name                      = var.postgres_sku_name
+  storage_mb                    = var.postgres_storage_mb
+  zone                          = "1"
+  tags                          = local.merged_tags
+  (...)
+}
+
+resource "azurerm_container_app" "webapp" {
+  name                         = local.container_app_name
+  container_app_environment_id = azurerm_container_app_environment.this.id
+  resource_group_name          = azurerm_resource_group.this.name
+  revision_mode                = "Single"
+  workload_profile_name        = "Consumption"
+  tags                         = local.merged_tags
+
+  secret {
+    name                = "postgres-password"
+    key_vault_secret_id = azurerm_key_vault_secret.postgres_password.versionless_id
+    identity            = azurerm_user_assigned_identity.container_app.id
+  }
+
+(...)
+}
+\end{lstlisting}
+
+Todos los recursos forman parte de un único \textit{resource group}.
+En la \autoref{fig:azure-resources} se muestra una captura del portal de Azure donde se listan los 13 recursos
+necesarios para el funcionamiento de la solución en la nube, pertenecientes al \textit{resource group}
+\texttt{email2trip-demo-rg}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.00\textwidth]{images/azure-resources}
+    \figcaption{Lista de recursos del \textit{resource group} \texttt{email2trip-demo-rg}}%
+    \label{fig:azure-resources}
+\end{figure}
+
+\FloatBarrier{}
+
+Se define una \textit{virtual network} con dos \textit{subnets} dedicadas: una para el entorno de Azure
+Container Apps y otra para Azure Database for PostgreSQL Flexible Server.
+La separación en dos subredes corresponde a que cada servicio requiere una delegación distinta logrando
+aislamiento entre la capa de aplicación y la capa de datos.
+
+Se cuenta con un \textit{Container Apps Environment} integrado a la red virtual y, dentro de él, una
+\textit{Container App} pública para servir la aplicación web Spring Boot.
+La imagen del contenedor se descarga desde un repositorio privado de Docker Hub creado para tal fin.
+En el \autoref{lst:docker-buildx} se lista el comando necesario para crear una imagen de Docker con todo el código
+fuente del módulo \texttt{server} de extractor y cargarla en el repositorio privado de Docker Hub.
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Comando para crear y publicar la imagen de Docker del \texttt{server} en un repositorio privado.},
+    label={lst:docker-buildx}
+]
+docker buildx build \
+  --platform linux/amd64 \
+  -t "docker.io/${DOCKERHUB_USERNAME}/extractor-webapp:latest" \
+  . \
+  --push
+\end{lstlisting}
+
+En cuanto a la DB se utilizó Azure Database for PostgreSQL Flexible Server.
+Se despliega la DB dentro de una \textit{subnet} delegada, deshabilitando así el acceso público y definiendo una
+\textit{Private DNS Zone} para que la aplicación web resuelva el nombre del servidor dentro de la red virtual.
+
+También se utiliza Azure Key Vault para el almacenamiento de secretos de ejecución.
+Allí se almacena la contraseña aleatoria autogenerada para PostgreSQL, el token de acceso a la imagen de
+Docker Hub y la API key de Ollama Cloud.
+Para acceder a esos secretos se define una \textit{User Assigned Managed Identity} asociada a la Container App.
+
+Para el sistema de recomendaciones cabe mencionar que a diferencia del despliegue local con Docker se utiliza
+directamente el servicio \textit{cloud} de Ollama.
+Ollama ofrece \texttt{gemma4:31b-cloud} el cual es un modelo con más parámetros que el utilizado de forma local y
+permite un uso gratuito a través de la API de Ollama Cloud con topes que exceden el uso esperado para una demostración
+del proyecto.
+
+El resto de los recursos corresponden a componentes de monitoreo y control de costos.
+Se crea un \textit{Log Analytics Workspace} para centralizar logs y métricas del entorno.
+En la \autoref{fig:azure-log} se puede apreciar la salida de la terminal de la aplicación de Spring Boot en
+funcionamiento, tal como si se estuviera ejecutando localmente.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.00\textwidth]{images/azure-log}
+    \figcaption{\textit{Log stream} de la aplicación Spring Boot desplegada en \textit{Azure Container Apps}}%
+    \label{fig:azure-log}
+\end{figure}
+
+\FloatBarrier{}
+
+Para el seguimiento presupuestario se define un \textit{budget} mensual sobre el \textit{resource group}, con
+notificaciones al sobrepasar umbrales de gasto real o proyectado.
+También se define un \textit{Action Group} de Azure Monitor y alertas de uso de CPU y memoria tanto para la Container
+App y CPU y disco para la DB\@.
+Estas alertas permiten detectar tempranamente si la aplicación queda subdimensionada o si la base de datos presenta
+saturación durante la prueba.
+
+Además del código fuente de la infraestructura propiamente dicho, se define un \textit{backend} remoto de Terraform
+utilizando Azure Blob Storage.
+Para ello se crea un \textit{resource group} específico para el estado, un \textit{storage account} y un
+\textit{container} donde se almacena el archivo \texttt{tfstate}.
+Esto permite persistir el estado fuera de la máquina local, facilitando la continuidad del trabajo entre
+sesiones y reduciendo el riesgo de inconsistencias entre el estado real de Azure y el estado manejado por Terraform.
+
+Respecto al manejo de secretos, se evitó contar con credenciales sensibles escritas en archivos de Terraform.
+En su lugar se utilizó 1Password CLI (\texttt{op}) como herramienta de obtención de secretos en ejecución.
+En una bóveda llamada \texttt{email2trip} se almacenan el nombre de usuario y el \textit{personal access token} de
+Docker Hub y la API key de Ollama Cloud.
+Antes de ejecutar los comandos necesarios de Terraform, estos valores se exportan a variables de entorno del tipo
+\texttt{TF\_VAR\_*} (Ver \autoref{lst:op-tf}) de forma que Terraform los consuma sin necesidad de persistirlos en el
+código del proyecto.
+
+\begin{lstlisting}[
+    style=jsonlikecodestyle,
+    caption={Comandos para exportar a variables de entorno los secretos almacenados en 1Password.},
+    label={lst:op-tf}
+]
+export TF_VAR_registry_password="$(op read 'op://email2trip/dockerhub/pat')"
+export TF_VAR_container_image="docker.io/${DOCKERHUB_USERNAME}/extractor-webapp:latest"
+export TF_VAR_ollama_cloud_api_key="$(op read 'op://email2trip/ollama-cloud/api_key')"
+\end{lstlisting}
+
+Finalmente, las instrucciones para realizar un \textit{deploy} desde cero se encuentran en un archivo \texttt{README}.
+De esta forma el despliegue queda automatizado y reproducible.
+
+En la \autoref{fig:azure-diagram} se detalla el diagrama de arquitectura correspondiente.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.00\textwidth]{images/azure-diagram}
+    \figcaption{Diagrama de Arquitectura}%
+    \label{fig:azure-diagram}
+\end{figure}
+
+\FloatBarrier{}

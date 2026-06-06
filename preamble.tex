@@ -1,14 +1,3 @@
-%
-% Para resaltar secciones Revisadas
-% \begin{revisado}
-% ///
-% \end{revisado}
-%
-% Para resaltar secciones a Corregir
-% \begin{corregir}
-% ///
-% \end{corregir}
-%
 \usepackage{tcolorbox}
 \tcbuselibrary{breakable}
 \definecolor{celeste}{rgb}{0.7,0.9,1}
@@ -20,10 +9,6 @@
         before upper={\setlength{\parindent}{15pt}}
     }
 }
-\newtcolorbox{revisado}{revisionbox, colback=celeste!50}
-\newtcolorbox{corregir}{revisionbox, colback=yellow!50}
-\newtcolorbox{pendiente}{revisionbox, colback=red!50}
-\newtcolorbox{trenes}{revisionbox, colback=green!25}
 \newtcbox{\inlineentitybox}[1][]{%
     on line,
     boxrule=0.8pt,

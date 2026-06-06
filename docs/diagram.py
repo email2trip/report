@@ -14,7 +14,6 @@ with (Diagram(show=False, filename="diagram")):
             with Cluster(""):
                 qwen = Custom("LLM","./icons/gemma.png")
     nominatim = Custom("Nominatim","./icons/openstreetmap.png")
-    # mediawiki = Custom("MediaWiki","./icons/mediawiki.png")
     springBoot >> postgres
     springBoot >> qwen
     user >> Edge(label="HTTP") >> vanillaJS

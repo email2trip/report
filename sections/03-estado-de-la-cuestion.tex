@@ -2,8 +2,6 @@
 \section{Estado de la cuestión}%
 \label{sec:state}
 
-\begin{revisado}
-
 Se realizó un relevamiento de la literatura existente que cubre el procesamiento de correos electrónicos tanto de
 reservas de tickets aéreos como de estadías de hotel.
 Las estrategias propuestas abarcan desde métodos clásicos como el reconocimiento de entidades y clasificación basada en
@@ -45,12 +43,8 @@ HTML del correo electrónico para procesar únicamente texto plano) en esta prop
 combinadas que integren tanto la estructura HTML como el contenido textual.
 Esta representación es utilizada para entrenar un clasificador orientado al dominio de reservas de hotel.
 
-\end{revisado}
-
 \subsection{Aplicaciones}%
 \label{subsec:applications}
-
-\begin{revisado}
 
 Se realizó además un relevamiento de soluciones existentes en la actualidad que atiendan el problema planteado.
 Se encontraron aplicaciones destinadas al usuario que realiza las reservas como así también soluciones B2B.
@@ -61,12 +55,8 @@ Respecto a las soluciones B2B mencionaremos a la API de Amadeus.
 A continuación desarrollaremos una solución comercial gratuita (TripIt), una solución de software libre (KDE Itinerary)
 y una solución B2B (Amadeus).
 
-\end{revisado}
-
 \FloatBarrier{}
 \subsubsection{TripIt}
-
-\begin{revisado}
 
 Existe en la actualidad una solución gratuita llamada~\cite{tripit-home} que atiende el problema planteado donde un
 usuario puede reenviar correos electrónicos a una casilla particular de forma que la aplicación extrae información
@@ -80,8 +70,6 @@ el usuario registrado en la aplicación) para luego agregar a un itinerario la i
 apreciar en la \autoref{fig:tripit}.
 El usuario puede descargar la versión móvil desde las tiendas de aplicaciones de iOS y Android o utilizar la versión web.
 
-\end{revisado}
-
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.20\textwidth]{images/tripit1}
@@ -89,8 +77,6 @@ El usuario puede descargar la versión móvil desde las tiendas de aplicaciones 
     \figcaption{Capturas de pantalla de la aplicación TripIt}{\sourcelink{App Store para iPhone}{https://apps.apple.com/ar/app/tripit-travel-planner/id311035142}}%
     \label{fig:tripit}
 \end{figure}
-
-\begin{revisado}
 
 La aplicación no solo muestra una vista de itinerario integrada en función de los distintos correos electrónicos que se
 hayan reenviado sino que también permite agregar datos de eventos manualmente.
@@ -111,13 +97,9 @@ electrónicos que contienen datos sensibles de los usuarios que son parte de la 
 Por ejemplo para una reserva de un ticket de vuelo en el mail aparecerán el nombre completo del usuario, número de
 pasaporte, nacionalidad, entre otros.
 
-\end{revisado}
-
 \FloatBarrier{}
 
 \subsubsection{KDE Itinerary}
-
-\begin{revisado}
 
 En el ámbito del software libre se encuentra la aplicación~\cite{kde-itinerary-home} que consiste en una solución
 enfocada en la privacidad del usuario.
@@ -136,8 +118,6 @@ En cuanto a la implementación se emplea una combinación de técnicas que inclu
 utilización de expresiones regulares para formatos comunes de fecha y hora, y ciertas heurísticas basadas en el
 contenido HTML del correo.
 
-\end{revisado}
-
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.20\textwidth]{images/kde1}
@@ -149,8 +129,6 @@ contenido HTML del correo.
 \FloatBarrier{}
 
 \subsubsection{Amadeus Self-Service APIs: Trip Parser}
-
-\begin{revisado}
 
 Por último mencionamos la función de~\cite{amadeus-trip-parser} perteneciente al servicio Self-Service APIs de Amadeus.
 Amadeus IT Group es una empresa líder en el ámbito del turismo que provee soluciones tecnológicas que abarcan los
@@ -164,32 +142,4 @@ contendrá toda la información del itinerario correspondiente.
 Esta solución paga para desarrolladores soporta contenido en HTML, EML y PDF de más de 300 proveedores distintos en 27
 lenguajes y puede ser utilizada por cualquier aplicación web o móvil que quiera atender el problema planteado.
 
-Cabe destacar que la API
-%(Ver \autoref{fig:amadeus})
-ha sido deprecada por Amadeus por lo que es probable que deje de funcionar en un futuro.
-
-%\begin{figure}[htbp]
-%    \centering
-%    \includegraphics[width=0.75\textwidth]{images/amadeus1.png}
-%    \caption{Sitio web de Trip Parser del portal de desarrolladores de Amadeus}
-%    \label{fig:amadeus}
-%\end{figure}
-
-%\FloatBarrier{}
-%\section{Hipótesis}
-
-%Es posible generar una vista integral de la información de reservas de viaje a partir de la extracción de datos relevantes presentes en los mails de confirmación, independientemente del proveedor de servicio y de la estructura de mail utilizada.
-
-%\subsection{Variables}
-
-%A continuación se detalla el primer conjunto de variables a ser adoptadas para su tratamiento, clasificadas según su tipo (independiente, dependiente o contextual):
-
-%\begin{itemize}
-%\item \textbf{Datos relevantes (variable dependiente):} Para reservas de vuelos se debe extraer el nombre del pasajero, el código de reserva, la fecha y hora de salida y llegada, el aeropuerto de salida y llegada y datos del vuelo como el código y la aerolínea. En el caso de reservas de hoteles se debe extraer el nombre del hotel, la dirección, la fecha y hora de checkin y checkout.
-%\item \textbf{Mails de confirmación (variable independiente)}: El contenido del mail de confirmación que contiene todos los datos relevantes en distintas formas de presentación.
-%\item \textbf{Reservas de viaje (variable dependiente)}: Reservas de vuelos y reservas de hoteles.
-%\item \textbf{Proveedor del Servicio (variable contextual)}: El emisor del mail de confirmación, un sitio web que realiza la reserva (por ejemplo Booking, sitios web de las aerolíneas, etc).
-%\item \textbf{Estructura del mail (variable contextual)}: Como se organiza el texto del mail a analizar.
-%\end{itemize}
-
-\end{revisado}
+Cabe destacar que la API ha sido deprecada por Amadeus por lo que es probable que deje de funcionar en un futuro.

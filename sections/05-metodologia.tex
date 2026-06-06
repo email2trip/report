@@ -2,8 +2,6 @@
 \section{Metodología Aplicada}%
 \label{sec:methodology}
 
-\begin{corregir}
-
 Para estructurar las fases de desarrollo del proyecto y la gestión de los objetivos específicos se aplicó una
 combinación de \textit{Scrum} con \textit{Crisp-DM}.
 Se detallan a continuación ambas metodologías, junto con las técnicas y herramientas utilizadas.
@@ -35,12 +33,8 @@ Datos, Modelado, Evaluación y Despliegue.
 Su aplicación permitió en este proyecto guiar la creación de modelos de clasificación de los correos
 electrónicos, la implementación de técnicas de extracción de información y la evaluación de los resultados obtenidos.
 
-\end{corregir}
-
 \subsection{Técnicas y Herramientas}%
 \label{subsec:tools}
-
-\begin{revisado}
 
 En cuanto a las técnicas, en primer lugar se utilizaron tokenización y normalización, provenientes del área del
 procesamiento de lenguaje natural (NLP). Para la clasificación de los correos electrónicos según el tipo de reserva que
@@ -61,11 +55,7 @@ Por otro lado, para la organización del proyecto en general se utilizaron varia
 destacando el versionado del código fuente con \textit{Git} y el manejo del \textit{backlog} con GitHub Projects.
 Se detallan a continuación ambas herramientas:
 
-\end{revisado}
-
 \subsubsection{Git}
-
-\begin{corregir}
 
 Git es una herramienta de control de versión ampliamente utilizada en la industria del \textit{software} que permite
 llevar un registro de todos los cambios realizados en el tiempo.
@@ -82,8 +72,6 @@ manera paralela mediante el uso de ramas o \textit{branches} y organizar la crea
 También un repositorio para el dataset (\texttt{dataset}) y uno para la redacción de este mismo reporte
 (\texttt{report}).
 
-\end{corregir}
-
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=1.00\textwidth]{images/extractor-git-remote}
@@ -93,44 +81,15 @@ También un repositorio para el dataset (\texttt{dataset}) y uno para la redacci
 
 \FloatBarrier{}
 
-%Las incidencias o \textit{issues} fueron la herramienta para crear cada una de las tareas que formaron parte del
-%\textit{backlog}.
-%Como puede apreciarse en la \autoref{fig:github-issues} cada \textit{issue} cuenta con una descripción y referencias a
-%los cambios realizados en el código fuente para resolver esa tarea, además de poder categorizarlas con etiquetas o
-%\textit{labels}.
-
-%\begin{figure}[htbp]
-%    \centering
-%    \includegraphics[width=1.00\textwidth]{images/github-issues}
-%    \figcaption{Captura de ejemplo de una \textit{issue} del proyecto}{\sourcelink{GitHub Docs}{https://docs.github.com/es/issues/tracking-your-work-with-issues/learning-about-issues/planning-and-tracking-work-for-your-team-or-project}}%
-%    \label{fig:github-issues}
-%\end{figure}
-
-\begin{corregir}
-
 GitHub Projects permite organizar el desarrollo mediante tableros Kanban que están poblados por cada una de las
 \textit{issues} del proyecto.
-%como se muestra en la \autoref{fig:github-projects-board}.
 Así, en una vista general del tablero o \textit{board layout} se pueden distinguir las \textit{issues} por estado: si
 están todavía pendientes de análisis, en desarrollo, en etapa de pruebas o ya finalizada, dado que ya fueron integradas
 a la implementación final.
 
-\end{corregir}
-
-%\begin{figure}[htbp]
-%    \centering
-%    \includegraphics[width=1.00\textwidth]{images/github-projects-board}
-%    \figcaption{Captura de ejemplo de una vista \textit{board} del proyecto}{\sourcelink{GitHub Docs}{https://docs.github.com/es/issues/planning-and-tracking-with-projects/learning-about-projects/best-practices-for-projects}}%
-%    \label{fig:github-projects-board}
-%\end{figure}
-
-\begin{revisado}
-
 En la \autoref{fig:github-projects-roadmap} se puede ver una vista del ciclo de vida de desarrollo o \textit{roadmap}
 donde se puede apreciar la dimensión tiempo en cantidad de semanas y cómo las tareas se fueron resolviendo en cada
 momento.
-
-\end{revisado}
 
 \begin{figure}[htbp]
     \centering
@@ -254,7 +213,6 @@ Viena (Austria).
 
 \FloatBarrier{}
 
-\begin{trenes}
 \subsubsection{Correos de trenes}
 
 Los correos de viajes en tren se agrupan también en tres tipos: confirmación de reserva, actualización de estado o
@@ -321,8 +279,6 @@ correo los pases para dos o más tramos, por ejemplo, el de ida y el de vuelta.
 El segundo \textit{boarding pass} proviene de RegioJet, una empresa que conecta varios países europeos.
 Aquí se presenta un pase para viajar desde Wien Hbf hasta la estación Praha hlavní nádraží de República Checa (en el
 correo se usa la abreviatura en inglés MS que corresponde a \textit{Main Station} o estación principal).
-
-\end{trenes}
 
 \subsection{Preparación de los Datos}%
 \label{subsec:data-preparation}
@@ -451,10 +407,9 @@ Para el caso de correos electrónicos correspondientes a vuelos se busca obtener
 pasajero y el detalle de uno o más segmentos de vuelo.
 Cada segmento se compone de un código de vuelo, el aeropuerto de origen, el aeropuerto de destino y la fecha y hora de
 inicio de vuelo.
-\begin{trenes}
+
 En cuanto a los correos correspondientes a viajes en tren se espera extraer la misma información, donde cada segmento
 tendrá un número de tren, la estación de origen, la estación de destino y la fecha y hora de inicio del viaje.
-\end{trenes}
 
 \paragraph{Extracción de texto desde email}
 
@@ -628,6 +583,7 @@ Se creó un archivo \texttt{airport.rules} que asocia tanto el código IATA como
 nombre de la ciudad donde se ubica el aeropuerto.
 Retomando el ejemplo de Montreal, el contenido del archivo de reglas es el siguiente
 (Ver \autoref{lst:airport-rules-yul}):
+\pagebreak
 
 \begin{lstlisting}[
     style=basecodestyle,
@@ -844,8 +800,8 @@ Si bien en la siguiente etapa se podría buscar la palabra exacta ``Departing'' 
 de tipo \texttt{FLIGHT\_SEGMENT\_MARKER} para buscar múltiples entidades de un tipo en particular y así identificar uno
 o más tramos de vuelos dentro de una misma reserva.
 
-\begin{trenes}
-\subsubparagraph{Extracción de información para trenes}
+\subparagraph{Extracción de información para trenes}%
+\label{subpar:extraction-trains}
 
 El reconocimiento de información en el ambiente de trenes plantea ciertos desafíos cuando se lo compara con el de
 vuelos.
@@ -875,8 +831,6 @@ En lugar de un aeropuerto de origen y destino se deben buscar las estaciones de 
 La fecha y hora de salida y el nombre del pasajero son campos que no agregaron diferencias a la lógica de extracción.
 Sí corresponde detenerse es en la identificación de estaciones de tren ya que se necesita recurrir a
 \textit{datasets} distintos.
-
-\subsubparagraph{Estaciones de Tren}\label{subsubpar:train-stations}
 
 Otro efecto de que no exista una organización que regule todos los viajes en tren del mundo hace que sea más difícil
 conseguir un \textit{dataset} que contenga, por ejemplo, todas las estaciones de tren del mundo.
@@ -935,8 +889,6 @@ Praha hl.n.	TRAIN_STATION	O,PERSON,MISC,ORGANIZATION,LOCATION,CITY,STATE_OR_PROV
 Praha, hl\.n\.	TRAIN_STATION	O,PERSON,MISC,ORGANIZATION,LOCATION,CITY,STATE_OR_PROVINCE,COUNTRY	3.0
 \end{lstlisting}
 
-\end{trenes}
-
 Retomando el \autoref{lst:flight026-first-segment-txt} de la etapa inicial de extracción desde el mail, en la
 \autoref{fig:tcol-flights} se muestran las entidades identificadas al final de esta etapa de preprocesamiento con CoreNLP\@.
 
@@ -981,11 +933,9 @@ Allí también se aprecian etiquetados incorrectos que en principio no afectan l
 Por ejemplo, asociar ``Quebec Toronto'' a \texttt{ORGANIZATION} es un error porque corresponden a dos ciudades distintas
 ubicadas en diferentes provincias.
 
-\begin{trenes}
-
-Respecto a las entidades reconocidas en un correo de trenes se retoma el ejemplo del \autoref{fig:train-booking} para la
-reserva con tramos entre Wien Hbf y München Hbf.
-Se indican a continuación en la \autoref{fig:tcol-trains} las entidades reconocidas:
+Respecto a las entidades reconocidas en un correo de trenes se retoma el ejemplo de la \autoref{fig:train-booking} para
+la reserva con tramos entre Wien Hbf y München Hbf.
+En la \autoref{fig:tcol-trains}se muestran las entidades reconocidas:
 
 \begin{tcolorbox}[
     colback=black!2,
@@ -998,8 +948,7 @@ Se indican a continuación en la \autoref{fig:tcol-trains} las entidades reconoc
     \noindent
 
     {\raggedright%
-    Here is your booking confirmation.
-    Hello Mr \entityperson{Martin Young}, thank you for your booking with Deutsche Bahn.
+    Hello Mr \entityperson{Martin Young}.
     The order with the order number \entitytrainticketcode{123456789012} was booked on \entitytime{13.12.2025 at 18:19}
     as follows:
     Sitzplatzreservierung, 2.\ \entityperson{Klasse}, \entitytrainnumber{RJX 260}
@@ -1016,8 +965,6 @@ Se indican a continuación en la \autoref{fig:tcol-trains} las entidades reconoc
     \caption{Entidades reconocidas.}%
     \label{fig:tcol-trains}
 \end{minipage}
-
-\end{trenes}
 
 \paragraph{Extracción de Información Relevante}
 
@@ -1133,7 +1080,6 @@ formato JSON que se muestra en el \autoref{lst:output-extractor-core-json}:
 }
 \end{lstlisting}
 
-\begin{trenes}
 Respecto a los segmentos de tren y retomando el correo electrónico de dos segmentos, se muestra a continuación en el
 \autoref{lst:output-extractor-core-json-train} la salida correspondiente en formato JSON\@.
 
@@ -1163,7 +1109,6 @@ Respecto a los segmentos de tren y retomando el correo electrónico de dos segme
   ]
 }
 \end{lstlisting}
-\end{trenes}
 
 \paragraph{Enriquecimiento de la Información Relevante}
 
@@ -1253,8 +1198,6 @@ continuación (Ver \autoref{lst:output-extractor-enrich-json}, en la salida se o
   }
 }
 \end{lstlisting}
-
-\begin{trenes}
 
 Respecto a los correos de trenes, además de cargar en memoria los archivos de GTFS ya mencionados se necesita una tarea
 de enriquecimiento adicional.
@@ -1366,8 +1309,6 @@ algunos campos):
 }
 \end{lstlisting}
 
-\end{trenes}
-
 \paragraph{Recomendación de Puntos de Interés}%
 \label{par:poi}
 
@@ -1450,9 +1391,7 @@ siguiente (Ver \autoref{lst:user-prompt-txt}):
     label={lst:user-prompt-txt}
 ]
 Build a sightseeing itinerary for Montreal, Canada for 3 days.
-
 User interests: Culture & Historic, Nature
-
 Requirements:
 - Return exactly 3 days in the itinerary.
 - Each day must include:
@@ -1568,7 +1507,7 @@ propiedades del JSON\@.
 A modo de ejemplo, si se desea obtener recomendaciones de 3 días para la ciudad de Toronto priorizando los intereses
 \texttt{CULTURE\_HISTORIC} y \texttt{NATURE} se obtiene un JSON como el que se puede ver en el
 \autoref{lst:output-core-recommender-json}, (en la salida se ocultan algunos campos)
-
+\pagebreak
 \begin{lstlisting}[
     style=jsonlikecodestyle,
     caption={Salida del recomendador en formato JSON.},
@@ -1606,11 +1545,7 @@ A modo de ejemplo, si se desea obtener recomendaciones de 3 días para la ciudad
       "title": "Cultural Immersion and Green Spaces",
       "summary": "Dive into diverse neighborhoods and relax in Toronto's beautiful green spaces.",
       "places": [
-        {
-          "name": "St. Lawrence Market",
-          "description": "A historic market offering local goods and culinary experiences.",
-          "category": "SHOPPING"
-        },
+        { ... },
         { ... },
         { ... }
       ]
@@ -1745,9 +1680,9 @@ Para la implementación de la aplicación web se decidió utilizar la siguiente 
 
 En la \autoref{fig:architecture-diagram} se detalla el diagrama de arquitectura correspondiente.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio,trim=190 190 190 190,clip]{docs/diagram}
+    \includegraphics[width=0.75\textwidth,height=0.75\textheight,keepaspectratio,trim=190 190 190 190,clip]{docs/diagram}
     \figcaption{Diagrama de arquitectura.}%
     \label{fig:architecture-diagram}
 \end{figure}
@@ -1774,16 +1709,12 @@ Sin embargo se opta por la persistencia de esta información para reducir las in
 Además se facilita la implementación dado que la estructura de la tabla coincide con el archivo ``JSON'' que se obtiene
 a la salida del \textit{pipeline} de extracción.
 
-\begin{trenes}
-
-    Cada viaje cuenta con uno o más segmentos, modelados por la tabla \texttt{trip\_segment}.
-    Esta tabla contiene los datos comunes a vuelos y trenes, como el número identificador, la fecha y hora de salida.
-    Para los vuelos, la información relacionada a aeropuertos y a la aerolínea se almacena en la tabla
-    \texttt{trip\_flight\_segment\_details}.
-    Por su parte, para los trenes, la información relacionada a estaciones se almacenan en la tabla
-    \texttt{trip\_train\_segment\_details}.
-
-\end{trenes}
+Cada viaje cuenta con uno o más segmentos, modelados por la tabla \texttt{trip\_segment}.
+Esta tabla contiene los datos comunes a vuelos y trenes, como el número identificador, la fecha y hora de salida.
+Para los vuelos, la información relacionada a aeropuertos y a la aerolínea se almacena en la tabla
+\texttt{trip\_flight\_segment\_details}.
+Por su parte, para los trenes, la información relacionada a estaciones se almacenan en la tabla
+\texttt{trip\_train\_segment\_details}.
 
 Por último es necesario almacenar las recomendaciones de POIs.
 Para cada recomendación se persiste una tupla en la tabla \texttt{trip\_saved\_recommendation} donde se indica la
@@ -1796,16 +1727,12 @@ intereses posibles ya mencionados) y las coordenadas geográficas (latitud y lon
 
 En la \autoref{fig:db-model-diagram} se detalla el modelo relacional correspondiente.
 
-\begin{trenes}
-
-    \begin{figure}[H]
-        \centering
-        \resizebox{0.96\textwidth}{!}{\input{images/db-model-diagram.tikz}}
-        \figcaption{Modelo relacional de la base de datos.}%
-        \label{fig:db-model-diagram}
-    \end{figure}
-
-\end{trenes}
+\begin{figure}[H]
+    \centering
+    \resizebox{0.96\textwidth}{!}{\input{images/db-model-diagram.tikz}}
+    \figcaption{Modelo relacional de la base de datos.}%
+    \label{fig:db-model-diagram}
+\end{figure}
 
 \FloatBarrier{}
 
@@ -1968,7 +1895,7 @@ En caso de obtener un resultado se intenta luego con las cadenas \texttt{Ciudad 
 La respuesta de la API es un JSON que contiene la URL directa del recurso buscado, esto es, la imagen representativa
 de una ciudad.
 Para reducir las invocaciones a la API se implementa una caché a nivel de la sesión del lado del navegador.
-
+\pagebreak
 \begin{lstlisting}[
     style=javacodestyle,
     caption={Uso de la API de MediaWiki para imagen de una ciudad},

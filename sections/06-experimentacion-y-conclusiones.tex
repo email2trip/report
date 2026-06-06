@@ -1,4 +1,4 @@
-\section{Experimentación y Resultados}%
+\section{Resultados Experimentales}%
 \label{sec:experimentation-and-results}
 
 Para el despliegue del \textit{pipeline} de extracción y recomendaciones se decidió implementar una aplicación web
@@ -20,8 +20,6 @@ Ambas pantallas se pueden ver en la \autoref{fig:web-register-login}.
     \label{fig:web-register-login}
 \end{figure}
 
-\begin{trenes}
-
 Luego al presionar ``New Trip'' podrá arrastrar al navegador un archivo \texttt{.eml} con el correo electrónico sobre el
 cual se desea hacer la extracción de información (Ver \autoref{fig:web-upload}).
 
@@ -31,8 +29,6 @@ cual se desea hacer la extracción de información (Ver \autoref{fig:web-upload}
     \figcaption{Página para arrastrar un archivo \texttt{.eml} de vuelos o trenes.}%
     \label{fig:web-upload}
 \end{figure}
-
-\end{trenes}
 
 El usuario deberá exportar el correo en formato \texttt{.eml} usando la opción exportar de un cliente de escritorio de
 correo electrónico (como Microsoft Outlook, Mozilla Thunderbird o Apple Mail) o desde un webmail (como GMail u
@@ -86,11 +82,9 @@ Al final se ofrece también el nombre del pasajero y el código de reserva.
     \label{fig:web-trip-flights}
 \end{figure}
 
-\begin{trenes}
-
 En caso de mostrar una reserva de trenes de la red canadiense se dibujan en el mapa las líneas correspondientes a las
 vías.
-Esto es posible dado que el archivo GTFS mencionado en \autoref{subsubpar:train-stations} incluye un archivo
+Esto es posible dado que el archivo GTFS mencionado en \autoref{subpar:extraction-trains} incluye un archivo
 \texttt{shapes.txt} con las figuras geométricas necesarias para dibujarlas en el mapa.
 Parte del trazado de la red de trenes de la costa este de Canadá se puede ver en la \autoref{fig:web-trip-trains} donde
 se incluye un tramo que conecta la ciudad de Montreal con la capital del país (Ottawa).
@@ -101,8 +95,6 @@ se incluye un tramo que conecta la ciudad de Montreal con la capital del país (
     \figcaption{Detalles de los segmentos de tren}%
     \label{fig:web-trip-trains}
 \end{figure}
-
-\end{trenes}
 
 En la \autoref{fig:web-trip-activities} se puede apreciar la sección ``Activities'', que es la que dispara el sistema de
 recomendaciones de POIs usando un LLM\@.

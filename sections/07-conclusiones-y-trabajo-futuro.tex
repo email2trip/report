@@ -1,33 +1,58 @@
 \section{Conclusiones y Trabajo a Futuro}%
 \label{sec:conclusions}
 
-\begin{corregir}
+La organización eficiente de la información vinculada a viajes suele ser un desafío, debido a que suelen estar
+involucrados elementos (vuelos, trenes, hoteles, etc.) de diversos proveedores distintos que, además, suele recibirse a
+través de correos electrónicos con diferentes interfaces.
 
-Como conclusión, la presente implementación permite validar que es posible extraer campos relevantes de correos de vuelos
-y trenes independientemente de la estructura HTML, es decir, solo analizando texto plano sin utilizar marcas
-estructurales que actúen como indicios (como atributos de nodos HTML, asunto del correo electrónico, etc.).
+Como consecuencia, el usuario, al momento de querer consultar el itinerario de un viaje, debe consultar cada uno de esos
+mails individualmente o interactuar con las respectivas aplicaciones de cada proveedor, dificultando una vista integral
+del itinerario completo.
+Con este panorama, en muchos casos, el usuario termina aplicando como solución la copia de toda esa información en otro
+lugar o documento, con el riesgo de cometer un error o de contar con información desactualizada.
 
-Con el uso de CoreNLP se puede ver que el proceso de \textit{Named Entity Recognition} es solo el primer paso para una
-correcta identificación.
-En el caso de la identificación de segmentos de vuelos o trenes, es necesario ubicar en el texto a la entidad reconocida
-y, en función de la proximidad con otras entidades reconocidas, decidir con cierto nivel de confianza la información a
-extraer.
+En este contexto, la propuesta de este trabajo fue ofrecer una aplicación capaz de extraer información relevante de
+correos electrónicos de reservas, independientemente de la estructura o el remitente del correo, para luego proceder a
+la creación de un itinerario integral del viaje.
+
+El presente proyecto se centrará en la extracción de información relevante contenida exclusivamente en correos
+electrónicos de reservas de tickets aéreos y tickets de trenes, que es extensible a otros dominios, como estadías de
+hotel, alquiler de vehículos, entradas para espectáculos, excusiones, etc.
+
+El objetivo principal fue implementar un modelo que permita generar un itinerario integral por usuario, centralizando la
+información relevante de sus viajes mediante la extracción, identificación y clasificación automática de datos
+contenidos en correos electrónicos de confirmación (como reservas de vuelos, alojamientos, excursiones, entre otros),
+independientemente del proveedor del servicio y de la estructura del mensaje.
+Adicionalmente, se le agregó como funcionalidad complementaria la generación de recomendaciones de puntos de interés en
+los destinos identificados, con el objetivo de enriquecer la experiencia del usuario y aportar valor adicional al
+itinerario construido.
+
+La presente implementación comienza con la extracción automática de los campos relevantes de correos de vuelos y trenes,
+independientemente de la estructura HTML, es decir, solo analizando texto plano sin utilizar marcas estructurales que
+actúen como indicios (como atributos de nodos HTML, asunto del correo electrónico, etc.).
+
+Con el uso de CoreNLP se pudo ver que el proceso de Named Entity Recognition es solo el primer paso para una correcta
+identificación.
+En el caso de la identificación de segmentos de vuelos o trenes, fue necesario ubicar en el texto a la entidad
+reconocida y, en función de la proximidad con otras entidades reconocidas, decidir con cierto nivel de confianza la
+información a extraer.
+
+El prototipo funcional desarrollado permitió validar las técnicas aplicadas de extracción de información, a través de
+una solución web simple que simuló ser la vista del usuario de la aplicación de gestión de itinerarios, con un grado de
+usabilidad apropiado.
 
 En cuanto al trabajo futuro, una primera mejora posible consiste en la implementación de un clasificador de correos
 electrónicos, similar a como se implementa un filtro de spam.
-El clasificador produciría un valor de confianza para decidir en tiempo real si el correo corresponde a una reserva
-de vuelos, de trenes o de otro tipo, y así optar por el \textit{pipeline} apropiado cuando el usuario realiza
-\textit{drag \& drop} de cualquier correo en una sola área.
+El clasificador produciría un valor de confianza para decidir en tiempo real si el correo corresponde a una reserva de
+vuelos, de trenes o de otro tipo, y así optar por el pipeline apropiado cuando el usuario realiza drag \& drop de
+cualquier correo en una sola área.
 
-El siguiente paso puede ser la incorporación de otros \textit{pipelines} que cubran otros dominios no alcanzados por
-la implementación, como estadías en hoteles, alquileres de autos, atracciones y reservas en restaurantes.
-También se puede examinar la implementación de un \textit{pipeline} en español para los dominios de vuelos y trenes.
-Para cada uno de estos nuevos \textit{pipelines} se deben abordar una serie de desafíos propios de cada dominio
-concreto.
+También se podrían incorporar otros pipelines que cubran dominios no alcanzados por la implementación actual, como
+estadías en hoteles, alquileres de autos, atracciones y reservas en restaurantes.
+También se puede examinar la implementación de un pipeline en español para los dominios de vuelos y trenes.
+Para cada uno de estos nuevos pipelines se deberán abordar una serie de desafíos propios de cada dominio concreto.
 
-Respecto a la usabilidad, una mejora técnica posible es sustituir la tarea de exportar un correo a \texttt{.eml} para
+Finalmente, respecto a la usabilidad, una mejora técnica posible es sustituir la tarea de exportar un correo a .eml para
 que, en cambio, el usuario reenvíe los correos a una casilla como \texttt{trips@email2trip.xyz}, de forma que la
 aplicación analice los correos recibidos y los asigne según el remitente, que debe estar registrado en la aplicación con
 esa misma dirección de correo.
-
-\end{corregir}

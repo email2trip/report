@@ -15,8 +15,8 @@ En este caso, se debió aplicar ciertas modificaciones, ya que el equipo de trab
 integrante (también conocido como \textit{Single Scrum}), destacando que el autor del proyecto combinó los roles de
 Desarrollador, \textit{Product Owner} y \textit{Scrum Master}.
 
-En principio se planearon seis \textit{sprints} con una duración de dos semanas cada una, de forma que la totalidad del
-proyecto contempla una duración aproximada de tres meses.
+En principio se planearon seis \textit{sprints} con una duración de tres semanas cada una, de forma que la totalidad del
+proyecto contempla una duración aproximada de cuatro meses.
 Una vez definidas las historias de usuario se procedió a dividirlas en tareas más pequeñas que terminaron
 formando parte del \textit{backlog} del proyecto.
 Al finalizar cada \textit{sprint} se compartió el avance hasta el momento con la tutora del proyecto para obtener
@@ -30,26 +30,22 @@ Por su parte, \textit{Crisp-DM} es una metodología para el desarrollo de proyec
 independiente de las herramientas de \textit{software}.
 Esta metodología estructura el trabajo en seis fases: Comprensión del negocio, Análisis de los datos, Preparación de los
 Datos, Modelado, Evaluación y Despliegue.
-Su aplicación permitió en este proyecto guiar la creación de modelos de clasificación de los correos
-electrónicos, la implementación de técnicas de extracción de información y la evaluación de los resultados obtenidos.
+Su aplicación permitió en este proyecto guiar la implementación de técnicas de extracción de información y la evaluación
+de los resultados obtenidos.
 
 \subsection{Técnicas y Herramientas}%
 \label{subsec:tools}
 
 En cuanto a las técnicas, en primer lugar se utilizaron tokenización y normalización, provenientes del área del
-procesamiento de lenguaje natural (NLP). Para la clasificación de los correos electrónicos según el tipo de reserva que
-contengan se utilizaron modelos de aprendizaje supervisado.
+procesamiento de lenguaje natural (NLP).
 También se utilizó Named Entity Recognition para poder extraer la información relevante de cada mail de reserva, con
 la ayuda de expresiones regulares para aquellos casos que respeten patrones predecibles.
 
 Respecto al desarrollo de la solución se utilizaron diversas herramientas de acuerdo con los requerimientos de cada
 componente.
 Para el proceso de extracción, transformación y carga (ETL) se utilizó principalmente el lenguaje de programación
-Java.
-También se utilizó el lenguaje de programación R para los modelos de clasificación y extracción.
-La visualización de los resultados se llevó a cabo utilizando Observable.
+Java, como así también Python.
 Para la implementación de la aplicación web que muestra el itinerario consolidado del usuario se utilizó Spring Boot.
-Se evaluó además la posibilidad de incorporar un orquestador de flujos de trabajo como Apache Airflow.
 
 Por otro lado, para la organización del proyecto en general se utilizaron varias funcionalidades del sitio GitHub.com
 destacando el versionado del código fuente con \textit{Git} y el manejo del \textit{backlog} con GitHub Projects.
@@ -60,16 +56,17 @@ Se detallan a continuación ambas herramientas:
 Git es una herramienta de control de versión ampliamente utilizada en la industria del \textit{software} que permite
 llevar un registro de todos los cambios realizados en el tiempo.
 
-Para este trabajo, se creó una organización en~\cite{github} denominada \texttt{email2trip} que contiene todos los
-repositorios necesarios para el proyecto.
-En la \autoref{fig:extractor-git-remote} se puede ver el repositorio privado (\texttt{extractor}) que forma parte de
+Para este trabajo, se utilizó GitHub como plataforma~\cite{github}.
+Allí se creó una organización denominada \texttt{email2trip}, que contiene todos los repositorios necesarios para el
+proyecto.
+En la \autoref{fig:extractor-git-remote} se puede ver el repositorio (\texttt{extractor}) que forma parte de
 la organización y que actuó como servidor remoto del repositorio Git local.
 
 En este proyecto su aplicación permitió revertir cambios cuando fue necesario, trabajar en distintas funcionalidades de
 manera paralela mediante el uso de ramas o \textit{branches} y organizar la creación de los entregables de cada
 \textit{sprint} mediante la funcionalidad de \textit{releases} y \textit{tags}.
 
-También un repositorio para el dataset (\texttt{dataset}) y uno para la redacción de este mismo reporte
+También se creó un repositorio para el dataset (\texttt{dataset}) y uno para la redacción de este mismo reporte
 (\texttt{report}).
 
 \begin{figure}[htbp]
@@ -182,7 +179,7 @@ realizado el \textit{check-in}.
 Los campos a extraer también coinciden con los dos tipos anteriores, con la particularidad de que aquí siempre se
 estará mencionando un único tramo.
 
-En la \autoref{fig:eml-boardingpass-fra-vie} se presenta un ejemplo que corresponde a un\textit{boarding pass} de la
+En la \autoref{fig:eml-boardingpass-fra-vie} se presenta un ejemplo que corresponde a un \textit{boarding pass} de la
 aerolínea Austrian del grupo Lufthansa que incluye un segmento desde Fráncfort (Alemania) con destino a la ciudad de
 Viena (Austria).
 
@@ -220,7 +217,7 @@ Los correos de viajes en tren se agrupan también en tres tipos: confirmación d
 
 Se pueden apreciar en la \autoref{fig:train-booking} dos ejemplos de compañías distintas: la canadiense VIA Rail y
 Deutsche Bahn (DB) de Alemania.
-En la primera se puede apreciar un segmento que une las ciudades canadienses de Montreal y Ottawa.
+En la primera se puede ver un segmento que une las ciudades canadienses de Montreal y Ottawa.
 En cuanto a la reserva de DB existen dos segmentos, uno de ida y otro de vuelta.
 Ambos conectan la estación Wien Hauptbahnhof (Viena, Austria) con la estación München Hauptbahnhof (Múnich, Alemania).
 
@@ -250,7 +247,7 @@ más tarde de lo originalmente anunciado.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1.00\textwidth]{images/train-eml-reminder-vie-muc}
+    \includegraphics[width=0.96\textwidth]{images/train-eml-reminder-vie-muc}
     \figcaption{Ejemplo de un correo electrónico de actualización de estado de un viaje en tren de Deutsche Bahn.}%
     \label{fig:train-status-update}
 \end{figure}
@@ -283,7 +280,7 @@ correo se usa la abreviatura en inglés MS que corresponde a \textit{Main Statio
 \subsection{Preparación de los Datos}%
 \label{subsec:data-preparation}
 
-En esta sección se mencionan los tipos distintos de mails que existen, el proceso de anonimización realizado para
+En esta sección se menciona el proceso de anonimización realizado para
 que en el \textit{dataset} no aparezcan datos sensibles de los pasajeros que voluntariamente se prestaron a compartir
 sus correos electrónicos y el uso de una herramienta para llevar un control de versiones del \textit{dataset}.
 
@@ -385,10 +382,10 @@ id,type,booking,origin_airport,destination_airport,date,passenger_name,flight_co
 
 En esta sección se detalla el proceso de implementación de la solución completa, incluyendo desde la lógica de
 extracción de campos relevantes en un texto usando procesamiento de lenguaje natural (NLP) hasta el despliegue
-de la aplicación web para que un usuario pueda registrarse, reenviar sus
+de la aplicación web para que un usuario pueda registrarse, cargar sus
 correos electrónicos y obtener un itinerario de viaje integral.
-Como prueba de concepto, se realizó un trabajo de aplicación integral de todo el proceso, sólo sobre los vuelos del
-itinerario.
+Como prueba de concepto, se realizó un trabajo de aplicación integral de todo el proceso, sobre los vuelos y viajes
+en tren del itinerario.
 
 \subsubsection{\textit{Pipeline end-to-end} de Procesamiento de Emails}
 
@@ -492,7 +489,7 @@ private static String normalizeFlightNumbers(String text) {
 
 \paragraph{Preprocesamiento con CoreNLP}\label{par:corenlp}
 
-Una vez que se cuenta con una instancia de \textit{String} con únicamente el contenido a simple vista de un correo
+Una vez que se cuenta con una instancia de \texttt{String} con únicamente el contenido a simple vista de un correo
 electrónico se envía este texto al \textit{pipeline} de~\cite{stanford-corenlp}.
 Stanford CoreNLP es una biblioteca de procesamiento de lenguaje natural desarrollada por Stanford que permite analizar
 texto automáticamente, por ejemplo detectando tokens, lemas, categorías gramaticales, entidades y relaciones, entre
@@ -511,7 +508,7 @@ continuación:
 \FloatBarrier{}
 
 La tokenización consiste en convertir texto en tokens.
-La forma más elemental consiste en dividir cada vez que aparece un espacio.
+La forma más elemental resulta en dividir cada vez que aparece un espacio.
 Por ejemplo para el texto \enquote{Thanks for flying.} la tokenización genera cuatro tokens:
 \enquote{Thanks}, \enquote{for}, \enquote{flying} y \enquote{.}.
 CoreNLP realiza la separación del texto en \textit{tokens} usando una colección de reglas ya previstas.
@@ -607,8 +604,8 @@ Debido a que CoreNLP puede reconocer a una cadena ``YUL Montréal'' como una ún
 \texttt{ORGANIZATION}, entonces necesitamos de una segunda regla para cada aeropuerto donde se ubica primero el código
 IATA y luego el nombre de la ciudad correspondiente.
 
-La particularidad de los nombres de los aeropuertos es que el modelo puede fácilmente con el nombre de una persona,
-por ejemplo del pasajero del vuelo.
+La particularidad de los nombres de los aeropuertos es que el modelo puede fácilmente confundirlo con el nombre de una
+persona, por ejemplo del pasajero del vuelo.
 Siguiendo con el mismo ejemplo, para la cadena ``Charles de Gaulle Airport'' el modelo lo anota como \texttt{PERSON}.
 Es por eso que para cada aeropuerto se crean hasta tres reglas adicionales indicadas en el archivo
 \texttt{airport-names.rules} donde para un nombre proveniente del dataset como ``Montreal / Pierre Elliott Trudeau
@@ -673,9 +670,8 @@ palabras comunes del idioma inglés y así excluirlas de cualquier identificaci�
 Las palabras definidas en la implementación son las siguientes: ``API'', ``GET'', ``GST'', ``HST'', ``MAX'', ``MAY'', y
 ``VOL''.
 
-Respecto a las entidades Códigos de Vuelo y Aerolínea, ya se explicó en la Sección \autoref{par:corenlp} el
-preprocesamiento que se realiza antes de iniciar el pipeline de CoreNLP y que involucra a los códigos de vuelo definidos
-por IATA\@.
+Respecto a las entidades Códigos de Vuelo y Aerolínea, ya se explicó el preprocesamiento que se realiza antes de iniciar
+el \textit{pipeline} de CoreNLP y que involucra a los códigos de vuelo definidos por IATA\@.
 Ahora es momento de obtener el token ``AC8633'' y reconocerlo como una entidad de tipo \texttt{FLIGHT\_NUMBER}.
 Para ello se utilizó el \textit{dataset} público de aerolíneas de~\cite{openflights-data}
 que ofrece un CSV con más de 6.000 registros que representan a todas las aerolíneas del mundo.
@@ -800,7 +796,51 @@ Si bien en la siguiente etapa se podría buscar la palabra exacta ``Departing'' 
 de tipo \texttt{FLIGHT\_SEGMENT\_MARKER} para buscar múltiples entidades de un tipo en particular y así identificar uno
 o más tramos de vuelos dentro de una misma reserva.
 
-\subparagraph{Extracción de información para trenes}%
+Retomando el \autoref{lst:flight026-first-segment-txt} de la etapa inicial de extracción desde el mail, en la
+\autoref{fig:tcol-flights} se muestran las entidades identificadas al final de esta etapa de preprocesamiento con CoreNLP\@.
+\pagebreak
+\begin{tcolorbox}[
+    colback=black!2,
+    colframe=black!35,
+    title={Entidades reconocidas en un fragmento de texto de una reserva aérea},
+    breakable
+]
+
+    \medskip
+    \noindent
+
+    {\raggedright%
+    Depart \entitydate{Sun 24 Jul, 2022} Business Class {-} Flexible Reward \entitystateorprovince{Quebec} City
+    \entityairportcode{YQB} \entitytime{10:50} \\
+    \entityperson{Jean Lesage Int.} \entityorganization{Quebec Toronto} \entityairportcode{YYZ} \\
+    \entitytime{12:25} Toronto-Pearson Int., Terminal \entitynumber{1} \entitypnrcode{AC1795}\\
+    \entityduration{1hr} \entitynumber{35m} Business (I) Operated by: \entityairlinename{AIR CANADA} ROUGE A319{-}100 | Wi-Fi\par
+    }
+
+    \medskip
+    \noindent
+
+\end{tcolorbox}
+\noindent\begin{minipage}{\linewidth}
+             \captionsetup{type=figure,hypcap=false}
+             \caption{Entidades reconocidas.}%
+             \label{fig:tcol-flights}
+\end{minipage}
+
+Si bien la salida es la esperada para las entidades de tipo \texttt{DATE}, \texttt{TIME}, \texttt{AIRPORT\_CODE} y
+\texttt{PNR\_CODE}, también se obtienen identificaciones incorrectas.
+Por ejemplo el caso de \enquote{Jean Lesage Int.} que es incorrectamente anotado como \texttt{PERSON} cuando en realidad
+es el nombre completo del aeropuerto en cuestión.
+Esto demuestra la necesidad de una siguiente etapa donde, para un conjunto de entidades de tipo \texttt{PERSON} (entre
+ellas la esperada, la incorrecta del ejemplo y cualquier otra que pueda aparecer con el procesamiento del resto del mail)
+se deberá aplicar cierto criterio para quedarse sólo con una.
+
+Las entidades resaltadas en color negro corresponden a la implementación por defecto de CoreNLP\@.
+Allí también se aprecian etiquetados incorrectos que en principio no afectan la tarea de extracción planteada.
+Por ejemplo, asociar ``Quebec Toronto'' a \texttt{ORGANIZATION} es un error porque corresponden a dos ciudades distintas
+ubicadas en diferentes provincias.
+
+\subparagraph{Preprocesamiento con CoreNLP para trenes}%
 \label{subpar:extraction-trains}
 
 El reconocimiento de información en el ambiente de trenes plantea ciertos desafíos cuando se lo compara con el de
@@ -828,8 +868,8 @@ Por lo tanto se plantean reglas para poder extraer ambos tipos de código de res
 
 La detección de segmentos de tren sí plantea similitudes con la de vuelos ya que conceptualmente coinciden.
 En lugar de un aeropuerto de origen y destino se deben buscar las estaciones de tren de origen y destino.
-La fecha y hora de salida y el nombre del pasajero son campos que no agregaron diferencias a la lógica de extracción.
-Sí corresponde detenerse es en la identificación de estaciones de tren ya que se necesita recurrir a
+La fecha y hora de salida y el nombre del pasajero son campos que no agregan diferencias a la lógica de extracción.
+Sí corresponde detenerse en la identificación de estaciones de tren ya que se necesita recurrir a
 \textit{datasets} distintos.
 
 Otro efecto de que no exista una organización que regule todos los viajes en tren del mundo hace que sea más difícil
@@ -857,8 +897,7 @@ Si bien la implementación actual está limitada a correos electrónicos en ingl
 no solo el nombre original de la estación sino también una variante en inglés o en el idioma de la compañía de tren.
 
 Es por eso que es necesario recurrir a un \textit{dataset} adicional proveniente de la empresa
-\sourcelink{Trainline EU}{https://github.com/trainline-eu/stations} que provee mucha más información para cada estación
-de tren.
+~\cite{trainlineeu} que provee mucha más información para cada estación de tren.
 En primer lugar indica el identificador que coincide con la especificación GTFS\@.
 Esto permite agregar información adicional directamente a cada estación del \textit{dataset} original.
 Los campos que se destacan son los de internacionalización, como las columnas \texttt{info:de}, \texttt{info:en} y
@@ -889,54 +928,10 @@ Praha hl.n.	TRAIN_STATION	O,PERSON,MISC,ORGANIZATION,LOCATION,CITY,STATE_OR_PROV
 Praha, hl\.n\.	TRAIN_STATION	O,PERSON,MISC,ORGANIZATION,LOCATION,CITY,STATE_OR_PROVINCE,COUNTRY	3.0
 \end{lstlisting}
 
-Retomando el \autoref{lst:flight026-first-segment-txt} de la etapa inicial de extracción desde el mail, en la
-\autoref{fig:tcol-flights} se muestran las entidades identificadas al final de esta etapa de preprocesamiento con CoreNLP\@.
-
-\begin{tcolorbox}[
-    colback=black!2,
-    colframe=black!35,
-    title={Entidades reconocidas en un fragmento de texto de una reserva aérea},
-    breakable
-]
-
-    \medskip
-    \noindent
-
-    {\raggedright%
-    Depart \entitydate{Sun 24 Jul, 2022} Business Class {-} Flexible Reward \entitystateorprovince{Quebec} City
-    \entityairportcode{YQB} \entitytime{10:50} \\
-    \entityperson{Jean Lesage Int.} \entityorganization{Quebec Toronto} \entityairportcode{YYZ} \\
-    \entitytime{12:25} Toronto-Pearson Int., Terminal \entitynumber{1} \entitypnrcode{AC1795}\\
-    \entityduration{1hr} \entitynumber{35m} Business (I) Operated by: \entityairlinename{AIR CANADA} ROUGE A319{-}100 | Wi-Fi\par
-    }
-
-    \medskip
-    \noindent
-
-\end{tcolorbox}
-\noindent\begin{minipage}{\linewidth}
-    \captionsetup{type=figure,hypcap=false}
-    \caption{Entidades reconocidas.}%
-    \label{fig:tcol-flights}
-\end{minipage}
-
-Si bien la salida es la esperada para las entidades de tipo \texttt{DATE}, \texttt{TIME}, \texttt{AIRPORT\_CODE} y
-\texttt{PNR\_CODE}, también se obtienen identificaciones incorrectas.
-Por ejemplo el caso de \enquote{Jean Lesage Int.} que es incorrectamente anotado como \texttt{PERSON} cuando en realidad
-es el nombre completo del aeropuerto en cuestión.
-Esto demuestra la necesidad de una siguiente etapa donde, para un conjunto de entidades de tipo \texttt{PERSON} (entre
-ellas la esperada, la incorrecta del ejemplo y cualquier otra que pueda aparecer con el procesamiento del resto del mail)
-se deberá aplicar cierto criterio para quedarse sólo con una.
-
-Las entidades resaltadas en color negro corresponden a la implementación por defecto de CoreNLP\@.
-Allí también se aprecian etiquetados incorrectos que en principio no afectan la tarea de extracción planteada.
-Por ejemplo, asociar ``Quebec Toronto'' a \texttt{ORGANIZATION} es un error porque corresponden a dos ciudades distintas
-ubicadas en diferentes provincias.
-
 Respecto a las entidades reconocidas en un correo de trenes se retoma el ejemplo de la \autoref{fig:train-booking} para
 la reserva con tramos entre Wien Hbf y München Hbf.
-En la \autoref{fig:tcol-trains}se muestran las entidades reconocidas:
-
+En la \autoref{fig:tcol-trains} se muestran las entidades reconocidas:
+\pagebreak
 \begin{tcolorbox}[
     colback=black!2,
     colframe=black!35,
@@ -1006,7 +1001,7 @@ Lo mismo aplica para la hora de despegue.
 La lógica mencionada para aeropuerto origen, destino, fecha y hora de origen y código de vuelo puede encapsularse en lo
 que se denomina la identificación de un tramo de vuelo.
 En un único mail de reserva de un vuelo se pueden encontrar uno o más segmentos o tramos.
-Por lo tanto se procederá a identificar tramos donde cada tramo se compone de dos entidades de tipo
+Por lo tanto se procederá a identificar tramos donde cada uno se compone de dos entidades de tipo
 \texttt{AIRPORT\_CODE}, un \texttt{DATE} y un \texttt{TIME} para el origen y un \texttt{FLIGHT\_NUMBER}.
 Para ello se implementaron cuatro \textit{layouts} posibles, es decir, cuatro formas en que podrían aparecer estas
 entidades, contemplando así la totalidad de los correos de reservas presentes en el \textit{dataset}.
@@ -1026,14 +1021,14 @@ entidades, contemplando así la totalidad de los correos de reservas presentes e
         \texttt{\ldots\ AIRPORT\_CODE \ldots\ TIME}
         \item Ejemplo: ``AC132 YVR Vancouver Departing at 13:00 YYZ Toronto Arriving at 20:28''
     \end{itemize}
-    \item Opción 3: Un layout partido donde las fechas y horas aparecen al final
+    \item Opción 3: Un \textit{layout} partido donde las fechas y horas aparecen al final
     \begin{itemize}
         \item Regla:
         \texttt{AIRPORT\_CODE \ldots\ AIRPORT\_CODE \ldots\ FLIGHT\_NUMBER}\\
         \texttt{\ldots\ DATE TIME \ldots\ DATE TIME}
         \item Ejemplo: ``EZE ATL DL110 Departs 07/20/2020 8:20 PM Arrives 07/21/2020 5:48 AM''
     \end{itemize}
-    \item Opción 4: El más utilizado por los correos de tipo boarding pass donde primero aparece la fecha del embarque
+    \item Opción 4: El más utilizado por los correos de tipo \textit{boarding pass} donde primero aparece la fecha del embarque
     \begin{itemize}
         \item Regla:
         \texttt{DATE \ldots\ FLIGHT\_NUMBER \ldots\ AIRPORT\_CODE \ldots\ TIME}\\
@@ -1047,7 +1042,7 @@ El último paso es evitar conservar dos segmentos que resultan equivalentes, est
 Esto es común en confirmaciones de vuelos donde la información aparece primero con los datos del pasajero y luego
 aparece por segunda vez sólo para indicar la política de equipaje para cada segmento.
 Una vez que se extrajeron los campos relevantes de una reserva se envía esa información al proceso de enriquecimiento o
-\textit{enrichment} para conseguir más información a partir de los identificadores únicos que resultan algunas de las
+\textit{enrichment} para conseguir más información a partir de los identificadores únicos que resultan de algunas de las
 entidades identificadas.
 
 Retomando el correo electrónico de ejemplo de dos segmentos, luego de la extracción se obtiene la siguiente salida en
@@ -1112,7 +1107,7 @@ Respecto a los segmentos de tren y retomando el correo electrónico de dos segme
 
 \paragraph{Enriquecimiento de la Información Relevante}
 
-Con los mismos datasets de vuelos y aerolíneas utilizados para la creación de reglas de CoreNLP se puede enriquecer el
+Con los mismos \textit{datasets} de vuelos y aerolíneas utilizados para la creación de reglas de CoreNLP se puede enriquecer el
 JSON obtenido.
 
 Para los aeropuertos, a partir del código IATA, se pueden obtener las coordenadas geográficas para poder ubicarlo más
@@ -1211,7 +1206,7 @@ la limitación de procesar hasta una coordenada por segundo.
 Para eliminar esta restricción se puede utilizar un proveedor pago o el despliegue de una instancia propia.
 
 Para cada geocodificación se realiza un \textit{request} HTTP a la API REST de Nominatim usando el path
-\texttt{/reverse} donde se utilizan los parámetros \textit{lat}, \textit{lon} entre otros.
+\texttt{/reverse} donde se utilizan los parámetros \textit{lat} y \textit{lon}, entre otros.
 En el \textit{request} se indica además que el formato de respuesta debe ser \texttt{jsonv2} y que la cantidad de
 resultados es una.
 Así la respuesta consiste en un JSON con el nodo \texttt{address} que cuenta con tres campos relevantes: \texttt{city},
@@ -1313,7 +1308,8 @@ algunos campos):
 \label{par:poi}
 
 Esta sección cubre la funcionalidad adicional de ofrecer recomendaciones de puntos de interés que el usuario podría
-visitar en cada una de las ciudades destino de la reserva (ciudades según los aeropuertos destino de cada segmento).
+visitar en cada una de las ciudades destino de la reserva (ciudades según los aeropuertos destino o estaciones de
+tren de llegada de cada segmento).
 
 En lugar de utilizar una base de datos de POIs (\textit{points of interest}) se optó por utilizar un
 \textit{Large Language Model} (LLM) de forma local al que se le solicitan recomendaciones de POIs para un destino y se
@@ -1343,14 +1339,14 @@ Ofrece compatibilidad con más de 140 idiomas y la versión E4B cuenta con 4.500
 De acuerdo a lo enunciado en la tarjeta del modelo, Gemma 4 se recomienda para tareas como la generación de texto, la
 programación y el razonamiento.
 La variedad de modelos (en función de la cantidad de parámetros) permite que estos puedan ser implementados en entornos
-que van desde teléfonos de alta gama hasta laptops y servidores, es decir, sin necesidad de contar con una \textit{GPU}
+que van desde teléfonos de alta gama hasta \textit{laptops} y servidores, es decir, sin necesidad de contar con una \textit{GPU}
 potente.
 
 El modelo se ejecuta en Ollama, una herramienta que permite ejecutar modelos localmente, tanto en CPU como en GPU,
 exponiendo una \textit{API HTTP} para interactuar con el modelo y así facilitar la integración en aplicaciones.
 En la implementación se utiliza Ollama dentro de un contenedor de Docker por lo que el modelo se ejecuta sólo en CPU\@.
 Sin embargo el uso de Ollama permite que, al momento de realizar el \textit{deploy} de la aplicación en algún proveedor
-\textit{cloud} se puede definir una propiedad y así dejar de utilizar Ollama local y usar una API de pago.
+\textit{cloud}, se puede definir una propiedad y así dejar de utilizar Ollama local y usar una API de pago.
 
 Para interactuar con el LLM desde código Java se utiliza el \textit{framework} Spring AI\@.
 Esta biblioteca se encarga de pedirle al modelo que la salida cumpla con un \textit{schema} para lograr la salida
@@ -1507,7 +1503,7 @@ propiedades del JSON\@.
 A modo de ejemplo, si se desea obtener recomendaciones de 3 días para la ciudad de Toronto priorizando los intereses
 \texttt{CULTURE\_HISTORIC} y \texttt{NATURE} se obtiene un JSON como el que se puede ver en el
 \autoref{lst:output-core-recommender-json}, (en la salida se ocultan algunos campos)
-\pagebreak
+
 \begin{lstlisting}[
     style=jsonlikecodestyle,
     caption={Salida del recomendador en formato JSON.},
@@ -1602,8 +1598,8 @@ siguiente (Ver \autoref{lst:api-nominatim-response-json}):
 
 Para algunas recomendaciones del LLM, dado que no coincide con el nombre exacto que el servicio de
 geocodificación espera, no se podrán conseguir las coordenadas geográficas.
-En la implementación se decidió utilizar las coordenadas del aeropuerto para marcar al menos la zona de la ciudad donde
-el punto de interés se encuentra.
+En la implementación se decidió utilizar las coordenadas del aeropuerto o de la estación de tren para marcar al menos la
+zona de la ciudad donde el punto de interés se encuentra.
 
 A modo de ejemplo, si se desea obtener recomendaciones de 3 días para la ciudad de Toronto priorizando los intereses
 \texttt{CULTURE\_HISTORIC} y \texttt{NATURE} se obtiene un JSON como el que se muestra en el
@@ -1672,7 +1668,8 @@ Para la implementación de la aplicación web se decidió utilizar la siguiente 
     \item Ollama: Herramienta que sirve el LLM de las recomendaciones que invoca el \textit{back-end}
     \item APIs externas
     \begin{itemize}
-        \item Nominatim: Para la geolocalización de puntos de interés, invocada por el \textit{back-end}
+        \item Nominatim: Para la geolocalización de puntos de interés y la geolocalización inversa de las estaciones
+de tren, ambas invocadas por el \textit{back-end}
         \item MediaWiki: Para la obtención de una imagen representativa del viaje (visible en ``My Trips''), invocada
         por el \textit{front-end}
     \end{itemize}
@@ -1864,7 +1861,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
 Como se ve en el fragmento de código, se utilizó una protección contra solicitudes maliciosas basada en tokens
 Cross-Site Request Forgery (CSRF) que consisten en valores únicos generados por el servidor y verificados en cada
 solicitud que modifique el estado de la aplicación.
-De esta forma, en caso de que un atacante envíe una petición maliciosa, al no tener el token esperado la operación será
+De esta forma, en caso de que un atacante envíe una petición maliciosa, al no tener el \textit{token} esperado la operación será
 rechazada.
 
 \subsubsection{Front-End: Vanilla JS}
@@ -1878,7 +1875,7 @@ también desde dispositivos móviles con pantallas más pequeñas.
 En el directorio \texttt{assets/} del módulo \texttt{extractor-client} se ubican los archivos JavaScript y CSS
 necesarios.
 Además se utilizó Bootstrap, un framework front-end de componentes y reglas CSS que permite construir aplicaciones web
-\texttt{responsive} consistentes a partir de estilos y componentes ya definidos.
+\textit{responsive} consistentes a partir de estilos y componentes ya definidos.
 
 Los archivos de extensión HTML se encuentran ubicados en el directorio \texttt{templates/} del módulo
 \texttt{extractor-server}.
@@ -1891,7 +1888,7 @@ de MediaWiki para conseguir una imagen de la ciudad que corresponde al destino f
 Esta imagen se puede ver en la sección ``My Trips''.
 La API es gratuita y para esta implementación se realiza un \texttt{request} GET (Ver \autoref{lst:js-mediawiki})
 probando primero con la cadena \texttt{Ciudad, País}.
-En caso de obtener un resultado se intenta luego con las cadenas \texttt{Ciudad (País)} y \texttt{Ciudad}.
+En caso de no obtener un resultado se intenta luego con las cadenas \texttt{Ciudad (País)} y \texttt{Ciudad}.
 La respuesta de la API es un JSON que contiene la URL directa del recurso buscado, esto es, la imagen representativa
 de una ciudad.
 Para reducir las invocaciones a la API se implementa una caché a nivel de la sesión del lado del navegador.
@@ -1921,7 +1918,6 @@ const fetchImageUrlForTitle = async (title) => {
 
 En esta sección se detalla el uso de Docker para orquestar los servicios necesarios, Terraform para definir la
 infraestructura en la nube necesaria y las particularidades del proveedor de servicios en la nube elegido, Azure.
-Para el despliegue de la aplicación web se utilizará el dominio http://email2trip.xyz.
 
 \subsubsection{Despliegue Local: Docker}
 
@@ -1931,7 +1927,7 @@ Para ello se define un archivo Dockerfile (Ver \autoref{lst:docker-dockerfile}) 
 la imagen con todos los módulos del proyecto en dos etapas, lo que se conoce como \textit{multi-stage build}.
 En la primera etapa se compila la aplicación por completo, a partir de la imagen base \texttt{eclipse-temurin:25-jdk}.
 En lugar de ejecutar la aplicación sobre la misma imagen utilizada para la compilación, se provee solo el \texttt{.jar}
-resultante a una imagen más liviana, a partir de la imagen base \texttt{eclipse-temurin:25-jre}, reduciendo así el
+resultante a una imagen más liviana, a partir de la imagen base \texttt{eclipse-temurin:26-jre}, reduciendo así el
 tamaño final del contenedor.
 Por último se inicia la aplicación mediante el comando \texttt{java -jar app.jar}.
 
@@ -1940,7 +1936,7 @@ Por último se inicia la aplicación mediante el comando \texttt{java -jar app.j
     caption={Archivo Dockerfile (se omiten varias líneas (...) correspondientes a la etapa \texttt{build})},
     label={lst:docker-dockerfile}
 ]
-FROM eclipse-temurin:25-jdk AS build
+FROM eclipse-temurin:26-jdk AS build
 
 WORKDIR /workspace
 
@@ -1951,7 +1947,7 @@ RUN --mount=type=cache,target=/root/.m2 \
 
 (...)
 
-FROM eclipse-temurin:25-jre
+FROM eclipse-temurin:26-jre
 
 WORKDIR /app
 
@@ -1975,7 +1971,7 @@ Estos valores están definidos en un archivo \texttt{.env} para centralizar las 
 evitando dejarlas definidas en el código y permitiendo contar con más de un archivo \texttt{.env} para realizar el
 despliegue de la aplicación en distintos ambientes (por ejemplo un ambiente local y otro en la nube).
 
-Luego el servicio \texttt{ollama} se define a partir de la imagen Ollama 0.20.
+Luego el servicio \texttt{ollama} se define a partir de la imagen Ollama 0.24.
 Para la descarga a demanda del modelo LLM requerido se define otro servicio \texttt{ollama-init} que descarga el modelo
 y luego finaliza su ejecución.
 
@@ -2005,14 +2001,14 @@ services:
     volumes:
       - postgres:/var/lib/postgresql
   ollama:
-    image: ollama/ollama:0.20.3
+    image: ollama/ollama:0.24.0
     (...)
     ports:
       - "${OLLAMA_PORT}:${OLLAMA_PORT}"
     volumes:
       - ollama:/root/.ollama
   ollama-init:
-    image: ollama/ollama:0.20.3
+    image: ollama/ollama:0.24.0
     (...)
     entrypoint:
       - /bin/sh

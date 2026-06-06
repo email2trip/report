@@ -38,7 +38,7 @@ Elegido el archivo basta con presionar ``Create Trip'' para que se dispare el \t
 Todos los correos electrónicos procesados con éxito son asociados al usuario logueado y persistidos en la base de datos
 para que puedan ser consultados en la sección ``My Trips'' que puede apreciarse en la \autoref{fig:web-home}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1.00\textwidth]{images/web-home}
     \figcaption{Página Principal}%
@@ -48,7 +48,7 @@ para que puedan ser consultados en la sección ``My Trips'' que puede apreciarse
 Allí se listan todos los viajes creados a partir de la extracción, donde para cada correo electrónico se genera un
 viaje distinto.
 Además se ofrece el filtro por año de viaje.
-Para cada viaje se indica el destino final (la ciudad correspondiente al aeropuerto de destino del último segmento),
+Para cada viaje se indica el destino final (la ciudad correspondiente al aeropuerto o estación de tren de destino del último segmento),
 el país del destino final, un nombre autogenerado (por ejemplo ``Trip to Montréal'') que el usuario puede modificar,
 las fechas de inicio y fin del viaje, la cantidad de segmentos que tiene el viaje y la cantidad de itinerarios de POIs
 generados.
@@ -59,7 +59,7 @@ cambiarlos por cualquiera de las cinco opciones disponibles.
 De acuerdo a lo ya mencionado en~\autoref{par:poi}, estas preferencias son utilizadas para la obtención de
 recomendaciones de POIs.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1.00\textwidth]{images/web-interests}
     \figcaption{Edición de los intereses del usuario}%
@@ -68,14 +68,14 @@ recomendaciones de POIs.
 
 Al hacer click en uno de los viajes de ``My Trips'' se ofrece la vista con el detalle de un viaje.
 En la parte superior se ofrecen opciones para renombrar el viaje y para eliminarlo.
-En la \autoref{fig:web-trip-flights} se puede apreciar la sección ``Flights'', que cuenta con un mapa cada uno de los
+En la \autoref{fig:web-trip-flights} se puede apreciar la sección ``Flights'', que cuenta con un mapa con cada uno de los
 segmentos de vuelo del viaje, donde para cada segmento, se lista toda la información relevante que extrajo el
 \textit{pipeline}.
 Para el mapa se utilizó Leaflet con un mapa interactivo que utiliza una cartografía base minimalista donde sólo aparecen
 límites y nombres de países, ciudades y provincias importantes.
 Al final se ofrece también el nombre del pasajero y el código de reserva.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1.00\textwidth]{images/web-trip-flights}
     \figcaption{Detalles de los segmentos aéreos del viaje}%
@@ -100,7 +100,7 @@ En la \autoref{fig:web-trip-activities} se puede apreciar la sección ``Activiti
 recomendaciones de POIs usando un LLM\@.
 En primer lugar se ofrece la opción de elegir la cantidad de días deseada (entre 1 y 7) y luego corresponde elegir la
 ciudad sobre la cual se buscan recomendaciones.
-Sólo se ofrecen como opciones de ciudades a aquellas que corresponden con el o los aeropuertos de destino.
+Sólo se ofrecen como opciones de ciudades a aquellas que corresponden con los aeropuertos o estaciones de tren de destino.
 Una vez definidos los días y la ciudad basta con presionar la opción ``Generate'' para conseguir un itinerario con las
 recomendaciones basadas en los intereses del usuario indicados en ``My Interests''.
 
@@ -117,7 +117,7 @@ Si el usuario lo desea puede presionar ``Save'' y así persistir el itinerario c
 para consultarlo más adelante.
 La implementación permite almacenar un itinerario de recomendaciones por ciudad destino por viaje.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1.00\textwidth]{images/web-trip-activities}
     \figcaption{Detalles de las recomendaciones de POIs del viaje}%
